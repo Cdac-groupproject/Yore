@@ -10,6 +10,8 @@ import AuctioneerSessionSummary from "./pages/Auctioneer/AuctioneerSessionSummar
 import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
 import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuction";
 
+import ContactUs from "./pages/ContactUs";
+
 import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
 
@@ -60,6 +62,7 @@ function App() {
         <Route path="/auctioneer/ongoing" element={<AuctioneerOngoingPage />} />
 
         {/* <Route path="/profile" element={<Profile />} /> */}
+        <Route path="/contact-us" element={<ContactUs />} />
       </Routes>
     </div>
   );
