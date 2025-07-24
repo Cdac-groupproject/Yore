@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/newLogo.png";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import toast from "react-hot-toast";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -16,19 +17,22 @@ function Login() {
     e.preventDefault();
 
     if (logEmail == null || logEmail != email) {
-      alert("User Not found register first");
+      // alert("User Not found register first");
+      toast.error("User Not Found!!!");
       return;
     }
     if (!email || !password) {
       console.log("sample");
       console.log("loged info : ", logEmail);
-      alert("Enter valid details!!!");
+      // alert("Enter valid details!!!");
+      toast.error("Enter valid details!!!");
       return;
     } else if (email == logEmail && password == logPass) {
       console.log("Login details : ", email, " ", password);
       sessionStorage.setItem("isLoggedIn", true);
       navigate("/");
-      alert("Login Succesfull");
+      // alert("Login Succesfull");
+      toast.success("Login Succesfully");
     } else {
       alert("Please enter valid details!!!");
       return;

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import EditProfile from "../pages/EditProfile";
+import toast from "react-hot-toast";
 
 function Profile({ onClose }) {
   const [showModal, setShowmodal] = useState(false);
@@ -9,8 +10,9 @@ function Profile({ onClose }) {
   const email = sessionStorage.getItem("email");
 
   const handleLogout = () => {
+    toast.success("Logout Successfull");
     sessionStorage.clear();
-    alert("Logout successful");
+    // alert("Logout successful");
     window.location.href = "/login";
   };
 

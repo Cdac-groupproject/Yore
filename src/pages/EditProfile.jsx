@@ -1,17 +1,5 @@
-// import React from "react";
-// import Navbar from "../components/Navbar";
-
-// function EditProfile() {
-//   return (
-//     <div>
-//       <Navbar />
-//     </div>
-//   );
-// }
-
-// export default EditProfile;
-
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const EditProfile = ({ isOpen, onClose, uname, uemail, onSave }) => {
   const [name, setName] = useState(uname);
@@ -24,8 +12,9 @@ const EditProfile = ({ isOpen, onClose, uname, uemail, onSave }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ name, email }); // Pass updated values back to parent
-    onClose(); // Close modal
+    onSave({ name, email });
+    toast.success("Profile Updated!");
+    onClose();
   };
 
   if (!isOpen) return null;
