@@ -1,7 +1,10 @@
 import React from "react";
 import logo from "../assets/newLogo.png"; // Make sure path matches your asset folder
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const ContactUs = () => {
+  const navigate = useNavigate();
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-[#ece6da] to-[#d1c7b7] py-16 px-4">
       <div className="bg-white/90 backdrop-blur-lg border border-[#c4b7a6] rounded-3xl shadow-2xl flex flex-col items-center max-w-xl w-full p-8 md:p-12">
@@ -15,18 +18,23 @@ const ContactUs = () => {
           Contact YORE
         </h1>
         <p className="text-[#544333] text-center mb-8">
-          We're here to help you find your own rare estate.<br />
+          We're here to help you find your own rare estate.
+          <br />
           Send us a message and our dedicated team will respond soon.
         </p>
         <form
           className="space-y-5 w-full"
-          onSubmit={e => {
+          onSubmit={(e) => {
             e.preventDefault();
-            alert("Thank you for reaching out!");
+            // alert("Thank you for reaching out!");
+            toast.success("Thanks for reaching out! We'll respond shortly.");
+            navigate("/");
           }}
         >
           <div>
-            <label className="block text-[#795b33] font-medium mb-1">Name</label>
+            <label className="block text-[#795b33] font-medium mb-1">
+              Name
+            </label>
             <input
               type="text"
               required
@@ -35,7 +43,9 @@ const ContactUs = () => {
             />
           </div>
           <div>
-            <label className="block text-[#795b33] font-medium mb-1">Email</label>
+            <label className="block text-[#795b33] font-medium mb-1">
+              Email
+            </label>
             <input
               type="email"
               required
@@ -44,7 +54,9 @@ const ContactUs = () => {
             />
           </div>
           <div>
-            <label className="block text-[#795b33] font-medium mb-1">Message</label>
+            <label className="block text-[#795b33] font-medium mb-1">
+              Message
+            </label>
             <textarea
               required
               rows={4}
@@ -60,7 +72,8 @@ const ContactUs = () => {
           </button>
         </form>
         <div className="mt-8 text-[#b59f77] text-xs text-center">
-          YORE • Your Own Rare Estate<br />
+          YORE • Your Own Rare Estate
+          <br />
           <span className="italic">Crafted with Perplexity</span>
         </div>
       </div>

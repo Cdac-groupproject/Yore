@@ -75,7 +75,7 @@ function Navbar() {
             Upcoming Auctions
           </Link>
 
-            <Link
+          {/* <Link
             to="/bidder"
             className={
               isBidder
@@ -84,8 +84,7 @@ function Navbar() {
             }
           >
             Bidder Auction
-          </Link>
-
+          </Link> */}
         </div>
 
         {/* Search + Auth Buttons */}

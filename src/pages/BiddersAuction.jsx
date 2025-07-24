@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import toast from "react-hot-toast";
 
 const productImages = [
   "/src/assets/Homepage/car.png",
@@ -38,9 +39,11 @@ const BiddersAuction = () => {
     if (bidValue > highestBid) {
       setHighestBid(bidValue);
       setYourBid("");
-      alert("Bid placed successfully!");
+      // alert("Bid placed successfully!");
+      toast.success("Bid Placed Successfully!");
     } else {
-      alert("Your bid must be higher than the current highest bid.");
+      // alert("Your bid must be higher than the current highest bid.");
+      toast.error("Your bid must be higher than the current highest bid");
     }
   };
 
