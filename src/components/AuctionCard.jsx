@@ -1,5 +1,11 @@
 import { FaCalendarAlt, FaUser } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
 function NewCardComp({ image, title, autioneer, sdate, edate }) {
+  const location = useLocation();
+
+  const isOnGoingPage = location.pathname == "/ongoing";
+  const navigate = useNavigate();
+
   return (
     <div className="bg-[#fdf6ec] py-8 px-4 flex justify-center">
       <div className="flex flex-col md:flex-row items-center bg-white border border-yellow-600 rounded-2xl shadow-md w-full max-w-4xl overflow-hidden hover:shadow-xl transition duration-300">
@@ -36,10 +42,14 @@ function NewCardComp({ image, title, autioneer, sdate, edate }) {
               End Date: <span className="font-medium">{edate}</span>
             </p>
           </div>
-
-          <button className="mt-4 bg-yellow-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-yellow-700 hover:scale-95 cursor-pointer transition-all duration-200">
-            View Auction
-          </button>
+          {isOnGoingPage && (
+            <button
+              onClick={() => navigate("/bidder")}
+              className="mt-4 bg-yellow-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-yellow-700 hover:scale-95 cursor-pointer transition-all duration-200"
+            >
+              View Auction
+            </button>
+          )}
         </div>
       </div>
     </div>

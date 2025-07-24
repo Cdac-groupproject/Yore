@@ -7,7 +7,6 @@ import UpcomingAuction from "./pages/UpcomingAuction";
 import Profile from "./components/Profile";
 import BiddersAuction from "./pages/BiddersAuction";
 
-
 function App() {
   return (
     <div className="w-screen border-t-orange-200">
@@ -18,7 +17,7 @@ function App() {
         <Route path="/ongoing" element={<OnGoingAuction />} />
         <Route path="/upcoming" element={<UpcomingAuction />} />
         <Route path="/bidder" element={<BiddersAuction />} />
-       
+
         {/* <Route path="/profile" element={<Profile />} /> */}
       </Routes>
     </div>
