@@ -14,6 +14,7 @@ function Navbar() {
   const isHome = location.pathname === "/";
   const isOnGoing = location.pathname === "/ongoing";
   const isUpcoming = location.pathname === "/upcoming";
+  const isBidder = location.pathname === "/bidder";
 
   const loggedInfo = sessionStorage.getItem("isLoggedIn");
   const username = sessionStorage.getItem("name");
@@ -73,6 +74,18 @@ function Navbar() {
           >
             Upcoming Auctions
           </Link>
+
+            <Link
+            to="/bidder"
+            className={
+              isBidder
+                ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                : "text-gray-700 hover:text-yellow-700"
+            }
+          >
+            Bidder Auction
+          </Link>
+
         </div>
 
         {/* Search + Auth Buttons */}
