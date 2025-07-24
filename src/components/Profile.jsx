@@ -53,43 +53,43 @@ function Profile({ onClose }) {
       </div>
     </div>
 
-    // <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transform transition-transform duration-300">
-    //   <div className="p-6 flex flex-col h-full">
-    //     {/* Header */}
-    //     <div className="flex justify-between items-center mb-6">
-    //       <h2 className="text-xl font-semibold text-gray-800">User Profile</h2>
-    //       <button
-    //         onClick={onClose}
-    //         className="text-gray-500 hover:text-gray-700 text-xl"
-    //       >
-    //         <IoCloseSharp />
-    //       </button>
-    //     </div>
+//     // <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transform transition-transform duration-300">
+//     //   <div className="p-6 flex flex-col h-full">
+//     //     {/* Header */}
+//     //     <div className="flex justify-between items-center mb-6">
+//     //       <h2 className="text-xl font-semibold text-gray-800">User Profile</h2>
+//     //       <button
+//     //         onClick={onClose}
+//     //         className="text-gray-500 hover:text-gray-700 text-xl"
+//     //       >
+//     //         <IoCloseSharp />
+//     //       </button>
+//     //     </div>
 
-    //     {/* User Info */}
-    //     <div className="space-y-4 flex-1">
-    //       <p>
-    //         <strong>Name:</strong> {name}
-    //       </p>
-    //       <p>
-    //         <strong>Email:</strong> {email}
-    //       </p>
+//     //     {/* User Info */}
+//     //     <div className="space-y-4 flex-1">
+//     //       <p>
+//     //         <strong>Name:</strong> {name}
+//     //       </p>
+//     //       <p>
+//     //         <strong>Email:</strong> {email}
+//     //       </p>
 
-    //       <button className="w-full mt-4 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg">
-    //         Edit Profile
-    //       </button>
-    //     </div>
+//     //       <button className="w-full mt-4 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg">
+//     //         Edit Profile
+//     //       </button>
+//     //     </div>
 
-    //     {/* Logout */}
-    //     <button
-    //       onClick={handleLogout}
-    //       className="mt-auto w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg"
-    //     >
-    //       Logout
-    //     </button>
-    //   </div>
-    // </div>
+//     //     {/* Logout */}
+//     //     <button
+//     //       onClick={handleLogout}
+//     //       className="mt-auto w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg"
+//     //     >
+//     //       Logout
+//     //     </button>
+//     //   </div>
+//     // </div>
   );
-}
+};
 
 export default Profile;
