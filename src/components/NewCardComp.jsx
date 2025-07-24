@@ -37,9 +37,9 @@ function NewCardComp({ image, title, autioneer, sdate, edate }) {
             </p>
           </div>
 
-          <button className="mt-4 bg-yellow-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-yellow-700 hover:scale-95 cursor-pointer transition-all duration-200">
+          {/* <button className="mt-4 bg-yellow-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-yellow-700 hover:scale-95 cursor-pointer transition-all duration-200">
             View Auction
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/newLogo.png";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import toast from "react-hot-toast";
 
 function Register() {
   const navigate = useNavigate();
@@ -13,9 +14,10 @@ function Register() {
 
   const onRegisterHandler = () => {
     if (!name || !email || !password) {
-      alert("Please fill all details");
+      alert("Fill all details");
       return;
     }
+    // toast.success("User Register Succefully");
     sessionStorage.setItem("name", name);
     sessionStorage.setItem("email", email);
     sessionStorage.setItem("password", password);
