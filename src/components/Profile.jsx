@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-<<<<<<< Updated upstream
-=======
 import EditProfile from "../pages/EditProfile";
 import toast from "react-hot-toast";
->>>>>>> Stashed changes
+import { Link } from "react-router-dom";
 
 function Profile({ onClose }) {
   const name = sessionStorage.getItem("name");
   const email = sessionStorage.getItem("email");
+  const isAdmin = sessionStorage.getItem("isAdmin") === "true";
+
+  useEffect(() => {
+    console.log("isADmin = ", isAdmin);
+  }, []);
 
   const handleLogout = () => {
     toast.success("Logout Successfull");
@@ -42,8 +45,38 @@ function Profile({ onClose }) {
           </p>
 
           <hr className="border-t border-gray-300 my-3" />
+          {isAdmin && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600 mb-2 font-medium">
+                Admin Links
+              </p>
+              <div className="flex flex-col gap-1 text-sm">
+                <Link
+                  to="/auctioneer/upcoming"
+                  className="text-gray-700 hover:text-yellow-600"
+                >
+                  Upcoming Auction
+                </Link>
+                <Link
+                  to="/auctioneer/summary"
+                  className="text-gray-700 hover:text-yellow-600"
+                >
+                  Auction Summary
+                </Link>
+                <Link
+                  to="/auctioneer/ongoing"
+                  className="text-gray-700 hover:text-yellow-600"
+                >
+                  Ongoing Auction
+                </Link>
+              </div>
+            </div>
+          )}
 
-          <button className="w-full bg-yellow-500 mt-4 py-2 hover:bg-yellow-600 hover:scale-95 rounded-lg text-white font-semibold transition-all duration-200 ">
+          <button
+            onClick={() => setShowmodal(true)}
+            className="w-full bg-yellow-500 mt-4 py-2 hover:bg-yellow-600 hover:scale-95 rounded-lg text-white font-semibold transition-all duration-200 "
+          >
             Edit Profile
           </button>
         </div>

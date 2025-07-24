@@ -12,10 +12,11 @@ function Login() {
 
   const logEmail = sessionStorage.getItem("email");
   const logPass = sessionStorage.getItem("password");
+  const isAdmin = sessionStorage.getItem("isAdmin");
 
   const handleLogin = (e) => {
     e.preventDefault();
-
+    console.log("Admin session storage = ", isAdmin);
     if (logEmail == null || logEmail != email) {
       // alert("User Not found register first");
       toast.error("User Not Found!!!");
