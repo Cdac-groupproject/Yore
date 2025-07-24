@@ -1,13 +1,19 @@
 import React from "react";
 import { IoCloseSharp } from "react-icons/io5";
+<<<<<<< Updated upstream
+=======
+import EditProfile from "../pages/EditProfile";
+import toast from "react-hot-toast";
+>>>>>>> Stashed changes
 
 function Profile({ onClose }) {
   const name = sessionStorage.getItem("name");
   const email = sessionStorage.getItem("email");
 
   const handleLogout = () => {
+    toast.success("Logout Successfull");
     sessionStorage.clear();
-    alert("Logout successful");
+    // alert("Logout successful");
     window.location.href = "/login";
   };
 
