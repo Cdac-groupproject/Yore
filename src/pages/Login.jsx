@@ -32,7 +32,7 @@ function Login() {
       sessionStorage.setItem("isLoggedIn", true);
       navigate("/");
       // alert("Login Succesfull");
-      toast.success("Login Succesfully");
+      toast.success("Logged in Succesfully");
     } else {
       alert("Please enter valid details!!!");
       return;

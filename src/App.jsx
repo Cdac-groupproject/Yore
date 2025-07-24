@@ -6,14 +6,12 @@ import OnGoingAuction from "./pages/OnGoingAuction";
 import UpcomingAuction from "./pages/UpcomingAuction";
 import Profile from "./components/Profile";
 
-
-import AuctioneerSessionSummary from "./pages/Auctioneer/AuctioneerSessionSummary"
+import AuctioneerSessionSummary from "./pages/Auctioneer/AuctioneerSessionSummary";
 import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
-import AuctioneerUpcomingAuction from './pages/Auctioneer/AuctioneerUpcomingAuction';
+import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuction";
 
 import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
-
 
 function App() {
   return (
@@ -51,12 +49,15 @@ function App() {
         <Route path="/upcoming" element={<UpcomingAuction />} />
         <Route path="/bidder" element={<BiddersAuction />} />
 
-       
-        <Route path="/auctioneer/upcoming" element={<AuctioneerUpcomingAuction />} />
-        <Route path="/auctioneer/summary" element={<AuctioneerSessionSummary/>}/>
-        <Route path="/auctioneer/ongoing" element={<AuctioneerOngoingPage/>}/>
-
-
+        <Route
+          path="/auctioneer/upcoming"
+          element={<AuctioneerUpcomingAuction />}
+        />
+        <Route
+          path="/auctioneer/summary"
+          element={<AuctioneerSessionSummary />}
+        />
+        <Route path="/auctioneer/ongoing" element={<AuctioneerOngoingPage />} />
 
         {/* <Route path="/profile" element={<Profile />} /> */}
       </Routes>

@@ -8,7 +8,9 @@ import list4 from "../assets/Homepage/list4.png";
 import car from "../assets/Homepage/car.png";
 import Footer from "../components/Footer";
 import AboutUs from "../components/AboutUs";
+import { useNavigate } from "react-router-dom";
 function HomePage() {
+  const navigate = useNavigate();
   return (
     <>
       <Navbar />
@@ -116,7 +118,10 @@ function HomePage() {
               </div>
             </div>
 
-            <button className="w-fit bg-orange-500 text-white px-5 py-2 rounded-full text-sm hover:bg-orange-600 transition-all hover:scale-95 duration-200">
+            <button
+              onClick={() => navigate("/bidder")}
+              className="w-fit bg-orange-500 text-white px-5 py-2 rounded-full text-sm hover:bg-orange-600 transition-all hover:scale-95 duration-200"
+            >
               Bid In Auction
             </button>
           </div>
