@@ -53,15 +53,6 @@ function App() {
         <Route path="/bidder" element={<BiddersAuction />} />
         <Route path="/contact" element={<ContactUs />} />
 
-<<<<<<< HEAD
-        <Route path="/add-employee" element={<AddEmployee />} />
-       
-        <Route path="/auctioneer/upcoming" element={<AuctioneerUpcomingAuction />} />
-        <Route path="/auctioneer/summary" element={<AuctioneerSessionSummary/>}/>
-        <Route path="/auctioneer/ongoing" element={<AuctioneerOngoingPage/>}/>
-
-
-=======
         <Route
           path="/auctioneer/upcoming"
           element={<AuctioneerUpcomingAuction />}
@@ -71,7 +62,6 @@ function App() {
           element={<AuctioneerSessionSummary />}
         />
         <Route path="/auctioneer/ongoing" element={<AuctioneerOngoingPage />} />
->>>>>>> beda9b448a05e3907f0f4938b1fc4c1fd8955f02
 
         {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/contact-us" element={<ContactUs />} />
