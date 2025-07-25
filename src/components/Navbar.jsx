@@ -75,6 +75,28 @@ function Navbar() {
             Upcoming Auctions
           </Link>
 
+          <Link
+            to="/contact"
+            className={
+              isUpcoming
+                ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                : "text-gray-700 hover:text-yellow-700"
+            }
+          >
+            Contact Us
+          </Link>
+
+          <Link
+            to="/add-employee"
+            className={
+              isUpcoming
+                ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                : "text-gray-700 hover:text-yellow-700"
+            }
+          >
+            Add Employee
+          </Link>
+
           {/* <Link
             to="/bidder"
             className={
@@ -121,6 +143,28 @@ function Navbar() {
               >
                 Register
               </Link>
+
+              {/* <Link
+                to="/contact"
+                className={`mx-2 px-3 py-1 rounded-lg font-semibold transition-colors hover:bg-[#e9dfc4] hover:text-[#332214] ${
+                  location.pathname === "/contact"
+                    ? "bg-[#b59f77] text-white"
+                    : "text-[#332214]"
+                }`}
+              >
+                Contact Us
+              </Link>
+
+              <Link
+                to="/add-employee"
+                className={`mx-2 px-3 py-1 rounded-lg font-semibold transition-colors hover:bg-[#e9dfc4] hover:text-[#332214] ${
+                  location.pathname === "/add-employee"
+                    ? "bg-[#b59f77] text-white"
+                    : "text-[#332214]"
+                }`}
+              >
+                Add Employee
+              </Link> */}
             </>
           )}
         </div>
