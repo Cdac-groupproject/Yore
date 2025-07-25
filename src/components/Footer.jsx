@@ -19,7 +19,7 @@ function Footer() {
           <div className="flex flex-wrap gap-6 text-sm text-gray-700 font-medium">
             <a href="#">Terms & Condition</a>
             <a href="#">Privacy Policy</a>
-            <a href="#">Contact Us</a>
+            <a href="/contact-us">Contact Us</a>
           </div>
           <p className="text-xs text-gray-500 mt-2">
             Copyright ©2025. All rights are reserved

@@ -10,9 +10,10 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const onRegisterHandler = () => {
+    // e.preventDefault();
     if (!name || !email || !password) {
       alert("Fill all details");
       return;
@@ -21,7 +22,8 @@ function Register() {
     sessionStorage.setItem("name", name);
     sessionStorage.setItem("email", email);
     sessionStorage.setItem("password", password);
-    // sessionStorage.setItem("isAdmin", isAdmin);
+    sessionStorage.setItem("isAdmin", isAdmin ? "true" : "false");
+    console.log("Admin session storage = ", isAdmin);
     navigate("/login");
   };
 
@@ -77,7 +79,7 @@ function Register() {
             </div>
 
             {/* Below code is for admin checkbox */}
-            {/* <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <label
                 htmlFor="admin"
                 className="text-sm text-gray-700 font-medium cursor-pointer"
@@ -91,7 +93,7 @@ function Register() {
                 className="w-4 h-4 accent-yellow-400 cursor-pointer"
                 onChange={(e) => setIsAdmin(e.target.checked)}
               />
-            </div> */}
+            </div>
 
             <button
               type="submit"
