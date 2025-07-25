@@ -4,7 +4,21 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OnGoingAuction from "./pages/OnGoingAuction";
 import UpcomingAuction from "./pages/UpcomingAuction";
+<<<<<<< Updated upstream
 import Profile from "./components/Profile";
+=======
+import Profile from "./components/Profile";       
+import ContactUs from "./pages/ContactUs";
+import UpdateProduct from './pages/MuseumManager/UpdateProduct';
+import AddProduct from "./pages/MuseumManager/AddProduct";
+import ProductList from "./pages/MuseumManager/ProductList";
+
+import AuctioneerSessionSummary from "./pages/Auctioneer/AuctioneerSessionSummary";
+import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
+import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuction";
+
+//import ContactUs from "./pages/ContactUs";
+>>>>>>> Stashed changes
 
 import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
@@ -46,6 +60,15 @@ function App() {
         <Route path="/bidder" element={<BiddersAuction />} />
 
         {/* <Route path="/profile" element={<Profile />} /> */}
+<<<<<<< Updated upstream
+=======
+        <Route path="/contact-us" element={<ContactUs />} />
+
+         <Route path="/add-employee" element={<AddEmployee />} />
+        <Route path="/museummanager/addproduct" element={<AddProduct />}/>
+        <Route path="/museummanager/productlist" element={<ProductList />}/>
+        <Route path="/update-product" element={<UpdateProduct />} />
+>>>>>>> Stashed changes
       </Routes>
     </div>
   );
