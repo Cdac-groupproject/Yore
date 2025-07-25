@@ -11,10 +11,11 @@ import AuctioneerSessionSummary from "./pages/Auctioneer/AuctioneerSessionSummar
 import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
 import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuction";
 
-import ContactUs from "./pages/ContactUs";
+//import ContactUs from "./pages/ContactUs";
 
 import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
+import AddEmployee from "./pages/AddEmployee";
 
 function App() {
   return (
@@ -65,6 +66,8 @@ function App() {
 
         {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/contact-us" element={<ContactUs />} />
+
+         <Route path="/add-employee" element={<AddEmployee />} />
       </Routes>
     </div>
   );
