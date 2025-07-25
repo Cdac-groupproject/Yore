@@ -6,6 +6,9 @@ import OnGoingAuction from "./pages/OnGoingAuction";
 import UpcomingAuction from "./pages/UpcomingAuction";
 import Profile from "./components/Profile";       
 import ContactUs from "./pages/ContactUs";
+import UpdateProduct from './pages/MuseumManager/UpdateProduct';
+import AddProduct from "./pages/MuseumManager/AddProduct";
+import ProductList from "./pages/MuseumManager/ProductList";
 
 import AuctioneerSessionSummary from "./pages/Auctioneer/AuctioneerSessionSummary";
 import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
@@ -68,6 +71,9 @@ function App() {
         <Route path="/contact-us" element={<ContactUs />} />
 
          <Route path="/add-employee" element={<AddEmployee />} />
+        <Route path="/museummanager/addproduct" element={<AddProduct />}/>
+        <Route path="/museummanager/productlist" element={<ProductList />}/>
+        <Route path="/update-product" element={<UpdateProduct />} />
       </Routes>
     </div>
   );

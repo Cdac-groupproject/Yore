@@ -40,3 +40,21 @@
 .read-the-docs {
   color: #888;
 }
+
+.add-product-page {
+  background-color: #fdf6ec;
+  padding: 40px 20px;
+}
+
+.product-form-card {
+  width: 80%;
+  max-width: 1000px;
+  border-radius: 15px;
+  background-color: #ffffff;
+}
+
+.form-title {
+  color: #3a2e2e;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+}
