@@ -4,8 +4,10 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OnGoingAuction from "./pages/OnGoingAuction";
 import UpcomingAuction from "./pages/UpcomingAuction";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile";       
+import ContactUs from "./pages/ContactUs";
 
+import AddEmployee from "./pages/AddEmployee";
 
 import AuctioneerSessionSummary from "./pages/Auctioneer/AuctioneerSessionSummary"
 import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
@@ -50,7 +52,9 @@ function App() {
         <Route path="/ongoing" element={<OnGoingAuction />} />
         <Route path="/upcoming" element={<UpcomingAuction />} />
         <Route path="/bidder" element={<BiddersAuction />} />
+        <Route path="/contact" element={<ContactUs />} />
 
+        <Route path="/add-employee" element={<AddEmployee />} />
        
         <Route path="/auctioneer/upcoming" element={<AuctioneerUpcomingAuction />} />
         <Route path="/auctioneer/summary" element={<AuctioneerSessionSummary/>}/>
@@ -65,3 +69,7 @@ function App() {
 }
 
 export default App;
+
+
+// ...inside <Routes>
+

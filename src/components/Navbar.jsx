@@ -122,6 +122,26 @@ function Navbar() {
               >
                 Register
               </Link>
+
+              <Link
+                to="/contact"
+                className={`mx-2 px-3 py-1 rounded-lg font-semibold transition-colors hover:bg-[#e9dfc4] hover:text-[#332214] ${
+                 location.pathname === "/contact" ? "bg-[#b59f77] text-white" : "text-[#332214]"
+                 }`}
+              >
+                Contact Us
+              </Link>
+
+              <Link
+                to="/add-employee"
+                className={`mx-2 px-3 py-1 rounded-lg font-semibold transition-colors hover:bg-[#e9dfc4] hover:text-[#332214] ${
+                 location.pathname === "/add-employee" ? "bg-[#b59f77] text-white" : "text-[#332214]"
+                 }`}
+              >
+               Add Employee
+              </Link>
+
+
             </>
           )}
         </div>
@@ -132,3 +152,4 @@ function Navbar() {
 }
 
 export default Navbar;
+
