@@ -21,12 +21,6 @@ CREATE TABLE country_of_origin (
     country_name VARCHAR(100)
 );
 
--- Employee Categories Table
-CREATE TABLE employee_categories (
-    emp_category_id INT PRIMARY KEY,
-    category_name VARCHAR(50)
-);
-
 create table products(
     id int primary key auto_increment,
     name varchar(255) not null,
