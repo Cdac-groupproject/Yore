@@ -4,8 +4,8 @@ use yore;
 
 
 create table product_categories(
-    id int primary key auto_increment,
-    category_name varchar(255) not null
+    category_id int primary key auto_increment,
+    name varchar(255) not null
 );
 
 create table genders(
@@ -22,18 +22,18 @@ CREATE TABLE country_of_origin (
 );
 
 create table products(
-    id int primary key auto_increment,
+    product_id int primary key auto_increment,
     name varchar(255) not null,
-    price decimal(10,2) not null,
+    price decimal(10,2),
     description text,
     image_url varchar(255),
-    category_id int,
-    country_id int,
+    product_category int,
+    country_of_origin int,
     year_made int,
     auctioned_for_today boolean,
     sold boolean,
-    foreign key (category_id) references categories(id),
-    foreign key (country_id) references countryoforigin(country_id),
+    foreign key (product_category) references product_categories(category_id),
+    foreign key (country_of_origin) references country_of_origin(country_id),
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp on update current_timestamp
 );
