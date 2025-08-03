@@ -1,21 +1,19 @@
 package com.project.service.bidder;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.custom_exception.ApiException;
 import com.project.dao.BidderDao;
 import com.project.dao.GenderDao;
 import com.project.dao.RoleDao;
-import com.project.dto.ApiResponseDTO;
 import com.project.dto.bidder.BIdderRegisterResDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
 import com.project.dto.bidder.BidderRequestDTO;
-import com.project.entity.User;
 import com.project.entity.Gender;
 import com.project.entity.Role;
+import com.project.entity.User;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -29,22 +27,22 @@ public class BidderServiceImpl implements BidderService {
 	private GenderDao genderDao;
 	private RoleDao roleDao;
 	private ModelMapper mapper;
-	
+
 	@Override
 	public BidderLogResDTO logIn(BidderLogReqDTO dto) {
 		User entity = bidderdao.findByEmailAndPassword(dto.getEmail(), dto.getPassword())
 				.orElseThrow(() -> new ApiException("Invalid Credintials"));
-		
+
 		BidderLogResDTO resdto = new BidderLogResDTO();
-		
+
 		resdto.setFullName(entity.getFullName());
 		resdto.setEmail(entity.getEmail());
 		resdto.setPhoneNo(entity.getPhoneNo());
 		resdto.setAge(entity.getAge());
 		resdto.setGender(entity.getGender().getGenderName());
 		resdto.setRole(entity.getRole().getRoleName());
-		
-		
+
+
 		return resdto;
 	}
 
@@ -52,20 +50,21 @@ public class BidderServiceImpl implements BidderService {
 
 	@Override
 	public BIdderRegisterResDTO register(BidderRequestDTO dto) {
-		if(bidderdao.existsByEmail(dto.getEmail())) 
+		if(bidderdao.existsByEmail(dto.getEmail())) {
 			throw new ApiException("Email already registered!!!");
-		
+		}
+
 		Gender gender = genderDao.findById(dto.getGenderId())
 				.orElseThrow(() -> new ApiException("Gender id not valid"));
-		
+
 		Role role = roleDao.findById(dto.getRoleId())
 				.orElseThrow(() -> new ApiException("Role is not valid"));
-		
+
 		User entity = mapper.map(dto, User.class);
 		entity.setGender(gender);
 		entity.setRole(role);
 		bidderdao.save(entity);
-		
+
 		BIdderRegisterResDTO resdto = new BIdderRegisterResDTO();
 		resdto.setFullName(dto.getFullName());
 		resdto.setEmail(dto.getEmail());
@@ -73,10 +72,10 @@ public class BidderServiceImpl implements BidderService {
 		resdto.setAge(dto.getAge());
 		resdto.setGenderId(dto.getGenderId());
 		resdto.setRoleId(dto.getRoleId());
-		
+
 		return resdto;
 	}
 
 
-	
+
 }

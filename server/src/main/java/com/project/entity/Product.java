@@ -2,8 +2,6 @@ package com.project.entity;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.ManyToAny;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,32 +23,32 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "product_id")
 	private Long productId;
-	
+
 	@Column(nullable = false)
 	private String name;
 	private String description;
 	private Double price;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "product_category" , referencedColumnName = "categoryId")
+	@JoinColumn(name = "product_category" , referencedColumnName = "category_id")
 	private ProductCategory category;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "country_of_origin" , referencedColumnName = "countryId")
+	@JoinColumn(name = "country_of_origin" , referencedColumnName = "country_id")
 	private CountryRef countryOfOrigin;
-	
+
 	@Column(name = "year_made")
 	private Long yearMade;
-	
+
 	@Column(name = "auctioned_for_today")
 	private Boolean auctionedForToday;
 	private Boolean sold;
-	
+
 	@Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
