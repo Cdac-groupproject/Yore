@@ -23,25 +23,25 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<?> handelApiException(ApiException e){
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDTO(e.getMessage()));
 	}
-	
+
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<?> handleResourceNotFoundException(ApiException e){
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDTO(e.getMessage()));
 	}
-	
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
 		List<FieldError> fieldErrors = e.getFieldErrors();
-		
+
 		Map<String, String> errorMap = new HashMap<>();
-		
+
 		fieldErrors.forEach(fieldError ->
 			errorMap.put(fieldError.getField(),
 						fieldError.getDefaultMessage()));
-		
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
 	}
-	
+
 //	Generic catch block
 	// equivalent to catch-all
 		@ExceptionHandler(Exception.class)
@@ -49,8 +49,8 @@ public class GlobalExceptionHandler {
 			System.out.println("in catch all exc " + e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDTO(e.getMessage()));
 		}
-	
-	
-	
+
+
+
 }
 

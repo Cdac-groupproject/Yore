@@ -1,7 +1,5 @@
 package com.project.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +20,7 @@ public class CountryRef {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "country_id")
 	private Long countryId;
-	
+
 	@Column(name = "country_name", nullable = false , unique = true)
 	private String countryName;
 }

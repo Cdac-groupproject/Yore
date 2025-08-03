@@ -1,6 +1,5 @@
 package com.project.service.bidder;
 
-import com.project.dto.ApiResponseDTO;
 import com.project.dto.bidder.BIdderRegisterResDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
