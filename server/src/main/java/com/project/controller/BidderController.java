@@ -14,6 +14,8 @@ import com.project.dto.bidder.BidderLogResDTO;
 import com.project.dto.bidder.BidderRequestDTO;
 import com.project.service.bidder.BidderService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -26,13 +28,13 @@ public class BidderController {
 	private BidderService bidderService;
 	
 	@PostMapping("/signin")
-	public ResponseEntity<?> signIn(@RequestBody BidderLogReqDTO dto){
+	public ResponseEntity<?> signIn(@Valid @RequestBody BidderLogReqDTO dto){
 		BidderLogResDTO response = bidderService.logIn(dto);	
 		return ResponseEntity.ok(response);
 	}
 	
 	@PostMapping("/signup")
-	public ResponseEntity<?> signUp(@RequestBody BidderRequestDTO dto) {
+	public ResponseEntity<?> signUp(@Valid @RequestBody BidderRequestDTO dto) {
 		BIdderRegisterResDTO response = bidderService.register(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}	 

@@ -1,0 +1,5 @@
+package com.project.custom_exception;
+
+public class ResourceNotFoundException {
+
+}
