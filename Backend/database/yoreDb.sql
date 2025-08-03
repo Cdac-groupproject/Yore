@@ -88,3 +88,34 @@ CREATE TABLE visitors (
     age INT,
     email VARCHAR(100)
 );
+
+--auctions Table
+CREATE TABLE auctions (
+    auction_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    product_id BIGINT NOT NULL UNIQUE,
+    auctioneer_id BIGINT NOT NULL,
+
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,  -- derived from start_time + duration
+
+    duration_minutes INT NOT NULL,  -- e.g., 5, 10, 30
+
+    is_closed BOOLEAN DEFAULT FALSE,
+    winner_user_id BIGINT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_auction_product
+        FOREIGN KEY (product_id) REFERENCES products(product_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_auctioneer
+        FOREIGN KEY (auctioneer_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_auction_winner
+        FOREIGN KEY (winner_user_id) REFERENCES users(user_id)
+        ON DELETE SET NULL
+);

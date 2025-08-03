@@ -1,0 +1,118 @@
+--Products--
+
+INSERT INTO country_of_origin (country_name) VALUES
+('India'),
+('France'),
+('Egypt'),
+('China'),
+('Italy');
+
+INSERT INTO product_categories (name)
+VALUES
+('Sculpture'),
+('Painting'),
+('Weaponry'),
+('Artifacts'),
+('Timepieces');
+
+
+INSERT INTO products (
+    name,
+    description,
+    price,
+    product_category,
+    country_of_origin,
+    year_made,
+    auctioned_for_today,
+    sold,
+    created_at,
+    updated_at
+) VALUES
+(
+    'Ancient Bronze Sword',
+    'A rare bronze-age weapon excavated from southern China.',
+    55000.00,
+    3,  -- Weaponry
+    4,  -- China
+    1200,
+    0,
+    0,
+    NOW(),
+    NOW()
+),
+(
+    'Renaissance Oil Painting',
+    'Italian oil painting from the early Renaissance period.',
+    125000.00,
+    2,  -- Painting
+    5,  -- Italy
+    1500,
+    1,
+    0,
+    NOW(),
+    NOW()
+),
+(
+    'Egyptian Gold Amulet',
+    'A pharaoh-era gold amulet believed to bring protection.',
+    87000.00,
+    4,  -- Artifacts
+    3,  -- Egypt
+    -500,
+    0,
+    0,
+    NOW(),
+    NOW()
+),
+(
+    'Stone Carved Buddha Statue',
+    'Ancient stone carving from India, reflecting early Buddhist art.',
+    65000.00,
+    1,  -- Sculpture
+    1,  -- India
+    200,
+    1,
+    0,
+    NOW(),
+    NOW()
+),
+(
+    'French Pocket Watch',
+    'Vintage 18th-century pocket watch with gold casing.',
+    43000.00,
+    5,  -- Timepieces
+    2,  -- France
+    1780,
+    0,
+    0,
+    NOW(),
+    NOW()
+);
+
+--Users--
+
+INSERT INTO genders (gender_name) VALUES
+('Male'),
+('Female'),
+('Other');
+
+
+INSERT INTO roles (role_name) VALUES
+('Admin'),
+('Manager'),
+('Auctioneer'),
+('Bidder');
+
+
+INSERT INTO users (
+    age, created_at, email, full_name, log1, log2, log3, log4, password,
+    phone_no, updated_at, gender_id, role_id
+) VALUES
+(34, NOW(), 'admin@yore.com',     'Alice Admin',     NULL, NULL, NULL, NULL, 'admin123',     '9999911111', NOW(), 2, 1),
+(41, NOW(), 'manager@yore.com',   'Bob Manager',     NULL, NULL, NULL, NULL, 'manager123',   '9999922222', NOW(), 1, 2),
+(30, NOW(), 'auctioneer@yore.com','Charlie Auction', NULL, NULL, NULL, NULL, 'auction123',   '9999933333', NOW(), 1, 3),
+(27, NOW(), 'bidder1@yore.com',   'David Bidder',    NULL, NULL, NULL, NULL, 'bidder123',    '9999944444', NOW(), 1, 4),
+(25, NOW(), 'bidder2@yore.com',   'Eve Bidder',      NULL, NULL, NULL, NULL, 'bidder123',    '9999955555', NOW(), 2, 4);
+
+
+
