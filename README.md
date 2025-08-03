@@ -2,7 +2,7 @@
 
 ## 📌 Description:
 
-    YORE is a full-stack web application designed to digitize and streamline traditional auction events. Inspired by a vintage aesthetic, the platform provides a seamless, role-based interface tailored for auctioneers, bidders, and administrators. It features real-time bidding, auction scheduling, item listing, and secure user management to ensure efficient and transparent auction operations.
+  YORE is a full-stack web application designed to digitize and streamline traditional auction events. Inspired by a vintage aesthetic, the platform provides a seamless, role-based interface tailored for auctioneers, bidders, and administrators. It features real-time bidding, auction scheduling, item listing, and secure user management to ensure efficient and transparent auction operations.
 
 ## 📌 Features :
 
