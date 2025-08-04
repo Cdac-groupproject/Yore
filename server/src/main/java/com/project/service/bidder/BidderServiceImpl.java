@@ -15,9 +15,9 @@ import com.project.dao.GenderDao;
 import com.project.dao.RoleDao;
 import com.project.dto.ApiResponseDTO;
 import com.project.dto.bidder.BidderRegisterResDTO;
+import com.project.dto.bidder.BidderRequestDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
-import com.project.dto.bidder.BidderRequestDTO;
 import com.project.entity.Gender;
 import com.project.entity.Role;
 import com.project.entity.User;
@@ -60,33 +60,6 @@ public class BidderServiceImpl implements BidderService {
 
 
 
-	@Override
-	public BidderRegisterResDTO register(BidderRequestDTO dto) {
-		if(userDao.existsByEmail(dto.getEmail())) 
-			throw new ApiException("Email already registered!!!");
-		
-		Gender gender = genderDao.findById(dto.getGenderId())
-				.orElseThrow(() -> new ApiException("Gender id not valid"));
-
-		Role role = roleDao.findById(dto.getRoleId())
-				.orElseThrow(() -> new ApiException("Role is not valid"));
-
-		User entity = mapper.map(dto, User.class);
-//		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-		entity.setGender(gender);
-		entity.setRole(role);
-		userDao.save(entity);
-		
-		BidderRegisterResDTO resdto = new BidderRegisterResDTO();
-		resdto.setFullName(dto.getFullName());
-		resdto.setEmail(dto.getEmail());
-		resdto.setPhoneNo(dto.getPhoneNo());
-		resdto.setAge(dto.getAge());
-		resdto.setGenderId(dto.getGenderId());
-		resdto.setRoleId(dto.getRoleId());
-
-		return resdto;
-	}
 
 
 
@@ -105,6 +78,47 @@ public class BidderServiceImpl implements BidderService {
 				.toList();
 		return userRes;
 	}
+
+
+
+
+
+
+	@Override
+	public BidderRegisterResDTO register(BidderRequestDTO dto) {
+		if(userDao.existsByEmail(dto.getEmail())) {
+			throw new ApiException("Email already registered!!!");
+		
+		Gender gender = genderDao.findById(dto.getGenderId())
+				.orElseThrow(() -> new ApiException("Gender id not valid"));
+
+		Role role = roleDao.findById(dto.getRoleId())
+				.orElseThrow(() -> new ApiException("Role is not valid"));
+
+		User entity = mapper.map(dto, User.class);
+//		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+		entity.setGender(gender);
+		entity.setRole(role);
+		userDao.save(entity);
+
+		
+		BidderRegisterResDTO resdto = new BidderRegisterResDTO();
+		resdto.setFullName(dto.getFullName());
+		resdto.setEmail(dto.getEmail());
+		resdto.setPhoneNo(dto.getPhoneNo());
+		resdto.setAge(dto.getAge());
+		resdto.setGenderId(dto.getGenderId());
+		resdto.setRoleId(dto.getRoleId());
+
+		return resdto;
+	}
+
+
+
+
+
+
+
 
 
 	
