@@ -1,7 +1,9 @@
 package com.project.service.bidder;
 
+import java.util.List;
+
 import com.project.dto.ApiResponseDTO;
-import com.project.dto.bidder.BIdderRegisterResDTO;
+import com.project.dto.bidder.BidderRegisterResDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
 import com.project.dto.bidder.BidderRequestDTO;
@@ -9,5 +11,6 @@ import com.project.dto.bidder.BidderRequestDTO;
 
 public interface BidderService {
 	BidderLogResDTO logIn(BidderLogReqDTO dto);
-	BIdderRegisterResDTO register(BidderRequestDTO dto);
+	BidderRegisterResDTO register(BidderRequestDTO dto);
+	List<BidderLogResDTO> getAllUsers();
 }

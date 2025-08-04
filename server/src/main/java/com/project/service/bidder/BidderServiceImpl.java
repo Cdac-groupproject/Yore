@@ -1,15 +1,20 @@
 package com.project.service.bidder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.custom_exception.ApiException;
-import com.project.dao.BidderDao;
+import com.project.custom_exception.ResourceNotFoundException;
+import com.project.dao.UserDao;
 import com.project.dao.GenderDao;
 import com.project.dao.RoleDao;
 import com.project.dto.ApiResponseDTO;
-import com.project.dto.bidder.BIdderRegisterResDTO;
+import com.project.dto.bidder.BidderRegisterResDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
 import com.project.dto.bidder.BidderRequestDTO;
@@ -25,15 +30,20 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class BidderServiceImpl implements BidderService {
 
-	private  BidderDao bidderdao;
+	private  UserDao userDao;
 	private GenderDao genderDao;
 	private RoleDao roleDao;
+//	private PasswordEncoder passwordEncoder;
 	private ModelMapper mapper;
 	
 	@Override
 	public BidderLogResDTO logIn(BidderLogReqDTO dto) {
-		User entity = bidderdao.findByEmailAndPassword(dto.getEmail(), dto.getPassword())
-				.orElseThrow(() -> new ApiException("Invalid Credintials"));
+		User entity = userDao.findByEmailAndPassword(dto.getEmail(), dto.getPassword())
+				.orElseThrow(() -> new ApiException("Email id not found"));
+		
+//		if(!passwordEncoder.matches(dto.getPassword(), entity.getPassword())) {
+//			throw new ApiException("Invalid Credintials");
+//		}
 		
 		BidderLogResDTO resdto = new BidderLogResDTO();
 		
@@ -51,8 +61,8 @@ public class BidderServiceImpl implements BidderService {
 
 
 	@Override
-	public BIdderRegisterResDTO register(BidderRequestDTO dto) {
-		if(bidderdao.existsByEmail(dto.getEmail())) 
+	public BidderRegisterResDTO register(BidderRequestDTO dto) {
+		if(userDao.existsByEmail(dto.getEmail())) 
 			throw new ApiException("Email already registered!!!");
 		
 		Gender gender = genderDao.findById(dto.getGenderId())
@@ -62,11 +72,12 @@ public class BidderServiceImpl implements BidderService {
 				.orElseThrow(() -> new ApiException("Role is not valid"));
 		
 		User entity = mapper.map(dto, User.class);
+//		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 		entity.setGender(gender);
 		entity.setRole(role);
-		bidderdao.save(entity);
+		userDao.save(entity);
 		
-		BIdderRegisterResDTO resdto = new BIdderRegisterResDTO();
+		BidderRegisterResDTO resdto = new BidderRegisterResDTO();
 		resdto.setFullName(dto.getFullName());
 		resdto.setEmail(dto.getEmail());
 		resdto.setPhoneNo(dto.getPhoneNo());
@@ -75,6 +86,24 @@ public class BidderServiceImpl implements BidderService {
 		resdto.setRoleId(dto.getRoleId());
 		
 		return resdto;
+	}
+
+
+
+	@Override
+	public List<BidderLogResDTO> getAllUsers() {
+		List<User> allUsers = userDao.findAll();
+		List<BidderLogResDTO> userRes = allUsers.stream().map(user ->  {
+		BidderLogResDTO dto = new BidderLogResDTO();
+        dto.setFullName(user.getFullName());
+        dto.setEmail(user.getEmail());
+        dto.setPhoneNo(user.getPhoneNo());
+        dto.setAge(user.getAge());
+        dto.setGender(user.getGender() != null ? user.getGender().getGenderName() : null);
+        dto.setRole(user.getRole() != null ? user.getRole().getRoleName() : null);
+        return dto;})
+				.toList();
+		return userRes;
 	}
 
 
