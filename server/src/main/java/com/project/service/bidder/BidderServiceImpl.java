@@ -88,8 +88,7 @@ public class BidderServiceImpl implements BidderService {
 	public BidderRegisterResDTO register(BidderRequestDTO dto) {
 		if(userDao.existsByEmail(dto.getEmail())) {
 			throw new ApiException("Email already registered!!!");
-		}
-
+		
 		Gender gender = genderDao.findById(dto.getGenderId())
 				.orElseThrow(() -> new ApiException("Gender id not valid"));
 

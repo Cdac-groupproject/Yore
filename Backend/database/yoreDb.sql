@@ -119,3 +119,15 @@ CREATE TABLE auctions (
         FOREIGN KEY (winner_user_id) REFERENCES users(user_id)
         ON DELETE SET NULL
 );
+
+--Bids Table
+CREATE TABLE bids (
+    bid_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    auction_id BIGINT NOT NULL,
+    bidder_id BIGINT NOT NULL,
+    bid_amount DECIMAL(15,2) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_auction_bid FOREIGN KEY (auction_id) REFERENCES auctions(auction_id),
+    CONSTRAINT fk_user_bidder FOREIGN KEY (bidder_id) REFERENCES users(userId)
+);

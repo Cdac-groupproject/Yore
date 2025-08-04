@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.project.dto.ApiResponseDTO;
 import com.project.dto.bidder.BidderRegisterResDTO;
+import com.project.dto.bidder.BidderRegisterResDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
 import com.project.dto.bidder.BidderRequestDTO;
