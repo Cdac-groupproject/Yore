@@ -61,13 +61,10 @@ public class BidderServiceImpl implements BidderService {
 
 
 	@Override
-	public BIdderRegisterResDTO register(BidderRequestDTO dto) {
-		if(bidderdao.existsByEmail(dto.getEmail())) {
 	public BidderRegisterResDTO register(BidderRequestDTO dto) {
 		if(userDao.existsByEmail(dto.getEmail())) 
 			throw new ApiException("Email already registered!!!");
-		}
-
+		
 		Gender gender = genderDao.findById(dto.getGenderId())
 				.orElseThrow(() -> new ApiException("Gender id not valid"));
 
@@ -78,9 +75,6 @@ public class BidderServiceImpl implements BidderService {
 //		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 		entity.setGender(gender);
 		entity.setRole(role);
-		bidderdao.save(entity);
-
-		BIdderRegisterResDTO resdto = new BIdderRegisterResDTO();
 		userDao.save(entity);
 		
 		BidderRegisterResDTO resdto = new BidderRegisterResDTO();
