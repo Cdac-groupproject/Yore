@@ -1,9 +1,9 @@
 package com.project.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -36,7 +36,7 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gender_id", referencedColumnName = "genderId")
     private Gender gender;
-    
+
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "roleId")
     private Role role;

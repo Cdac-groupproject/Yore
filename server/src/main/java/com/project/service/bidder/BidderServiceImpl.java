@@ -18,9 +18,9 @@ import com.project.dto.bidder.BidderRegisterResDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
 import com.project.dto.bidder.BidderRequestDTO;
-import com.project.entity.User;
 import com.project.entity.Gender;
 import com.project.entity.Role;
+import com.project.entity.User;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ public class BidderServiceImpl implements BidderService {
 	private RoleDao roleDao;
 //	private PasswordEncoder passwordEncoder;
 	private ModelMapper mapper;
-	
+
 	@Override
 	public BidderLogResDTO logIn(BidderLogReqDTO dto) {
 		User entity = userDao.findByEmailAndPassword(dto.getEmail(), dto.getPassword())
@@ -46,35 +46,41 @@ public class BidderServiceImpl implements BidderService {
 //		}
 		
 		BidderLogResDTO resdto = new BidderLogResDTO();
-		
+
 		resdto.setFullName(entity.getFullName());
 		resdto.setEmail(entity.getEmail());
 		resdto.setPhoneNo(entity.getPhoneNo());
 		resdto.setAge(entity.getAge());
 		resdto.setGender(entity.getGender().getGenderName());
 		resdto.setRole(entity.getRole().getRoleName());
-		
-		
+
+
 		return resdto;
 	}
 
 
 
 	@Override
+	public BIdderRegisterResDTO register(BidderRequestDTO dto) {
+		if(bidderdao.existsByEmail(dto.getEmail())) {
 	public BidderRegisterResDTO register(BidderRequestDTO dto) {
 		if(userDao.existsByEmail(dto.getEmail())) 
 			throw new ApiException("Email already registered!!!");
-		
+		}
+
 		Gender gender = genderDao.findById(dto.getGenderId())
 				.orElseThrow(() -> new ApiException("Gender id not valid"));
-		
+
 		Role role = roleDao.findById(dto.getRoleId())
 				.orElseThrow(() -> new ApiException("Role is not valid"));
-		
+
 		User entity = mapper.map(dto, User.class);
 //		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 		entity.setGender(gender);
 		entity.setRole(role);
+		bidderdao.save(entity);
+
+		BIdderRegisterResDTO resdto = new BIdderRegisterResDTO();
 		userDao.save(entity);
 		
 		BidderRegisterResDTO resdto = new BidderRegisterResDTO();
@@ -84,7 +90,7 @@ public class BidderServiceImpl implements BidderService {
 		resdto.setAge(dto.getAge());
 		resdto.setGenderId(dto.getGenderId());
 		resdto.setRoleId(dto.getRoleId());
-		
+
 		return resdto;
 	}
 

@@ -4,8 +4,8 @@ use yore;
 
 
 create table product_categories(
-    id int primary key auto_increment,
-    category_name varchar(255) not null
+    category_id int primary key auto_increment,
+    name varchar(255) not null
 );
 
 create table genders(
@@ -22,18 +22,18 @@ CREATE TABLE country_of_origin (
 );
 
 create table products(
-    id int primary key auto_increment,
+    product_id int primary key auto_increment,
     name varchar(255) not null,
-    price decimal(10,2) not null,
+    price decimal(10,2),
     description text,
     image_url varchar(255),
-    category_id int,
-    country_id int,
+    product_category int,
+    country_of_origin int,
     year_made int,
     auctioned_for_today boolean,
     sold boolean,
-    foreign key (category_id) references categories(id),
-    foreign key (country_id) references countryoforigin(country_id),
+    foreign key (product_category) references product_categories(category_id),
+    foreign key (country_of_origin) references country_of_origin(country_id),
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp on update current_timestamp
 );
@@ -87,4 +87,35 @@ CREATE TABLE visitors (
     phone_no CHAR(10),
     age INT,
     email VARCHAR(100)
+);
+
+--auctions Table
+CREATE TABLE auctions (
+    auction_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    product_id BIGINT NOT NULL UNIQUE,
+    auctioneer_id BIGINT NOT NULL,
+
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,  -- derived from start_time + duration
+
+    duration_minutes INT NOT NULL,  -- e.g., 5, 10, 30
+
+    is_closed BOOLEAN DEFAULT FALSE,
+    winner_user_id BIGINT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_auction_product
+        FOREIGN KEY (product_id) REFERENCES products(product_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_auctioneer
+        FOREIGN KEY (auctioneer_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_auction_winner
+        FOREIGN KEY (winner_user_id) REFERENCES users(user_id)
+        ON DELETE SET NULL
 );
