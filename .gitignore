@@ -52,3 +52,77 @@ hs_err_pid*
 replay_pid*
 
 private/
+
+# DotNet
+
+# Build results
+bin/
+obj/
+[Ll]og/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# VS for Mac
+.vscode/
+.vscode-test/
+
+# Rider
+.idea/
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Visual Studio Cache Files
+.vs/
+.vscode/
+**/.vs/
+**/.vscode/
+
+# Resharper
+*.DotSettings.user
+
+# IIS Express
+*.vspscc
+*.vssscc
+*.scc
+*.publishsettings
+
+# Web projects
+wwwroot/
+
+# Local SQL DBs
+*.mdf
+*.ldf
+
+# Entity Framework
+Migrations/
+
+# dotCover
+*.dcvr
+
+# Coverage tools
+coverage/
+*.coverage
+*.coveragexml
+
+# Logs
+*.log
+
+# Others
+TestResults/
+*.tmp
+*.bak
+*.swp
+*.lock.json
