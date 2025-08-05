@@ -14,5 +14,5 @@ public class BidReqDTO {
 
 	private Long auctionId;
     private Long userId;
-    private BigDecimal bidAmount;
+    private Double bidAmount;
 }
