@@ -131,3 +131,18 @@ CREATE TABLE bids (
     CONSTRAINT fk_auction_bid FOREIGN KEY (auction_id) REFERENCES auctions(auction_id),
     CONSTRAINT fk_user_bidder FOREIGN KEY (bidder_id) REFERENCES users(userId)
 );
+
+--employee_categories table
+create table employee_categories(
+    designation_id int primary key auto_increment,
+    employee_designation varchar(255) not null
+);
+
+--employee table
+create table employee(
+    employee_id int primary key auto_increment,
+    name varchar(255) not null,
+    email varchar(255) not null,
+    category_id int,
+    foreign key (category_id) references employee_categories(designation_id)
+);
