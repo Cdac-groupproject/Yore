@@ -2,10 +2,13 @@ package com.project;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import com.project.entity.Auction;
+import com.project.dto.AuctionRespDTO;
 
 @SpringBootApplication // includes @Configuration
 public class Application {
@@ -24,6 +27,8 @@ public class Application {
 	public ModelMapper modelMapper() {
 		System.out.println("in model mapper creation");
 		ModelMapper mapper = new ModelMapper();
+		
+		
 		mapper.getConfiguration()
 				/*
 				 * To tell ModelMapper to map only those props whose names match in src n dest.
@@ -34,6 +39,17 @@ public class Application {
 				 * To tell ModelMapper not to transfer nulls from src -> dest
 				 */
 				.setPropertyCondition(Conditions.isNotNull());// use case - PUT
+		mapper.addMappings(new PropertyMap<Auction, AuctionRespDTO>() {
+	        @Override
+	        protected void configure() {
+	            map().setProductName(source.getProduct().getName());
+	            map().setWinnerName(source.getWinner() != null ? source.getWinner().getFullName() : null);
+	            // winningBidAmount will be set manually from the service
+	        }
+	    });
+
+		
+		
 		return mapper;
 
 	}

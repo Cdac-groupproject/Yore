@@ -34,49 +34,58 @@ public class BidServiceImpl implements BidService{
     
 	@Override
 	public BidRespDTO placeBid(BidReqDTO dto) {
-		Auction auction = auctionDao.findById(dto.getAuctionId())
-				.orElseThrow(() -> new ApiException("Invalid Auction ID"));
+	    Auction auction = auctionDao.findById(dto.getAuctionId())
+	            .orElseThrow(() -> new ApiException("Invalid Auction ID"));
 
-        if (Boolean.TRUE.equals(auction.getIsClosed())) {
-            throw new ApiException("Auction is already closed.");
-        }
+	    if (Boolean.TRUE.equals(auction.getIsClosed())) {
+	        throw new ApiException("Auction is already closed.");
+	    }
 
-        User bidder = userDao.findById(dto.getUserId())
-                .orElseThrow(() -> new ApiException("Invalid User ID"));
+	    User bidder = userDao.findById(dto.getUserId())
+	            .orElseThrow(() -> new ApiException("Invalid User ID"));
 
-        Optional<Bid> currentHighest = bidDao.findHighestBidByAuctionId(dto.getAuctionId());
+	    // 🔴 NEW: Enforce base price rule
+	    if (dto.getBidAmount().compareTo(auction.getBasePrice()) < 0) {
+	        throw new ApiException("Bid must be at least equal to the base price ₹" + auction.getBasePrice());
+	    }
 
-        if (currentHighest.isPresent() && dto.getBidAmount().compareTo(currentHighest.get().getBidAmount()) <= 0) {
-            throw new ApiException("Bid must be higher than current highest bid ₹" + currentHighest.get().getBidAmount());
-        }
+	    Optional<Bid> currentHighest = bidDao.findHighestBidByAuctionId(dto.getAuctionId());
 
-        // Map DTO to Bid Entity using ModelMapper
-        Bid bid = modelMapper.map(dto, Bid.class);
-        bid.setAuction(auction);
-        bid.setBidder(bidder);
+	    if (currentHighest.isPresent() && dto.getBidAmount().compareTo(currentHighest.get().getBidAmount()) <= 0) {
+	        throw new ApiException("Bid must be higher than current highest bid ₹" + currentHighest.get().getBidAmount());
+	    }
 
-        Bid saved = bidDao.save(bid);
+	    // Map DTO to Bid Entity using ModelMapper
+	    Bid bid = modelMapper.map(dto, Bid.class);
+	    bid.setAuction(auction);
+	    bid.setBidder(bidder);
 
-        // Map Entity to Response DTO using ModelMapper
-        BidRespDTO respDTO = modelMapper.map(saved, BidRespDTO.class);
-        respDTO.setAuctionId(auction.getAuctionId());
-        respDTO.setUserId(bidder.getUserId());
-        respDTO.setUsername(bidder.getFullName());
+	    Bid saved = bidDao.save(bid);
 
-        return respDTO;
+	    // Map Entity to Response DTO using ModelMapper
+	    BidRespDTO respDTO = modelMapper.map(saved, BidRespDTO.class);
+	    respDTO.setAuctionId(auction.getAuctionId());
+	    respDTO.setUserId(bidder.getUserId());
+	    respDTO.setUsername(bidder.getFullName());
+
+	    return respDTO;
 	}
-
 	@Override
 	public BidRespDTO getHighestBid(Long auctionId) {
-		Bid bid = bidDao.findHighestBidByAuctionId(auctionId)
-                .orElseThrow(() -> new ApiException("No bids found for this auction."));
+	    // Validate auction existence (optional but good practice)
+	    if (!auctionDao.existsById(auctionId)) {
+	        throw new ApiException("Invalid Auction ID");
+	    }
 
-        BidRespDTO respDTO = modelMapper.map(bid, BidRespDTO.class);
-        respDTO.setAuctionId(bid.getAuction().getAuctionId());
-        respDTO.setUserId(bid.getBidder().getUserId());
-        respDTO.setUsername(bid.getBidder().getFullName());
+	    Bid bid = bidDao.findHighestBidByAuctionId(auctionId)
+	            .orElseThrow(() -> new ApiException("No bids found for this auction."));
 
-        return respDTO;
+	    BidRespDTO respDTO = modelMapper.map(bid, BidRespDTO.class);
+	    respDTO.setAuctionId(bid.getAuction().getAuctionId());
+	    respDTO.setUserId(bid.getBidder().getUserId());
+	    respDTO.setUsername(bid.getBidder().getFullName());
+
+	    return respDTO;
 	}
 
 }

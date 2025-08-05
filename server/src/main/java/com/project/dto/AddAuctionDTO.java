@@ -2,6 +2,9 @@ package com.project.dto;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,9 +12,12 @@ import lombok.Setter;
 @Setter
 public class AddAuctionDTO {
 	
-    private Long productId;           // ID of the product to auction
-    private Long auctioneerId;        // ID of the user acting as auctioneer
-    private LocalDateTime startTime;  // Optional: When auction starts
-    private LocalDateTime endTime;    // Optional: When auction ends
-    private Integer durationMinutes;  // Optional: If endTime is not provided, calculate using this
+	private Long productId;
+    private Long auctioneerId;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private Long durationMinutes;
+    @NotNull(message = "Base price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Base price must be positive")
+    private Double basePrice;
 }

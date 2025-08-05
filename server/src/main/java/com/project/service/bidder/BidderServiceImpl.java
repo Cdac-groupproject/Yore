@@ -86,7 +86,7 @@ public class BidderServiceImpl implements BidderService {
 
 	@Override
 	public BidderRegisterResDTO register(BidderRequestDTO dto) {
-		if(userDao.existsByEmail(dto.getEmail())) {
+		if(userDao.existsByEmail(dto.getEmail())) 
 			throw new ApiException("Email already registered!!!");
 		
 		Gender gender = genderDao.findById(dto.getGenderId())
@@ -112,6 +112,8 @@ public class BidderServiceImpl implements BidderService {
 
 		return resdto;
 	}
+	}
+
 
 
 
@@ -122,4 +124,4 @@ public class BidderServiceImpl implements BidderService {
 
 
 	
-}
+

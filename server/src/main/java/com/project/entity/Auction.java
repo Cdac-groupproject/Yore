@@ -59,7 +59,8 @@ public class Auction {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
+    @Column(nullable = false)
+    private Double basePrice;
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();

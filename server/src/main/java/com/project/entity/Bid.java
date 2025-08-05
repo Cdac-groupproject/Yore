@@ -41,7 +41,7 @@ public class Bid {
     private User bidder;
 
     @Column(name = "bid_amount", nullable = false)
-    private BigDecimal bidAmount;
+    private Double bidAmount;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
