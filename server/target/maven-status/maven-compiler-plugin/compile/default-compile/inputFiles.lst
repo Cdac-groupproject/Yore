@@ -3,6 +3,7 @@ D:\cdac project\Yore\server\src\main\java\com\project\config\securityConfig.java
 D:\cdac project\Yore\server\src\main\java\com\project\controller\AuctionController.java
 D:\cdac project\Yore\server\src\main\java\com\project\controller\BidController.java
 D:\cdac project\Yore\server\src\main\java\com\project\controller\BidderController.java
+D:\cdac project\Yore\server\src\main\java\com\project\controller\EmployeeController.java
 D:\cdac project\Yore\server\src\main\java\com\project\controller\ProductController.java
 D:\cdac project\Yore\server\src\main\java\com\project\custom_exception\ApiException.java
 D:\cdac project\Yore\server\src\main\java\com\project\custom_exception\AuthenticationException.java
@@ -10,6 +11,8 @@ D:\cdac project\Yore\server\src\main\java\com\project\custom_exception\ResourceN
 D:\cdac project\Yore\server\src\main\java\com\project\dao\AuctionDao.java
 D:\cdac project\Yore\server\src\main\java\com\project\dao\BidDao.java
 D:\cdac project\Yore\server\src\main\java\com\project\dao\CountryRefDao.java
+D:\cdac project\Yore\server\src\main\java\com\project\dao\EmployeeCategoryDao.java
+D:\cdac project\Yore\server\src\main\java\com\project\dao\EmployeeDao.java
 D:\cdac project\Yore\server\src\main\java\com\project\dao\GenderDao.java
 D:\cdac project\Yore\server\src\main\java\com\project\dao\ProductCategoryDao.java
 D:\cdac project\Yore\server\src\main\java\com\project\dao\ProductDao.java
@@ -26,11 +29,15 @@ D:\cdac project\Yore\server\src\main\java\com\project\dto\bidder\BidderRegisterR
 D:\cdac project\Yore\server\src\main\java\com\project\dto\bidder\BidderRequestDTO.java
 D:\cdac project\Yore\server\src\main\java\com\project\dto\bids\BidReqDTO.java
 D:\cdac project\Yore\server\src\main\java\com\project\dto\bids\BidRespDTO.java
+D:\cdac project\Yore\server\src\main\java\com\project\dto\EmployeeCategoryDTO.java
+D:\cdac project\Yore\server\src\main\java\com\project\dto\EmployeeDTO.java
 D:\cdac project\Yore\server\src\main\java\com\project\dto\ProductDTO.java
 D:\cdac project\Yore\server\src\main\java\com\project\dto\UserDTO.java
 D:\cdac project\Yore\server\src\main\java\com\project\entity\Auction.java
 D:\cdac project\Yore\server\src\main\java\com\project\entity\Bid.java
 D:\cdac project\Yore\server\src\main\java\com\project\entity\CountryRef.java
+D:\cdac project\Yore\server\src\main\java\com\project\entity\Employee.java
+D:\cdac project\Yore\server\src\main\java\com\project\entity\EmployeeCategory.java
 D:\cdac project\Yore\server\src\main\java\com\project\entity\Gender.java
 D:\cdac project\Yore\server\src\main\java\com\project\entity\Order.java
 D:\cdac project\Yore\server\src\main\java\com\project\entity\Product.java
@@ -45,5 +52,7 @@ D:\cdac project\Yore\server\src\main\java\com\project\service\bidder\BidderServi
 D:\cdac project\Yore\server\src\main\java\com\project\service\bidder\BidderServiceImpl.java
 D:\cdac project\Yore\server\src\main\java\com\project\service\bids\BidService.java
 D:\cdac project\Yore\server\src\main\java\com\project\service\bids\BidServiceImpl.java
+D:\cdac project\Yore\server\src\main\java\com\project\service\employee\EmployeeService.java
+D:\cdac project\Yore\server\src\main\java\com\project\service\employee\EmployeeServiceImpl.java
 D:\cdac project\Yore\server\src\main\java\com\project\service\product\ProductService.java
 D:\cdac project\Yore\server\src\main\java\com\project\service\product\ProductServiceImpl.java
