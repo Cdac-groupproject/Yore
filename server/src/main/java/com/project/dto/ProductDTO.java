@@ -1,5 +1,7 @@
 package com.project.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +13,8 @@ public class ProductDTO {
     private String description;
     private Double startingPrice;
     private Boolean sold;
-    private String category;
-    private String imageUrl;
+    private String categoryId;
+    private Long countryOfOriginId; 
+    private Long yearMade;
+    private List<String> imageUrl;;
 }

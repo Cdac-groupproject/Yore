@@ -8,6 +8,6 @@ import com.project.entity.Product;
 
 public interface ProductDao extends JpaRepository<Product, Long>{
 
-	Optional<Product> findById(Long productId);
+	//Optional<Product> findById(Long productId);
 	
 }
