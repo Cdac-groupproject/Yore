@@ -37,7 +37,7 @@ public class SecurityConfig {
 	@Bean
 	AuthenticationManager authenticationManager(HttpSecurity http) throws Exception{
 		AuthenticationManagerBuilder authManagerBuilder= http.getSharedObject(AuthenticationManagerBuilder.class);
-		authManagerBuilder.userDetailsService(userDetailsService);
+		authManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());;
 		return authManagerBuilder.build();
 	}
 	
@@ -61,8 +61,7 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(csrf-> csrf.disable())
 			.authorizeHttpRequests(requests-> requests
-				.requestMatchers("/signin").permitAll()
-				.requestMatchers("/register").permitAll()
+				.requestMatchers("/signin","/sign-up","/verify-user").permitAll()
 				.requestMatchers("/bidder/**").hasRole("BIDDER")
 				.requestMatchers("/manager/**").hasRole("MANAGER")
 				.requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")
