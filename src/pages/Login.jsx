@@ -4,6 +4,7 @@ import logo from "../assets/newLogo.png";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import toast from "react-hot-toast";
+import { loginUser } from "../services/userService";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -11,32 +12,26 @@ function Login() {
   const navigate = useNavigate();
 
   const logEmail = sessionStorage.getItem("email");
-  const logPass = sessionStorage.getItem("password");
-  const isAdmin = sessionStorage.getItem("isAdmin");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Admin session storage = ", isAdmin);
-    if (logEmail == null || logEmail != email) {
-      // alert("User Not found register first");
-      toast.error("User Not Found!!!");
+    if (!email || !password) {
+      toast.error("Please enter both email and password.");
       return;
     }
-    if (!email || !password) {
-      console.log("sample");
-      console.log("loged info : ", logEmail);
-      // alert("Enter valid details!!!");
-      toast.error("Enter valid details!!!");
-      return;
-    } else if (email == logEmail && password == logPass) {
-      console.log("Login details : ", email, " ", password);
+
+    try {
+      const res = await loginUser({ email, password });
+      console.log(res);
       sessionStorage.setItem("isLoggedIn", true);
+      sessionStorage.setItem("user", JSON.stringify(res));
+      sessionStorage.setItem("name", res.data.fullName);
+      sessionStorage.setItem("email", res.data.email);
+      toast.success("Login successful!");
       navigate("/");
-      // alert("Login Succesfull");
-      toast.success("Logged in Succesfully");
-    } else {
-      alert("Please enter valid details!!!");
-      return;
+    } catch (error) {
+      toast.error("Invalid credintials");
+      console.log(error);
     }
   };
 
