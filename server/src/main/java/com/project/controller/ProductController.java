@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.ProductDTO;
+import com.project.dto.product.ProductGetDto;
 import com.project.dto.product.ProductPostDto;
 import com.project.service.product.ProductService;
 
@@ -79,7 +80,7 @@ public class ProductController {
      */
     @GetMapping("/{id}")
     @Operation(description = "Get Product by ID")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable @Min(1) Long id) {
+    public ResponseEntity<ProductGetDto> getProduct(@PathVariable @Min(1) Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
