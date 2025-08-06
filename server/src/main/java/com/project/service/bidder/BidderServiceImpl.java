@@ -49,11 +49,6 @@ public class BidderServiceImpl implements BidderService {
 	public BidderLogResDTO logIn(BidderLogReqDTO dto) {
 		User entity = userDao.findByEmail(dto.getEmail())
 				.orElseThrow(() -> new ApiException("Email id not found"));
-<<<<<<< HEAD
-		
-		BidderLogResDTO resdto = new BidderLogResDTO();
-=======
->>>>>>> chaitanya
 
 		// Match raw password with encrypted one
 		if (!passwordEncoder.matches(dto.getPassword(), entity.getPassword())) {
