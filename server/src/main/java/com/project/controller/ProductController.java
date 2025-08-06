@@ -1,13 +1,16 @@
 package com.project.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.ProductDTO;
+import com.project.dto.product.ProductPostDto;
 import com.project.service.product.ProductService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +34,7 @@ import lombok.AllArgsConstructor;
 @Validated
 public class ProductController {
 
+	@Autowired
     private final ProductService productService;
 
     /*
@@ -40,11 +45,10 @@ public class ProductController {
      * - Payload: JSON representation of ProductDTO
      * - Response: SC 201 (CREATED) + created product DTO
      */
-    @PostMapping("/create")
-    @Operation(description = "Add New Product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody @Valid ProductDTO dto) {
-        ProductDTO created = productService.addProduct(dto);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+	@PostMapping("/create")
+    @Operation(description = "Add new product")
+    public ResponseEntity<?> addNewProduct(@ModelAttribute ProductPostDto productPostDto) throws IOException{
+    	return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(productPostDto));
     }
 
     /*
