@@ -1,4 +1,4 @@
-package com.project.entity;
+ package com.project.entity;
 
 import lombok.*;
 import jakarta.persistence.Column;
