@@ -156,19 +156,36 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAllProducts() {
-        return productDao.findAll().stream()
-                .map(p -> {
-                    ProductDTO dto = modelMapper.map(p, ProductDTO.class);
-                    dto.setPrice(p.getPrice());
-                    dto.setCategoryId(p.getCategory().getCategoryId().toString());
-                    dto.setCountryOfOriginId(p.getCountryOfOrigin().getCountryId());
-                    dto.setImageUrl(p.getImageList().stream()
-                            .map(ProductImage::getImgUrl)
-                            .collect(Collectors.toList()));
-                    return dto;
-                })
-                .collect(Collectors.toList());
+    public List<ProductGetDto> getAllProducts() {
+List<Product> allProducts = productDao.findAll();
+    	
+    	return allProducts.stream().map(product -> {
+    		ProductGetDto dto = modelMapper.map(product, ProductGetDto.class);
+
+            // Map category
+            if (product.getCategory() != null) {
+                ProductCategoryDto categoryDto = new ProductCategoryDto();
+                categoryDto.setCategoryId(product.getCategory().getCategoryId());
+                categoryDto.setName(product.getCategory().getName());
+                dto.setCategory(categoryDto);
+            }
+
+            // Map country of origin
+            if (product.getCountryOfOrigin() != null) {
+                CountryRefDto countryDto = new CountryRefDto();
+                countryDto.setCountryId(product.getCountryOfOrigin().getCountryId());
+                countryDto.setCountryName(product.getCountryOfOrigin().getCountryName());
+                dto.setCountryOfOrigin(countryDto);
+            }
+            if (product.getImageList() != null) {
+                dto.setImageUrl(
+                    product.getImageList()
+                           .stream()
+                           .map(image -> image.getImgUrl()) // Assuming ProductImage has getImageUrl()
+                           .toList());
+            }
+            return dto; 
+    	}).toList();
     }
 
     @Override
