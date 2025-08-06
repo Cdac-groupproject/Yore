@@ -89,7 +89,6 @@ public class ProductServiceImpl implements ProductService {
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
-        product.setSold(productDTO.getSold());
         product.setYearMade(productDTO.getYearMade());
         product.setCategory(productCategory);
         product.setCountryOfOrigin(countryOfOrigin);
@@ -120,31 +119,6 @@ public class ProductServiceImpl implements ProductService {
         	productImageDao.saveAll(productImages);
         }
         return savedProduct;
-
-                    img.setImgUrl(url);
-                    img.setProduct(product);
-                    return img;
-                })
-                .collect(Collectors.toList());
-
-        product.setImageList(images);
-        Product saved = productDao.save(product);
-
-        ProductDTO dto = new ProductDTO();
-        dto.setProductId(saved.getProductId());
-        dto.setName(saved.getName());
-        dto.setDescription(saved.getDescription());
-        dto.setPrice(saved.getPrice());
-        dto.setSold(saved.getSold());
-        dto.setCategoryId(saved.getCategory().getCategoryId().toString());
-        dto.setCountryOfOriginId(saved.getCountryOfOrigin().getCountryId());
-        dto.setYearMade(saved.getYearMade());
-        dto.setImageUrl(saved.getImageList().stream()
-                .map(ProductImage::getImgUrl)
-                .collect(Collectors.toList()));
-
-        return dto;
-
     }
 
     @Override
