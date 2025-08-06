@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
+@RequestMapping("/")
 public class BidderController {
 
 	@Autowired
@@ -41,7 +42,7 @@ public class BidderController {
 	
 //	After verify user
 //	After otp verification
-	@PostMapping("/sign-up")
+	@PostMapping("sign-up")
 	public ResponseEntity<?> signUp(@RequestBody BidderRequestDTO dto){
 		String msg = bidderService.signUp(dto);
 		return ResponseEntity.ok(msg);
