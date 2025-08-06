@@ -12,7 +12,7 @@ import com.project.dto.bidder.BidderRequestDTO;
 
 public interface BidderService {
 	BidderLogResDTO logIn(BidderLogReqDTO dto);
-	BidderRegisterResDTO register(BidderRequestDTO dto);
+//	BidderRegisterResDTO register(BidderRequestDTO dto);
 	List<BidderLogResDTO> getAllUsers();
 	String signUp(BidderRequestDTO dto);
 	BidderRegisterResDTO verifyUser(String email, String otp);

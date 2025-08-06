@@ -49,10 +49,6 @@ public class BidderServiceImpl implements BidderService {
 		User entity = userDao.findByEmailAndPassword(dto.getEmail(), dto.getPassword())
 				.orElseThrow(() -> new ApiException("Email id not found"));
 		
-//		if(!passwordEncoder.matches(dto.getPassword(), entity.getPassword())) {
-//			throw new ApiException("Invalid Credintials");
-//		}
-		
 		BidderLogResDTO resdto = new BidderLogResDTO();
 
 		resdto.setFullName(entity.getFullName());
@@ -92,34 +88,34 @@ public class BidderServiceImpl implements BidderService {
 
 
 
-	@Override
-	public BidderRegisterResDTO register(BidderRequestDTO dto) {
-		if(userDao.existsByEmail(dto.getEmail())) 
-			throw new ApiException("Email already registered!!!");
-		
-		Gender gender = genderDao.findById(dto.getGenderId())
-				.orElseThrow(() -> new ApiException("Gender id not valid"));
-
-		Role role = roleDao.findById(dto.getRoleId())
-				.orElseThrow(() -> new ApiException("Role is not valid"));
-
-		User entity = mapper.map(dto, User.class);
-//		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-		entity.setGender(gender);
-		entity.setRole(role);
-		userDao.save(entity);
-
-		
-		BidderRegisterResDTO resdto = new BidderRegisterResDTO();
-		resdto.setFullName(dto.getFullName());
-		resdto.setEmail(dto.getEmail());
-		resdto.setPhoneNo(dto.getPhoneNo());
-		resdto.setAge(dto.getAge());
-		resdto.setGenderId(dto.getGenderId());
-		resdto.setRoleId(dto.getRoleId());
-
-		return resdto;
-	}
+//	@Override
+//	public BidderRegisterResDTO register(BidderRequestDTO dto) {
+//		if(userDao.existsByEmail(dto.getEmail())) 
+//			throw new ApiException("Email already registered!!!");
+//		
+//		Gender gender = genderDao.findById(dto.getGenderId())
+//				.orElseThrow(() -> new ApiException("Gender id not valid"));
+//
+//		Role role = roleDao.findById(dto.getRoleId())
+//				.orElseThrow(() -> new ApiException("Role is not valid"));
+//
+//		User entity = mapper.map(dto, User.class);
+////		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+//		entity.setGender(gender);
+//		entity.setRole(role);
+//		userDao.save(entity);
+//
+//		
+//		BidderRegisterResDTO resdto = new BidderRegisterResDTO();
+//		resdto.setFullName(dto.getFullName());
+//		resdto.setEmail(dto.getEmail());
+//		resdto.setPhoneNo(dto.getPhoneNo());
+//		resdto.setAge(dto.getAge());
+//		resdto.setGenderId(dto.getGenderId());
+//		resdto.setRoleId(dto.getRoleId());
+//
+//		return resdto;
+//	}
 
 
 
@@ -134,8 +130,9 @@ public class BidderServiceImpl implements BidderService {
 		Gender gender = genderDao.findById(dto.getGenderId())
 				.orElseThrow(() -> new ApiException("Gender id not valid"));
 		
-		Role role = roleDao.findById(dto.getRoleId())
-				.orElseThrow(() -> new ApiException("Role is not valid"));
+//		Role role = roleDao.findById(dto.getRoleId())
+//				.orElseThrow(() -> new ApiException("Role is not valid"));
+		Role role = roleDao.findByRoleName("BIDDER").orElseThrow(() -> new ApiException("Role Not Found"));
 
 		String otp = String.format("%06d", new Random().nextInt(100000));
 		otpMap.put(dto.getEmail(), otp);
@@ -149,9 +146,6 @@ public class BidderServiceImpl implements BidderService {
 		
 	    return "OTP sent successfully. Please verify to complete registration.";
 			}
-
-
-
 
 
 
@@ -169,8 +163,9 @@ public class BidderServiceImpl implements BidderService {
 		Gender gender = genderDao.findById(dto.getGenderId())
 				.orElseThrow(() -> new ApiException("Gender id not valid"));
 		
-		Role role = roleDao.findById(dto.getRoleId())
-				.orElseThrow(() -> new ApiException("Role is not valid"));
+//		Role role = roleDao.findById(dto.getRoleId())
+//				.orElseThrow(() -> new ApiException("Role is not valid"));
+		Role role = roleDao.findByRoleName("BIDDER").orElseThrow(() -> new ApiException("Role Not Found"));
 		
 		User entity = mapper.map(dto, User.class);
 		entity.setGender(gender);
@@ -190,8 +185,7 @@ public class BidderServiceImpl implements BidderService {
 		resdto.setPhoneNo(dto.getPhoneNo());
 		resdto.setAge(dto.getAge());
 		resdto.setGenderId(dto.getGenderId());
-		resdto.setRoleId(dto.getRoleId());
-//		resdto.setMessage("User verify successfully");		
+		resdto.setRoleId(role.getRoleName());	
 		return resdto;
 	}
 	}

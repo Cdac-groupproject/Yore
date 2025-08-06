@@ -30,6 +30,6 @@ public class BidderRequestDTO {
     @NotNull(message = "Gender ID is required")
     private Long genderId;
 
-    @NotNull(message = "Role ID is required")
-    private Long roleId;
+//    @NotNull(message = "Role ID is required")
+//    private Long roleId;
 }
