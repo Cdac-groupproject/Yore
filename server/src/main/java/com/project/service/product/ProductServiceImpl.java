@@ -237,4 +237,12 @@ List<Product> allProducts = productDao.findAll();
         productDao.delete(product);
     }
 
+	@Override
+	public void markProductAsAuctioned(Long productId) {
+		Product product = productDao.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("No product with this id found"));
+		product.setAuctionedForToday(true);
+		productDao.save(product);
+	}
+
 }

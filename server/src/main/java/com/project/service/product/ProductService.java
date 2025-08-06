@@ -15,5 +15,6 @@ public interface ProductService {
     List<ProductGetDto> getAllProducts();
     ProductDTO updateProduct(Long productId, ProductDTO productDTO);
     void deleteProduct(Long productId);
+	void markProductAsAuctioned(Long productId);
 
 }
