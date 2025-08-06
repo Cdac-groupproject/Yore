@@ -16,7 +16,7 @@ public class ProductDTO {
 	private Long productId;
     private String name;
     private String description;
-    private Double price;
+    private Double startingPrice;
     private Boolean sold;
     private String categoryId;
     private Long countryOfOriginId; 

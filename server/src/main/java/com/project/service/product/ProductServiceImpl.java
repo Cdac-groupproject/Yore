@@ -1,61 +1,126 @@
 package com.project.service.product;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.project.custom_exception.ApiException;
 import com.project.custom_exception.ResourceNotFoundException;
-import com.project.dao.CountryRefDao;
-import com.project.dao.ProductCategoryDao;
-import com.project.dao.ProductDao;
+import com.project.dao.product.CountryRefDao;
+import com.project.dao.product.ProductCategoryDao;
+import com.project.dao.product.ProductDao;
+import com.project.dao.product.ProductImageDao;
 import com.project.dto.ProductDTO;
+import com.project.dto.product.ProductPostDto;
 import com.project.entity.CountryRef;
 import com.project.entity.Product;
 import com.project.entity.ProductCategory;
 import com.project.entity.ProductImage;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 @Service
 @Transactional
+//@AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductDao productDao;
+//    @Autowired
+//    private final ProductDao productDao;
+//
+//    @Autowired
+//    private final ProductCategoryDao categoryDao;
+//
+//    @Autowired
+//    private final CountryRefDao countryDao;
+//    
+//    @Autowired
+//    private final ProductImageDao productImageDao;
+//    
+//    @Value(value = "${app.product.image.upload-dir}")
+//    private String uploadDir;
+//
+//    @Autowired
+//    private ModelMapper modelMapper;
+	private final ProductDao productDao;
+    private final ProductCategoryDao categoryDao;
+    private final CountryRefDao countryDao;
+    private final ProductImageDao productImageDao;
+    private final String uploadDir;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private ProductCategoryDao categoryDao;
-
-    @Autowired
-    private CountryRefDao countryDao;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    public ProductServiceImpl(
+        ProductDao productDao,
+        ProductCategoryDao categoryDao,
+        CountryRefDao countryDao,
+        ProductImageDao productImageDao,
+        @Value("${app.product.image.upload-dir}") String uploadDir,
+        ModelMapper modelMapper
+    ) {
+        this.productDao = productDao;
+        this.categoryDao = categoryDao;
+        this.countryDao = countryDao;
+        this.productImageDao = productImageDao;
+        this.uploadDir = uploadDir;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
-    public ProductDTO addProduct(ProductDTO productDTO) {
-        Product product = new Product();
+    public Product addProduct(ProductPostDto productDTO) throws IOException {
+    	
+    	ProductCategory productCategory = categoryDao.findById(productDTO.getCategoryId())
+    			.orElseThrow(() -> new RuntimeException("Invalid Category Id"));
+
+    	CountryRef countryOfOrigin = countryDao.findById(productDTO.getCountryOfOriginId())
+    			.orElseThrow(() -> new RuntimeException("Invalid Country id"));
+    	
+    	Product product = new Product();
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
         product.setSold(productDTO.getSold());
         product.setYearMade(productDTO.getYearMade());
+        product.setCategory(productCategory);
+        product.setCountryOfOrigin(countryOfOrigin);
 
-        ProductCategory category = categoryDao.findById(Long.valueOf(productDTO.getCategoryId()))
-                .orElseThrow(() -> new ApiException("Invalid Category ID"));
-        CountryRef country = countryDao.findById(productDTO.getCountryOfOriginId())
-                .orElseThrow(() -> new ApiException("Invalid Country ID"));
-
-        product.setCategory(category);
-        product.setCountryOfOrigin(country);
-
-        List<ProductImage> images = productDTO.getImageUrl().stream()
-                .map(url -> {
+        // we are saving the product first to give product a id for further use
+        Product savedProduct = productDao.save(product);
+        List<ProductImage> productImages = new ArrayList<>();
+        
+        if(productDTO.getImageFiles() != null && !productDTO.getImageFiles().isEmpty()) {
+        	for(MultipartFile file : productDTO.getImageFiles()) {
+        		if(!file.isEmpty()) {
+        			String uploadedFileName = file.getOriginalFilename();
+        			String uniqueFileName = UUID.randomUUID().toString() + "_" + uploadedFileName;
+        			File dir = new File(uploadDir);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    String filePath = uploadDir + File.separator + uniqueFileName;
+                    Files.copy(file.getInputStream(), Paths.get(filePath));
+                    
                     ProductImage img = new ProductImage();
+
+                    img.setImgUrl(filePath);
+                    img.setProduct(savedProduct);
+                    productImages.add(img);
+        		}
+        	}
+        	productImageDao.saveAll(productImages);
+        }
+        return savedProduct;
+
                     img.setImgUrl(url);
                     img.setProduct(product);
                     return img;
@@ -79,6 +144,7 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList()));
 
         return dto;
+
     }
 
     @Override

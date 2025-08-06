@@ -29,16 +29,16 @@ public class ProductPostDto {
 	private Double price;
 	
 	@Positive
-	private int categoryId;
+	private Long categoryId;
 	
 	@Positive
-	private int countryOfOriginId;
+	private Long countryOfOriginId;
 	
 	@NotNull
 	@Min(1000)
 	@Max(2025)
 	private Long yearMade;
 	
-	@JsonIgnore
+//	@JsonIgnore
     private List<MultipartFile> imageFiles;
 }

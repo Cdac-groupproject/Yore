@@ -1,4 +1,4 @@
-package com.project.dao;
+package com.project.dao.product;
 
 import java.util.Optional;
 
