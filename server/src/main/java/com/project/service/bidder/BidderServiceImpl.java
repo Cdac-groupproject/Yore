@@ -2,6 +2,9 @@ package com.project.service.bidder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import com.project.dto.bidder.BidderLogResDTO;
 import com.project.entity.Gender;
 import com.project.entity.Role;
 import com.project.entity.User;
+import com.project.service.EmailService;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -35,6 +39,10 @@ public class BidderServiceImpl implements BidderService {
 	private RoleDao roleDao;
 //	private PasswordEncoder passwordEncoder;
 	private ModelMapper mapper;
+	private EmailService emailService;
+	
+	private  Map<String, String> otpMap = new ConcurrentHashMap<>();
+	private  Map<String, BidderRequestDTO> pendingUsers = new ConcurrentHashMap<>();
 
 	@Override
 	public BidderLogResDTO logIn(BidderLogReqDTO dto) {
@@ -110,6 +118,80 @@ public class BidderServiceImpl implements BidderService {
 		resdto.setGenderId(dto.getGenderId());
 		resdto.setRoleId(dto.getRoleId());
 
+		return resdto;
+	}
+
+
+
+
+
+
+	@Override
+	public String signUp(BidderRequestDTO dto) {
+		if(userDao.existsByEmail(dto.getEmail())) 
+			throw new ApiException("Email already registered!!!");
+		
+		Gender gender = genderDao.findById(dto.getGenderId())
+				.orElseThrow(() -> new ApiException("Gender id not valid"));
+		
+		Role role = roleDao.findById(dto.getRoleId())
+				.orElseThrow(() -> new ApiException("Role is not valid"));
+
+		String otp = String.format("%06d", new Random().nextInt(100000));
+		otpMap.put(dto.getEmail(), otp);
+		pendingUsers.put(dto.getEmail(), dto);
+		
+//		Send otp
+		String subject = "OTP for Registration";
+	    String body = "Your OTP is: " + otp;
+	    emailService.sendEmail(dto.getEmail(), subject, body);
+		
+		
+	    return "OTP sent successfully. Please verify to complete registration.";
+			}
+
+
+
+
+
+
+	@Override
+	public BidderRegisterResDTO verifyUser(String email, String otp) {
+		if(!otpMap.containsKey(email) || !otpMap.get(email).equals(otp)) 
+			throw new ApiException("Invalid or expired otp");
+		
+		
+//		OTP validation
+		BidderRequestDTO dto = pendingUsers.get(email);
+		if(dto == null) 
+			throw new ApiException("No Pending request");
+		
+		Gender gender = genderDao.findById(dto.getGenderId())
+				.orElseThrow(() -> new ApiException("Gender id not valid"));
+		
+		Role role = roleDao.findById(dto.getRoleId())
+				.orElseThrow(() -> new ApiException("Role is not valid"));
+		
+		User entity = mapper.map(dto, User.class);
+		entity.setGender(gender);
+		entity.setRole(role);
+		entity.setOtp(otp);
+		entity.setVerified(true);
+		User newUser = userDao.save(entity);
+		
+//		Clean up
+		pendingUsers.remove(email);
+		otpMap.remove(email);
+		
+//		Response preparing
+		BidderRegisterResDTO resdto = new BidderRegisterResDTO();
+		resdto.setFullName(dto.getFullName());
+		resdto.setEmail(dto.getEmail());
+		resdto.setPhoneNo(dto.getPhoneNo());
+		resdto.setAge(dto.getAge());
+		resdto.setGenderId(dto.getGenderId());
+		resdto.setRoleId(dto.getRoleId());
+//		resdto.setMessage("User verify successfully");		
 		return resdto;
 	}
 	}

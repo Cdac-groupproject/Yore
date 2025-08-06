@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = new Product();
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
-        product.setPrice(productDTO.getStartingPrice());
+        product.setPrice(productDTO.getPrice());
         product.setSold(productDTO.getSold());
         product.setYearMade(productDTO.getYearMade());
 
@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setProductId(saved.getProductId());
         dto.setName(saved.getName());
         dto.setDescription(saved.getDescription());
-        dto.setStartingPrice(saved.getPrice());
+        dto.setPrice(saved.getPrice());
         dto.setSold(saved.getSold());
         dto.setCategoryId(saved.getCategory().getCategoryId().toString());
         dto.setCountryOfOriginId(saved.getCountryOfOrigin().getCountryId());
@@ -87,7 +87,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
 
         ProductDTO dto = modelMapper.map(product, ProductDTO.class);
-        dto.setStartingPrice(product.getPrice());
+        dto.setPrice(product.getPrice());
         dto.setCategoryId(product.getCategory().getCategoryId().toString());
         dto.setCountryOfOriginId(product.getCountryOfOrigin().getCountryId());
         dto.setImageUrl(product.getImageList().stream()
@@ -101,7 +101,7 @@ public class ProductServiceImpl implements ProductService {
         return productDao.findAll().stream()
                 .map(p -> {
                     ProductDTO dto = modelMapper.map(p, ProductDTO.class);
-                    dto.setStartingPrice(p.getPrice());
+                    dto.setPrice(p.getPrice());
                     dto.setCategoryId(p.getCategory().getCategoryId().toString());
                     dto.setCountryOfOriginId(p.getCountryOfOrigin().getCountryId());
                     dto.setImageUrl(p.getImageList().stream()
@@ -119,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
 
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
-        product.setPrice(productDTO.getStartingPrice());
+        product.setPrice(productDTO.getPrice());
         product.setSold(productDTO.getSold());
         product.setYearMade(productDTO.getYearMade());
 
@@ -145,7 +145,7 @@ public class ProductServiceImpl implements ProductService {
         Product saved = productDao.save(product);
 
         ProductDTO dto = modelMapper.map(saved, ProductDTO.class);
-        dto.setStartingPrice(saved.getPrice());
+        dto.setPrice(saved.getPrice());
         dto.setCategoryId(saved.getCategory().getCategoryId().toString());
         dto.setCountryOfOriginId(saved.getCountryOfOrigin().getCountryId());
         dto.setImageUrl(saved.getImageList().stream()
