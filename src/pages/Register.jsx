@@ -4,33 +4,37 @@ import logo from "../assets/newLogo.png";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import toast from "react-hot-toast";
+import { registerUser } from "../services/userService";
 
 function Register() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phoneNo, setPhoneNo] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [age, setAge] = useState("");
-  const [gender, setGender] = useState("male");
+  const [genderId, setGenderId] = useState("");
 
-  const onRegisterHandler = (e) => {
+  const onRegisterHandler = async (e) => {
     e.preventDefault();
 
-    if (!name || !email || !password || !phone || !age || !gender) {
+    if (!fullName || !email || !password || !phoneNo || !age || !genderId) {
       toast.error("Please fill all details");
       return;
     }
 
-    sessionStorage.setItem("name", name);
-    sessionStorage.setItem("email", email);
-    sessionStorage.setItem("password", password);
-    sessionStorage.setItem("phone", phone);
-    sessionStorage.setItem("age", age);
-    sessionStorage.setItem("gender", gender);
+    const userData = { fullName, email, password, phoneNo, age, genderId };
 
-    toast.success("User Registered Successfully");
-    navigate("/login");
+    try {
+      const res = await registerUser(userData);
+      toast.success("Otp send to you r email");
+      sessionStorage.setItem("email", email);
+      navigate("/otp-verification");
+    } catch (error) {
+      toast.error("Registration failed");
+    }
+    // toast.success("User Registered Successfully");
+    // navigate("/login");
   };
 
   return (
@@ -58,7 +62,7 @@ function Register() {
                 type="text"
                 placeholder="Paresh"
                 className="mt-1 w-full px-4 py-2 border border-yellow-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 bg-[#fffaf0]"
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setFullName(e.target.value)}
               />
             </div>
 
@@ -70,7 +74,7 @@ function Register() {
                 type="text"
                 placeholder="0123456789"
                 className="mt-1 w-full px-4 py-2 border border-yellow-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 bg-[#fffaf0]"
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhoneNo(e.target.value)}
               />
             </div>
 
@@ -115,13 +119,14 @@ function Register() {
                 Gender
               </label>
               <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
+                value={genderId}
+                onChange={(e) => setGenderId(Number(e.target.value))}
                 className="mt-1 w-full px-4 py-2 border border-yellow-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 bg-[#fffaf0] text-gray-700"
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="">Select Gender</option>
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+                <option value="3">Other</option>
               </select>
             </div>
 
