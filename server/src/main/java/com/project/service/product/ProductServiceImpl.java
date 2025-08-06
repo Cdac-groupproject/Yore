@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.project.custom_exception.ApiException;
 import com.project.custom_exception.ResourceNotFoundException;
@@ -22,6 +23,9 @@ import com.project.dao.product.ProductCategoryDao;
 import com.project.dao.product.ProductDao;
 import com.project.dao.product.ProductImageDao;
 import com.project.dto.ProductDTO;
+import com.project.dto.product.CountryRefDto;
+import com.project.dto.product.ProductCategoryDto;
+import com.project.dto.product.ProductGetDto;
 import com.project.dto.product.ProductPostDto;
 import com.project.entity.CountryRef;
 import com.project.entity.Product;
@@ -122,18 +126,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(Long id) {
+    public ProductGetDto getProductById(Long id) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
 
-        ProductDTO dto = modelMapper.map(product, ProductDTO.class);
-        dto.setPrice(product.getPrice());
-        dto.setCategoryId(product.getCategory().getCategoryId().toString());
-        dto.setCountryOfOriginId(product.getCountryOfOrigin().getCountryId());
-        dto.setImageUrl(product.getImageList().stream()
-                .map(ProductImage::getImgUrl)
-                .collect(Collectors.toList()));
+        ProductGetDto dto = modelMapper.map(product, ProductGetDto.class);
+        
+        if(product.getCategory() != null) {
+        	ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+        	productCategoryDto.setCategoryId(product.getCategory().getCategoryId());
+        	productCategoryDto.setName(product.getCategory().getName());
+        	dto.setCategory(productCategoryDto);
+        }
+        
+        if(product.getCountryOfOrigin() != null) {
+        	CountryRefDto countryDto = new CountryRefDto();
+        	countryDto.setCountryId(product.getCountryOfOrigin().getCountryId());
+        	countryDto.setCountryName(product.getCountryOfOrigin().getCountryName());
+        	dto.setCountryOfOrigin(countryDto);
+        }
+        
+        if(product.getImageList() != null) {
+        	dto.setImageUrl(product.getImageList().stream()
+        			.map(img -> img.getImgUrl())
+        			.toList());
+        }
         return dto;
+
     }
 
     @Override
