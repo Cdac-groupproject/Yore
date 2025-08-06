@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.project.custom_exception.ApiException;
@@ -72,18 +74,35 @@ public class BidServiceImpl implements BidService{
 	}
 	@Override
 	public BidRespDTO getHighestBid(Long auctionId) {
-	    // Validate auction existence (optional but good practice)
-	    if (!auctionDao.existsById(auctionId)) {
-	        throw new ApiException("Invalid Auction ID");
+	    // load auction (throws if invalid id)
+	    Auction auction = auctionDao.findById(auctionId)
+	            .orElseThrow(() -> new ApiException("Invalid Auction ID"));
+
+	    // try to get highest bid
+	    Optional<Bid> optBid = bidDao.findHighestBidByAuctionId(auctionId);
+
+	    if (optBid.isPresent()) {
+	        Bid bid = optBid.get();
+	        BidRespDTO respDTO = modelMapper.map(bid, BidRespDTO.class);
+	        respDTO.setAuctionId(bid.getAuction().getAuctionId());
+	        respDTO.setUserId(bid.getBidder().getUserId());
+	        respDTO.setUsername(bid.getBidder().getFullName());
+	        return respDTO;
 	    }
 
-	    Bid bid = bidDao.findHighestBidByAuctionId(auctionId)
-	            .orElseThrow(() -> new ApiException("No bids found for this auction."));
+	    // No bids — return base/initial price from auction
+	    BidRespDTO respDTO = new BidRespDTO();
 
-	    BidRespDTO respDTO = modelMapper.map(bid, BidRespDTO.class);
-	    respDTO.setAuctionId(bid.getAuction().getAuctionId());
-	    respDTO.setUserId(bid.getBidder().getUserId());
-	    respDTO.setUsername(bid.getBidder().getFullName());
+	    // set auction id
+	    respDTO.setAuctionId(auction.getAuctionId());
+
+	    // set bid amount to auction's initial/base price
+	    // --- adjust method name if your Auction entity uses a different getter
+	    respDTO.setBidAmount(auction.getBasePrice());
+
+	    // no bidder yet
+	    respDTO.setUserId(null);
+	    respDTO.setUsername(null);
 
 	    return respDTO;
 	}

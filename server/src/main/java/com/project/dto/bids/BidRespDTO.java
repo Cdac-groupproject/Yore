@@ -16,6 +16,6 @@ public class BidRespDTO {
     private Long auctionId;
     private Long userId;
     private String username;
-    private BigDecimal bidAmount;
+    private Double bidAmount;
     private LocalDateTime createdAt;
 }
