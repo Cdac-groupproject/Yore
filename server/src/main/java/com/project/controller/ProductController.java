@@ -112,4 +112,12 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @PutMapping("away-for-auction/{id}")
+    @Operation(description = "make a product to go for auction")
+    public ResponseEntity<String> markProductForAuction(@PathVariable Long productId){
+    	 productService.markProductAsAuctioned(productId);
+         return ResponseEntity.ok("Product marked as auctioned for today.");
+    }
+
 } 
