@@ -12,7 +12,7 @@ public interface ProductService {
 
 	Product addProduct(ProductPostDto productDTO) throws IOException;
     ProductGetDto getProductById(Long productId);
-    List<ProductDTO> getAllProducts();
+    List<ProductGetDto> getAllProducts();
     ProductDTO updateProduct(Long productId, ProductDTO productDTO);
     void deleteProduct(Long productId);
 
