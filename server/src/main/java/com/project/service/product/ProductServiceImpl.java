@@ -89,6 +89,7 @@ public class ProductServiceImpl implements ProductService {
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
+        product.setSold(productDTO.getSold());
         product.setYearMade(productDTO.getYearMade());
         product.setCategory(productCategory);
         product.setCountryOfOrigin(countryOfOrigin);
@@ -110,6 +111,7 @@ public class ProductServiceImpl implements ProductService {
                     Files.copy(file.getInputStream(), Paths.get(filePath));
                     
                     ProductImage img = new ProductImage();
+
                     img.setImgUrl(filePath);
                     img.setProduct(savedProduct);
                     productImages.add(img);
@@ -118,6 +120,31 @@ public class ProductServiceImpl implements ProductService {
         	productImageDao.saveAll(productImages);
         }
         return savedProduct;
+
+                    img.setImgUrl(url);
+                    img.setProduct(product);
+                    return img;
+                })
+                .collect(Collectors.toList());
+
+        product.setImageList(images);
+        Product saved = productDao.save(product);
+
+        ProductDTO dto = new ProductDTO();
+        dto.setProductId(saved.getProductId());
+        dto.setName(saved.getName());
+        dto.setDescription(saved.getDescription());
+        dto.setPrice(saved.getPrice());
+        dto.setSold(saved.getSold());
+        dto.setCategoryId(saved.getCategory().getCategoryId().toString());
+        dto.setCountryOfOriginId(saved.getCountryOfOrigin().getCountryId());
+        dto.setYearMade(saved.getYearMade());
+        dto.setImageUrl(saved.getImageList().stream()
+                .map(ProductImage::getImgUrl)
+                .collect(Collectors.toList()));
+
+        return dto;
+
     }
 
     @Override
@@ -126,7 +153,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
 
         ProductDTO dto = modelMapper.map(product, ProductDTO.class);
-        dto.setStartingPrice(product.getPrice());
+        dto.setPrice(product.getPrice());
         dto.setCategoryId(product.getCategory().getCategoryId().toString());
         dto.setCountryOfOriginId(product.getCountryOfOrigin().getCountryId());
         dto.setImageUrl(product.getImageList().stream()
@@ -140,7 +167,7 @@ public class ProductServiceImpl implements ProductService {
         return productDao.findAll().stream()
                 .map(p -> {
                     ProductDTO dto = modelMapper.map(p, ProductDTO.class);
-                    dto.setStartingPrice(p.getPrice());
+                    dto.setPrice(p.getPrice());
                     dto.setCategoryId(p.getCategory().getCategoryId().toString());
                     dto.setCountryOfOriginId(p.getCountryOfOrigin().getCountryId());
                     dto.setImageUrl(p.getImageList().stream()
@@ -158,7 +185,7 @@ public class ProductServiceImpl implements ProductService {
 
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
-        product.setPrice(productDTO.getStartingPrice());
+        product.setPrice(productDTO.getPrice());
         product.setSold(productDTO.getSold());
         product.setYearMade(productDTO.getYearMade());
 
@@ -184,7 +211,7 @@ public class ProductServiceImpl implements ProductService {
         Product saved = productDao.save(product);
 
         ProductDTO dto = modelMapper.map(saved, ProductDTO.class);
-        dto.setStartingPrice(saved.getPrice());
+        dto.setPrice(saved.getPrice());
         dto.setCategoryId(saved.getCategory().getCategoryId().toString());
         dto.setCountryOfOriginId(saved.getCountryOfOrigin().getCountryId());
         dto.setImageUrl(saved.getImageList().stream()
