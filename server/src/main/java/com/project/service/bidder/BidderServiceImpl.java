@@ -172,14 +172,9 @@ public class BidderServiceImpl implements BidderService {
 		Role role = roleDao.findByRoleName("BIDDER").orElseThrow(() -> new ApiException("Role Not Found"));
 		
 		User entity = mapper.map(dto, User.class);
-<<<<<<< HEAD
-=======
-<<<<<<< Updated upstream
-//		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-=======
+
 		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
->>>>>>> Stashed changes
->>>>>>> chaitanya
+
 		entity.setGender(gender);
 		entity.setRole(role);
 		entity.setOtp(otp);
