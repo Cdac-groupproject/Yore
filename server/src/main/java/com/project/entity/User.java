@@ -30,8 +30,8 @@ public class User {
 
     private Integer age;
 
-    @Column(name = "verified", nullable = false)
-    private boolean verified = false;
+//    @Column(name = "verified", nullable = false)
+//    private boolean verified = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gender_id", referencedColumnName = "genderId")
@@ -39,10 +39,10 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "roleId")
-    private Role role;
+    private Role role ;
 
-    @Column(name = "otp")
-    private String otp;
+    @Column(name = "log1")
+    private String log1;
 
     @Column(name = "log2")
     private String log2;
