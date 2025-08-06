@@ -11,5 +11,5 @@ public class BidderRegisterResDTO {
     private String email;
     private int age;
     private Long genderId;
-    private Long roleId;
+    private String roleId;
 }
