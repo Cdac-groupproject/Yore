@@ -4,9 +4,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OnGoingAuction from "./pages/OnGoingAuction";
 import UpcomingAuction from "./pages/UpcomingAuction";
-import Profile from "./components/Profile";       
+import Profile from "./components/Profile";
 import ContactUs from "./pages/ContactUs";
-import UpdateProduct from './pages/MuseumManager/UpdateProduct';
+import UpdateProduct from "./pages/MuseumManager/UpdateProduct";
 import AddProduct from "./pages/MuseumManager/AddProduct";
 import ProductList from "./pages/MuseumManager/ProductList";
 
@@ -19,6 +19,7 @@ import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuct
 import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
 import AddEmployee from "./pages/AddEmployee";
+import OtpVerification from "./components/OtpVerification";
 
 function App() {
   return (
@@ -70,10 +71,12 @@ function App() {
         {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/contact-us" element={<ContactUs />} />
 
-         <Route path="/add-employee" element={<AddEmployee />} />
-        <Route path="/museummanager/addproduct" element={<AddProduct />}/>
-        <Route path="/museummanager/productlist" element={<ProductList />}/>
+        <Route path="/add-employee" element={<AddEmployee />} />
+        <Route path="/museummanager/addproduct" element={<AddProduct />} />
+        <Route path="/museummanager/productlist" element={<ProductList />} />
         <Route path="/update-product" element={<UpdateProduct />} />
+
+        <Route path="/otp-verification" element={<OtpVerification />} />
       </Routes>
     </div>
   );
@@ -81,6 +84,4 @@ function App() {
 
 export default App;
 
-
 // ...inside <Routes>
-

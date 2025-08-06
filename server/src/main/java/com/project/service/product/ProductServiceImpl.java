@@ -123,8 +123,6 @@ public class ProductServiceImpl implements ProductService {
         	productImageDao.saveAll(productImages);
         }
         return savedProduct;
-
-
     }
 
     @Override

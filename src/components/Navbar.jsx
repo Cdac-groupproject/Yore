@@ -15,6 +15,8 @@ function Navbar() {
   const isOnGoing = location.pathname === "/ongoing";
   const isUpcoming = location.pathname === "/upcoming";
   const isBidder = location.pathname === "/bidder";
+  const isAddEmp = location.pathname === "/add-employee";
+  const isContactUs = location.pathname === "/contact";
 
   const loggedInfo = sessionStorage.getItem("isLoggedIn");
   const username = sessionStorage.getItem("name");
@@ -78,7 +80,7 @@ function Navbar() {
           <Link
             to="/contact"
             className={
-              isUpcoming
+              isContactUs
                 ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
                 : "text-gray-700 hover:text-yellow-700"
             }
@@ -89,24 +91,13 @@ function Navbar() {
           <Link
             to="/add-employee"
             className={
-              isUpcoming
+              isAddEmp
                 ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
                 : "text-gray-700 hover:text-yellow-700"
             }
           >
             Add Employee
           </Link>
-
-          {/* <Link
-            to="/bidder"
-            className={
-              isBidder
-                ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
-                : "text-gray-700 hover:text-yellow-700"
-            }
-          >
-            Bidder Auction
-          </Link> */}
         </div>
 
         {/* Search + Auth Buttons */}
@@ -119,12 +110,6 @@ function Navbar() {
               <span className="text-sm font-medium text-gray-800 bg-gray-100 px-3 py-1.5 rounded-2xl">
                 {username}
               </span>
-              {/* <button
-              onClick={logoutHandler}
-              className="bg-orange-600 text-white px-4 py-1.5 rounded-2xl text-sm font-medium hover:bg-orange-700"
-            >
-              Logout
-            </button> */}
               <button onClick={() => setShowProfile(true)}>
                 <FiUser className="w-6 h-6 text-gray-700 hover:text-yellow-700 transition-all duration-200 " />
               </button>
@@ -143,28 +128,6 @@ function Navbar() {
               >
                 Register
               </Link>
-
-              {/* <Link
-                to="/contact"
-                className={`mx-2 px-3 py-1 rounded-lg font-semibold transition-colors hover:bg-[#e9dfc4] hover:text-[#332214] ${
-                  location.pathname === "/contact"
-                    ? "bg-[#b59f77] text-white"
-                    : "text-[#332214]"
-                }`}
-              >
-                Contact Us
-              </Link>
-
-              <Link
-                to="/add-employee"
-                className={`mx-2 px-3 py-1 rounded-lg font-semibold transition-colors hover:bg-[#e9dfc4] hover:text-[#332214] ${
-                  location.pathname === "/add-employee"
-                    ? "bg-[#b59f77] text-white"
-                    : "text-[#332214]"
-                }`}
-              >
-                Add Employee
-              </Link> */}
             </>
           )}
         </div>

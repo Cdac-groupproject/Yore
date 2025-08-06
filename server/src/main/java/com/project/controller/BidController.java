@@ -16,7 +16,7 @@ import com.project.service.bids.BidService;
 
 @RestController
 @RequestMapping("/bidder/bids")
-@CrossOrigin(origins = "http://localhost:3000")
+
 public class BidController {
 	@Autowired
     private BidService bidService;
@@ -29,6 +29,7 @@ public class BidController {
 	 * successful Resp - SC 200 +Bid Resp dto-> JSON
 	 * error resp - SC 404 + Apiresp (err mesg)
 	 */
+	@CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/place")
     public ResponseEntity<BidRespDTO> placeBid(@RequestBody BidReqDTO dto) {
         return ResponseEntity.ok(bidService.placeBid(dto));
@@ -42,8 +43,10 @@ public class BidController {
 	 * successful Resp - SC 200 +Bid Resp dto-> JSON
 	 * error resp - SC 404 + Apiresp (err mesg)
 	 */
+	@CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/highest/{auctionId}")
     public ResponseEntity<BidRespDTO> getHighestBid(@PathVariable Long auctionId) {
+		
         return ResponseEntity.ok(bidService.getHighestBid(auctionId));
     }
 }
