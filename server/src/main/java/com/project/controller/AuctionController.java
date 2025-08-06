@@ -27,7 +27,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 
 @RestController 
-@RequestMapping("/auctions")
+@RequestMapping("/auctioneer/auctions")
 @CrossOrigin(origins = "http://localhost:3000")
 @AllArgsConstructor
 @Validated
