@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserServiceImpl implements UserService, UserDetailsService{
+public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private UserDao userDao;
@@ -44,13 +44,6 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 		return null;
 	}
 
-
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User dbUser = userDao.findByEmail(email)
-			.orElseThrow(() -> new UsernameNotFoundException("No user exists with email: " + email));
-		return dbUser;
-	}
 
 
 }
