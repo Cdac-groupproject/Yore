@@ -8,12 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.dto.bidder.BidderRegisterResDTO;
+import com.project.dto.EditProfileDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
 import com.project.dto.bidder.BidderRegisterResDTO;
@@ -24,7 +26,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.GET, RequestMethod.POST})
+@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class BidderController {
 
 	@Autowired
@@ -63,5 +65,10 @@ public class BidderController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		
 		return ResponseEntity.ok(users);
+	}
+	@PutMapping("/edit-profile")
+	public ResponseEntity<?> updateProfile(@RequestBody EditProfileDTO dto){
+		String res = bidderService.updateProfile(dto);
+		return ResponseEntity.ok(res);
 	}
 }

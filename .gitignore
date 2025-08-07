@@ -1,128 +1,82 @@
+########################################
+# Backend (Spring Boot - Maven - STS4) #
+########################################
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+
 # Logs
-logs
 *.log
+logs/
+
+# IDE files
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+
+# Eclipse workspace metadata (do NOT include this)
+.metadata/
+
+# Build results
+*.jar
+*.war
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# STS-specific
+.springBeans
+
+##################################
+# Frontend (React - Node/NPM)    #
+##################################
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+dist-ssr/
+.vite/
+
+# Environment variables
+.env
+.env.*.local
+*.local
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-.env
-.env.local
-.vite/
-
-# Editor directories and files
-.vscode/*
+# IDE / Editor config
+.vscode/
 !.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 
-
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
-
-private/
-
-# DotNet
-
-# Build results
-bin/
-obj/
-[Ll]og/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-
-# NuGet Packages
-*.nupkg
-*.snupkg
-.nuget/
-packages/
-project.lock.json
-project.fragment.lock.json
-artifacts/
-
-# VS for Mac
-.vscode/
-.vscode-test/
-
-# Rider
-.idea/
-*.sln.iml
-
-# ASP.NET Scaffolding
-ScaffoldingReadMe.txt
-
-# Visual Studio Cache Files
-.vs/
-.vscode/
-**/.vs/
-**/.vscode/
-
-# Resharper
-*.DotSettings.user
-
-# IIS Express
-*.vspscc
-*.vssscc
-*.scc
-*.publishsettings
-
-# Web projects
-wwwroot/
-
-# Local SQL DBs
-*.mdf
-*.ldf
-
-# Entity Framework
-Migrations/
-
-# dotCover
-*.dcvr
-
-# Coverage tools
+##########################
+# Optional - Test/Coverage
+##########################
 coverage/
+TestResults/
 *.coverage
 *.coveragexml
 
-# Logs
-*.log
-
-# Others
-TestResults/
-*.tmp
-*.bak
-*.swp
-*.lock.json
+##########################
+# OS-specific
+##########################
+.DS_Store
+Thumbs.db

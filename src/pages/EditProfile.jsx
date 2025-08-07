@@ -1,20 +1,52 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { updateProfile } from "../services/userService";
 
-const EditProfile = ({ isOpen, onClose, uname, uemail, onSave }) => {
-  const [name, setName] = useState(uname);
-  const [email, setEmail] = useState(uemail);
+const EditProfile = ({ isOpen, onClose, onSave }) => {
+  const user = JSON.parse(sessionStorage.getItem("user"));
+
+  const [name, setName] = useState("");
+  const [phoneNo, setPhoneNo] = useState("");
+  const [age, setAge] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
-    setName(uname);
-    setEmail(uemail);
-  }, [uname, uemail]);
+    if (user) {
+      setName(user.fullName || "");
+      setPhoneNo(user.phoneNo || "");
+      setAge(user.age || "");
+      setEmail(user.email || "");
+    }
+  }, [isOpen]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave({ name, email });
-    toast.success("Profile Updated!");
-    onClose();
+
+    const updatedUser = {
+      fullName: name,
+      phoneNo,
+      age,
+      email: user.email,
+    };
+
+    try {
+      console.log(updatedUser);
+      const res = await updateProfile(updatedUser);
+      console.log("result = " + res);
+      toast.success("Profile updated successfully!");
+
+      // update sessionStorage with new info
+      sessionStorage.setItem("user", JSON.stringify(updatedUser));
+
+      if (onSave) {
+        onSave(updatedUser); // optional callback
+      }
+
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update profile");
+      console.error(error);
+    }
   };
 
   if (!isOpen) return null;
@@ -27,17 +59,33 @@ const EditProfile = ({ isOpen, onClose, uname, uemail, onSave }) => {
         <input
           className="w-full mb-3 p-2 border rounded-md"
           type="text"
-          placeholder="Name"
+          placeholder="Full Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
 
         <input
-          className="w-full mb-4 p-2 border rounded-md"
+          className="w-full mb-3 p-2 border rounded-md"
+          type="number"
+          placeholder="Age"
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
+        />
+
+        <input
+          className="w-full mb-3 p-2 border rounded-md"
+          type="text"
+          placeholder="Phone Number"
+          value={phoneNo}
+          onChange={(e) => setPhoneNo(e.target.value)}
+        />
+
+        <input
+          className="w-full mb-4 p-2 border rounded-md bg-gray-100 cursor-not-allowed"
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          readOnly
         />
 
         <div className="flex justify-end gap-3">
