@@ -2,7 +2,7 @@ package com.project.service;
 
 import com.project.custom_exception.ApiException;
 import com.project.dao.AuctionDao;
-import com.project.dao.ProductDao;
+import com.project.dao.product.ProductDao;
 import com.project.dao.UserDao;
 import com.project.dto.AddAuctionDTO;
 import com.project.dto.ApiResponse;

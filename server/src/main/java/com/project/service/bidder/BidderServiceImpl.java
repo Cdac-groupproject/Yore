@@ -177,8 +177,8 @@ public class BidderServiceImpl implements BidderService {
 
 		entity.setGender(gender);
 		entity.setRole(role);
-		entity.setOtp(otp);
-		entity.setVerified(true);
+		//entity.setOtp(otp);
+		//entity.setVerified(true);
 		User newUser = userDao.save(entity);
 		
 //		Clean up

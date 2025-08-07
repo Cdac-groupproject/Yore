@@ -1,5 +1,8 @@
 package com.project.dao;
 
+import com.project.dao.product.CountryRefDao;
+import com.project.dao.product.ProductCategoryDao;
+import com.project.dao.product.ProductDao;
 import com.project.entity.CountryRef;
 import com.project.entity.Product;
 import com.project.entity.ProductCategory;
