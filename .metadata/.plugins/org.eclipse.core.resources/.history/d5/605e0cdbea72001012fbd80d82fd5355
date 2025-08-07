@@ -1,0 +1,10 @@
+package com.project.dto;
+
+public class EditProfileDTO {
+	private String fullName;
+    private String phoneNo;
+    private String email;
+    private int age;
+    private Long genderId;
+    private String roleId;
+}

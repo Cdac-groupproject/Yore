@@ -15,3 +15,7 @@ export const verifyOtp = async (email, otp) => {
 export const loginUser = async (loginData) => {
   return await myAxios.post("/signin", loginData);
 };
+
+export const updateProfile = async (profileData) => {
+  return await myAxios.put("/edit-profile", profileData);
+};

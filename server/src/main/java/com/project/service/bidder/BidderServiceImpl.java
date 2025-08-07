@@ -18,6 +18,7 @@ import com.project.dao.UserDao;
 import com.project.dao.GenderDao;
 import com.project.dao.RoleDao;
 import com.project.dto.ApiResponseDTO;
+import com.project.dto.EditProfileDTO;
 import com.project.dto.bidder.BidderRegisterResDTO;
 import com.project.dto.bidder.BidderRequestDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
@@ -27,6 +28,7 @@ import com.project.entity.Role;
 import com.project.entity.User;
 import com.project.service.EmailService;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -195,6 +197,21 @@ public class BidderServiceImpl implements BidderService {
 		resdto.setRoleId(role.getRoleName());	
 		return resdto;
 	}
+
+
+
+
+
+
+	@Override
+	public String updateProfile(EditProfileDTO profileDto) {
+		User user = userDao.findByEmail(profileDto.getEmail()).orElseThrow(() -> new ApiException("User not found"));
+		user.setFullName(profileDto.getFullName());
+		user.setAge(profileDto.getAge());
+		user.setPhoneNo(profileDto.getPhoneNo());
+		userDao.save(user);
+		return "User updated successfully";
+		}
 	}
 
 

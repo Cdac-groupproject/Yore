@@ -23,10 +23,14 @@ function Login() {
     try {
       const res = await loginUser({ email, password });
       console.log(res);
+      const user = res.data;
       sessionStorage.setItem("isLoggedIn", true);
-      sessionStorage.setItem("user", JSON.stringify(res));
-      sessionStorage.setItem("name", res.data.fullName);
-      sessionStorage.setItem("email", res.data.email);
+      sessionStorage.setItem("user", JSON.stringify(user));
+      // sessionStorage.setItem("user", JSON.stringify(res));
+      // sessionStorage.setItem("name", res.data.fullName);
+      // sessionStorage.setItem("email", res.data.email);
+      // sessionStorage.setItem("phoneNo", res.data.phoneNo);
+      // sessionStorage.setItem("age", res.data.age);
       toast.success("Login successful!");
       navigate("/");
     } catch (error) {
