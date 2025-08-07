@@ -198,6 +198,17 @@ public class BidderServiceImpl implements BidderService {
 		userDao.save(user);
 		return "User updated successfully";
 		}
+
+
+
+
+
+
+	@Override
+	public BidderLogResDTO getUser(Long id) {
+		User user = userDao.findById(id).orElseThrow(() -> new ApiException("User not found with given id"));
+		return mapper.map(user, BidderLogResDTO.class);
+	}
 	}
 
 

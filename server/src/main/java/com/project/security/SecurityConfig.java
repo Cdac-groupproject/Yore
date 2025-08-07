@@ -55,6 +55,37 @@ public class SecurityConfig {
 	}
 
 	
+<<<<<<< Updated upstream
+=======
+	@Bean
+	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception {
+	    http
+	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+	        .csrf(csrf -> csrf.disable())
+	        .authorizeHttpRequests(requests -> requests
+	            .requestMatchers(
+	                "/signin", 
+	                "/signup",
+	                "/verifyuser",
+	                "/edit-profile",
+	                "/get-user",
+	                "/v3/api-docs/**", 
+	                "/swagger-ui/**", 
+	                "/swagger-ui.html"
+	            ).permitAll()
+	            .requestMatchers("/bidder/**").hasRole("BIDDER")
+	            .requestMatchers("/manager/**").hasRole("MANAGER")
+	            .requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")
+	            .anyRequest().authenticated()
+	        )
+	        .httpBasic(Customizer.withDefaults())
+	        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+	    return http.build();
+	}
+	
+>>>>>>> Stashed changes
 //	@Bean
 //	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception{
 //		http

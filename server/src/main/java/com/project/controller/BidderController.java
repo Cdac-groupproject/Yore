@@ -3,6 +3,7 @@ package com.project.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.web.exchanges.HttpExchange.Principal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -70,5 +71,10 @@ public class BidderController {
 	public ResponseEntity<?> updateProfile(@RequestBody EditProfileDTO dto){
 		String res = bidderService.updateProfile(dto);
 		return ResponseEntity.ok(res);
+	}
+	
+	@GetMapping("/get-user")
+	public ResponseEntity<?> getUser(@RequestParam Long id){	
+		return ResponseEntity.ok(bidderService.getUser(id));
 	}
 }
