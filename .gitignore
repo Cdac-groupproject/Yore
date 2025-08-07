@@ -126,3 +126,4 @@ TestResults/
 *.bak
 *.swp
 *.lock.json
+.metadata/
