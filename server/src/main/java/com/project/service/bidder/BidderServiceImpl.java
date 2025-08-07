@@ -197,12 +197,6 @@ public class BidderServiceImpl implements BidderService {
 		resdto.setRoleId(role.getRoleName());	
 		return resdto;
 	}
-
-
-
-
-
-
 	@Override
 	public String updateProfile(EditProfileDTO profileDto) {
 		User user = userDao.findByEmail(profileDto.getEmail()).orElseThrow(() -> new ApiException("User not found"));

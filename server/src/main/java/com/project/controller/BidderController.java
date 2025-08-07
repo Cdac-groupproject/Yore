@@ -5,9 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,38 +28,18 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173",allowCredentials = "true", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
+@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class BidderController {
 
 	@Autowired
 	private BidderService bidderService;
-	
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private JwtUtil jwtUtil;
+
 
 	@PostMapping("/signin")
-<<<<<<< HEAD
 	public ResponseEntity<?> signIn(@Valid @RequestBody BidderLogReqDTO dto, HttpSession sessio){
 		BidderLogResDTO response = bidderService.logIn(dto);
 		sessio.setAttribute("userEmail", dto.getEmail());
 		return ResponseEntity.ok(response);
-=======
-	public ResponseEntity<?> signIn(@Valid @RequestBody BidderLogReqDTO dto){
-		System.out.println("SIGNIN API HIT");
-
-		Authentication auth = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
-		System.out.println(auth);
-		Authentication authenticated = authenticationManager.authenticate(auth);
-		System.out.println(authenticated);
-
-		String token = jwtUtil.createToken(authenticated);
-		System.out.println(token);
-
-		return ResponseEntity.ok(token);
->>>>>>> fd6db07672d45df73b5cfea1c10330ea40bd9bb1
 	}
 
 //	@PostMapping("/signup")
@@ -93,12 +70,4 @@ public class BidderController {
 		
 		return ResponseEntity.ok(users);
 	}
-	
-	
-	@PutMapping("/edit-profile")
-	public ResponseEntity<?> updateProfile(@RequestBody EditProfileDTO dto){
-		String res = bidderService.updateProfile(dto);
-		return ResponseEntity.ok(res);
-	}
-	
 }

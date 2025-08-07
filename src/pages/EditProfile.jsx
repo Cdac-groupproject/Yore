@@ -32,6 +32,7 @@ const EditProfile = ({ isOpen, onClose, onSave }) => {
     try {
       console.log(updatedUser);
       const res = await updateProfile(updatedUser);
+      console.log("result = " + res);
       toast.success("Profile updated successfully!");
 
       // update sessionStorage with new info
