@@ -70,4 +70,9 @@ public class BidderController {
 		
 		return ResponseEntity.ok(users);
 	}
+	@PutMapping("/edit-profile")
+	public ResponseEntity<?> updateProfile(@RequestBody EditProfileDTO dto){
+		String res = bidderService.updateProfile(dto);
+		return ResponseEntity.ok(res);
+	}
 }
