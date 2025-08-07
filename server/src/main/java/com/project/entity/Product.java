@@ -51,8 +51,8 @@ public class Product {
 	private Long yearMade;
 
 	@Column(name = "auctioned_for_today")
-	private Boolean auctionedForToday;
-	private Boolean sold;
+	private Boolean auctionedForToday = false;
+	private Boolean sold = false;
 	
 	@OneToMany(mappedBy = "product" , cascade = CascadeType.ALL , orphanRemoval = true)
 	private List<ProductImage> imageList = new ArrayList<ProductImage>();

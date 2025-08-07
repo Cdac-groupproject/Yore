@@ -1,6 +1,12 @@
 package com.project.entity;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +17,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -30,8 +36,8 @@ public class User {
 
     private Integer age;
 
-    @Column(name = "verified", nullable = false)
-    private boolean verified = false;
+//    @Column(name = "verified", nullable = false)
+//    private boolean verified = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gender_id", referencedColumnName = "genderId")
@@ -39,10 +45,10 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "roleId")
-    private Role role;
+    private Role role ;
 
-    @Column(name = "otp")
-    private String otp;
+    @Column(name = "log1")
+    private String log1;
 
     @Column(name = "log2")
     private String log2;
@@ -69,4 +75,17 @@ public class User {
     public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		List<GrantedAuthority> authorities= AuthorityUtils.createAuthorityList(this.role.getRoleName());
+		return authorities;
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return this.email;
+	}
 }
