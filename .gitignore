@@ -21,6 +21,7 @@ logs/
 # Eclipse workspace metadata (do NOT include this)
 .metadata/
 
+
 # Build results
 *.jar
 *.war
