@@ -3,11 +3,11 @@ import { myAxios } from "./config";
 
 // Send otp during registration
 export const registerUser = async (userData) => {
-  return await myAxios.post("/sign-up", userData);
+  return await myAxios.post("/signup", userData);
 };
 
 export const verifyOtp = async (email, otp) => {
-  return await myAxios.post("/verify-user", null, {
+  return await myAxios.post("/verifyuser", null, {
     params: { email: email, otp: otp },
   });
 };
@@ -18,4 +18,13 @@ export const loginUser = async (loginData) => {
 
 export const updateProfile = async (profileData) => {
   return await myAxios.put("/edit-profile", profileData);
+};
+
+export const getUserById = async (userId) => {
+  const token = localStorage.getItem("token");
+  return axios.get(`http://localhost:8080/get-user?id=${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
