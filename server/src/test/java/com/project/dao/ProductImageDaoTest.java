@@ -1,5 +1,7 @@
 package com.project.dao;
 
+import com.project.dao.product.ProductDao;
+import com.project.dao.product.ProductImageDao;
 import com.project.entity.Product;
 import com.project.entity.ProductImage;
 import org.junit.jupiter.api.BeforeEach;

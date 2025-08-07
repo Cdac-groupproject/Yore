@@ -1,5 +1,6 @@
 package com.project.dao;
 
+import com.project.dao.product.ProductDao;
 import com.project.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
