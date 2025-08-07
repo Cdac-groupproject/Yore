@@ -19,8 +19,9 @@ function Navbar() {
   const isContactUs = location.pathname === "/contact";
 
   const loggedInfo = sessionStorage.getItem("isLoggedIn");
-  const username = sessionStorage.getItem("name");
+  // const username = sessionStorage.getItem("name");
 
+  const username = JSON.parse(sessionStorage.getItem("user"))?.fullName;
   // const onProfileClick = () => {
   //   navigate("/profile");
   // };
