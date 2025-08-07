@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.ProductDTO;
+import com.project.dto.product.ProductGetDto;
 import com.project.dto.product.ProductPostDto;
 import com.project.service.product.ProductService;
 
@@ -61,8 +62,8 @@ public class ProductController {
      */
     @GetMapping
     @Operation(description = "List All Products")
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> products = productService.getAllProducts();
+    public ResponseEntity<List<ProductGetDto>> getAllProducts() {
+        List<ProductGetDto> products = productService.getAllProducts();
         if (products.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -79,7 +80,7 @@ public class ProductController {
      */
     @GetMapping("/{id}")
     @Operation(description = "Get Product by ID")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable @Min(1) Long id) {
+    public ResponseEntity<ProductGetDto> getProduct(@PathVariable @Min(1) Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
@@ -111,4 +112,12 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @PutMapping("away-for-auction/{id}")
+    @Operation(description = "make a product to go for auction")
+    public ResponseEntity<String> markProductForAuction(@PathVariable Long productId){
+    	 productService.markProductAsAuctioned(productId);
+         return ResponseEntity.ok("Product marked as auctioned for today.");
+    }
+
 } 

@@ -32,7 +32,9 @@ com\project\dao\AuctionDao.class
 com\project\dao\EmployeeCategoryDao.class
 com\project\entity\Role.class
 com\project\service\bidder\BidderServiceImpl.class
+com\project\dao\orders\OrdersDao.class
 com\project\controller\BidderController.class
+com\project\controller\orders\OrdersController.class
 com\project\dto\Credentials.class
 com\project\custom_exception\ResourceNotFoundException.class
 com\project\entity\Product.class
@@ -44,6 +46,7 @@ com\project\security\JwtUtil.class
 com\project\dto\AuctionRespDTO.class
 com\project\service\bids\BidService.class
 com\project\entity\Role$RoleBuilder.class
+com\project\service\orders\OrdersService.class
 com\project\security\JwtFilter.class
 com\project\dto\ApiResponseDTO.class
 com\project\service\product\ProductServiceImpl.class
@@ -56,6 +59,7 @@ com\project\dto\bidder\BidderRegisterResDTO.class
 com\project\entity\Order$OrderBuilder.class
 com\project\dto\product\ProductPostDto.class
 com\project\dao\BidDao.class
+com\project\dto\orders\OrderDto.class
 com\project\entity\EmployeeCategory.class
 com\project\dto\ApiResponse.class
 com\project\controller\ProductController.class
@@ -73,4 +77,5 @@ com\project\controller\BidController.class
 com\project\custom_exception\ApiException.class
 com\project\dto\product\CountryRefDto.class
 com\project\dto\bidder\BidderLogReqDTO.class
+com\project\service\orders\OrdersServiceImpl.class
 com\project\service\AuctionService.class

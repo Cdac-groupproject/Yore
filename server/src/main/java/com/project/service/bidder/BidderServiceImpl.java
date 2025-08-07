@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ import com.project.entity.Role;
 import com.project.entity.User;
 import com.project.service.EmailService;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -38,7 +40,7 @@ public class BidderServiceImpl implements BidderService {
 	private  UserDao userDao;
 	private GenderDao genderDao;
 	private RoleDao roleDao;
-//	private PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 	private ModelMapper mapper;
 	private EmailService emailService;
 	
@@ -47,18 +49,21 @@ public class BidderServiceImpl implements BidderService {
 
 	@Override
 	public BidderLogResDTO logIn(BidderLogReqDTO dto) {
-		User entity = userDao.findByEmailAndPassword(dto.getEmail(), dto.getPassword())
+		User entity = userDao.findByEmail(dto.getEmail())
 				.orElseThrow(() -> new ApiException("Email id not found"));
-		
-		BidderLogResDTO resdto = new BidderLogResDTO();
 
+		// Match raw password with encrypted one
+		if (!passwordEncoder.matches(dto.getPassword(), entity.getPassword())) {
+			throw new ApiException("Invalid password");
+		}
+
+		BidderLogResDTO resdto = new BidderLogResDTO();
 		resdto.setFullName(entity.getFullName());
 		resdto.setEmail(entity.getEmail());
 		resdto.setPhoneNo(entity.getPhoneNo());
 		resdto.setAge(entity.getAge());
 		resdto.setGender(entity.getGender().getGenderName());
 		resdto.setRole(entity.getRole().getRoleName());
-
 
 		return resdto;
 	}
@@ -169,10 +174,13 @@ public class BidderServiceImpl implements BidderService {
 		Role role = roleDao.findByRoleName("BIDDER").orElseThrow(() -> new ApiException("Role Not Found"));
 		
 		User entity = mapper.map(dto, User.class);
+
+		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+
 		entity.setGender(gender);
 		entity.setRole(role);
-		entity.setOtp(otp);
-		entity.setVerified(true);
+		//entity.setOtp(otp);
+		//entity.setVerified(true);
 		User newUser = userDao.save(entity);
 		
 //		Clean up

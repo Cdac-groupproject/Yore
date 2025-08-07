@@ -45,7 +45,7 @@ public class User implements UserDetails{
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "roleId")
-    private Role role;
+    private Role role ;
 
     @Column(name = "otp")
     private String otp;

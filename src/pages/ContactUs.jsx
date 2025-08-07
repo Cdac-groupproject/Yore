@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "../assets/newLogo.png"; // Make sure path matches your asset folder
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -6,6 +6,13 @@ import Navbar from "../components/Navbar";
 
 const ContactUs = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const loggeInInfo = sessionStorage.getItem("isLoggedIn");
+    if (!loggeInInfo) {
+      navigate("/login");
+    }
+  }, [navigate]);
   return (
     <>
       <Navbar />

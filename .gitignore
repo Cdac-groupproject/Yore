@@ -81,3 +81,5 @@ TestResults/
 ##########################
 .DS_Store
 Thumbs.db
+
+.metadata/

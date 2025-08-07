@@ -18,6 +18,14 @@ export default function AddEmployee() {
   const [categories, setCategories] = useState([]);
   const [submitted, setSubmitted] = useState(false);
 
+  const navigate = useNavigate();
+  useEffect(() => {
+    const loggeInInfo = sessionStorage.getItem("isLoggedIn");
+    if (!loggeInInfo) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   // Simulate fetching categories (replace with real API call if you have backend)
   useEffect(() => {
     // fetch('/api/employee-categories').then(...)

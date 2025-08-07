@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.project.custom_exception.ApiException;
 import com.project.custom_exception.ResourceNotFoundException;
@@ -22,6 +23,9 @@ import com.project.dao.product.ProductCategoryDao;
 import com.project.dao.product.ProductDao;
 import com.project.dao.product.ProductImageDao;
 import com.project.dto.ProductDTO;
+import com.project.dto.product.CountryRefDto;
+import com.project.dto.product.ProductCategoryDto;
+import com.project.dto.product.ProductGetDto;
 import com.project.dto.product.ProductPostDto;
 import com.project.entity.CountryRef;
 import com.project.entity.Product;
@@ -122,34 +126,66 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(Long id) {
+    public ProductGetDto getProductById(Long id) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
 
-        ProductDTO dto = modelMapper.map(product, ProductDTO.class);
-        dto.setPrice(product.getPrice());
-        dto.setCategoryId(product.getCategory().getCategoryId().toString());
-        dto.setCountryOfOriginId(product.getCountryOfOrigin().getCountryId());
-        dto.setImageUrl(product.getImageList().stream()
-                .map(ProductImage::getImgUrl)
-                .collect(Collectors.toList()));
+        ProductGetDto dto = modelMapper.map(product, ProductGetDto.class);
+        
+        if(product.getCategory() != null) {
+        	ProductCategoryDto productCategoryDto = new ProductCategoryDto();
+        	productCategoryDto.setCategoryId(product.getCategory().getCategoryId());
+        	productCategoryDto.setName(product.getCategory().getName());
+        	dto.setCategory(productCategoryDto);
+        }
+        
+        if(product.getCountryOfOrigin() != null) {
+        	CountryRefDto countryDto = new CountryRefDto();
+        	countryDto.setCountryId(product.getCountryOfOrigin().getCountryId());
+        	countryDto.setCountryName(product.getCountryOfOrigin().getCountryName());
+        	dto.setCountryOfOrigin(countryDto);
+        }
+        
+        if(product.getImageList() != null) {
+        	dto.setImageUrl(product.getImageList().stream()
+        			.map(img -> img.getImgUrl())
+        			.toList());
+        }
         return dto;
+
     }
 
     @Override
-    public List<ProductDTO> getAllProducts() {
-        return productDao.findAll().stream()
-                .map(p -> {
-                    ProductDTO dto = modelMapper.map(p, ProductDTO.class);
-                    dto.setPrice(p.getPrice());
-                    dto.setCategoryId(p.getCategory().getCategoryId().toString());
-                    dto.setCountryOfOriginId(p.getCountryOfOrigin().getCountryId());
-                    dto.setImageUrl(p.getImageList().stream()
-                            .map(ProductImage::getImgUrl)
-                            .collect(Collectors.toList()));
-                    return dto;
-                })
-                .collect(Collectors.toList());
+    public List<ProductGetDto> getAllProducts() {
+List<Product> allProducts = productDao.findAll();
+    	
+    	return allProducts.stream().map(product -> {
+    		ProductGetDto dto = modelMapper.map(product, ProductGetDto.class);
+
+            // Map category
+            if (product.getCategory() != null) {
+                ProductCategoryDto categoryDto = new ProductCategoryDto();
+                categoryDto.setCategoryId(product.getCategory().getCategoryId());
+                categoryDto.setName(product.getCategory().getName());
+                dto.setCategory(categoryDto);
+            }
+
+            // Map country of origin
+            if (product.getCountryOfOrigin() != null) {
+                CountryRefDto countryDto = new CountryRefDto();
+                countryDto.setCountryId(product.getCountryOfOrigin().getCountryId());
+                countryDto.setCountryName(product.getCountryOfOrigin().getCountryName());
+                dto.setCountryOfOrigin(countryDto);
+            }
+            if (product.getImageList() != null) {
+                dto.setImageUrl(
+                    product.getImageList()
+                           .stream()
+                           .map(image -> image.getImgUrl()) // Assuming ProductImage has getImageUrl()
+                           .toList());
+            }
+            return dto; 
+    	}).toList();
     }
 
     @Override
@@ -200,5 +236,13 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         productDao.delete(product);
     }
+
+	@Override
+	public void markProductAsAuctioned(Long productId) {
+		Product product = productDao.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("No product with this id found"));
+		product.setAuctionedForToday(true);
+		productDao.save(product);
+	}
 
 }

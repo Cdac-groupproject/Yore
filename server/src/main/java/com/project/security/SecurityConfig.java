@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 @Configuration	// declare this class as a configuration class(dont do this in traditional way, do it in my way)
 @EnableWebSecurity // enable the web security for application
 public class SecurityConfig {
@@ -37,7 +38,7 @@ public class SecurityConfig {
 	@Bean
 	AuthenticationManager authenticationManager(HttpSecurity http) throws Exception{
 		AuthenticationManagerBuilder authManagerBuilder= http.getSharedObject(AuthenticationManagerBuilder.class);
-		authManagerBuilder.userDetailsService(userDetailsService);
+		authManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());;
 		return authManagerBuilder.build();
 	}
 	
@@ -55,8 +56,7 @@ public class SecurityConfig {
 	}
 
 	
-<<<<<<< Updated upstream
-=======
+<
 	@Bean
 	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception {
 	    http
@@ -65,10 +65,13 @@ public class SecurityConfig {
 	        .authorizeHttpRequests(requests -> requests
 	            .requestMatchers(
 	                "/signin", 
+
 	                "/signup",
 	                "/verifyuser",
 	                "/edit-profile",
 	                "/get-user",
+	                "/signup", 
+	                "/verifyuser",
 	                "/v3/api-docs/**", 
 	                "/swagger-ui/**", 
 	                "/swagger-ui.html"
@@ -85,15 +88,14 @@ public class SecurityConfig {
 	    return http.build();
 	}
 	
->>>>>>> Stashed changes
+
 //	@Bean
 //	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception{
 //		http
 //			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 //			.csrf(csrf-> csrf.disable())
 //			.authorizeHttpRequests(requests-> requests
-//				.requestMatchers("/signin").permitAll()
-//				.requestMatchers("/register").permitAll()
+//				.requestMatchers("/signin","/signup","/verifyuser").permitAll()
 //				.requestMatchers("/bidder/**").hasRole("BIDDER")
 //				.requestMatchers("/manager/**").hasRole("MANAGER")
 //				.requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")
@@ -106,17 +108,5 @@ public class SecurityConfig {
 //			
 //			
 //	}
-	@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable() // Disable CSRF for testing
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() // Allow ALL endpoints
-            )
-            .formLogin().disable()
-            .httpBasic().disable(); // Disable default login forms (optional)
-
-        return http.build();
-    }
 	
 }
