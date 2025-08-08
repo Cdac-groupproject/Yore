@@ -1,3 +1,4 @@
+com\project\dto\user\UserRequestDTO.class
 com\project\service\AuctionServiceImpl.class
 com\project\dao\product\ProductDao.class
 com\project\service\user\UserServiceImpl.class
@@ -17,8 +18,10 @@ com\project\dao\product\ProductImageDao.class
 com\project\service\employee\EmployeeService.class
 com\project\dto\bids\BidRespDTO.class
 com\project\entity\User.class
+com\project\dto\EditProfileDTO.class
 com\project\entity\ProductImage.class
 com\project\dao\UserDao.class
+com\project\dto\user\UserRequestDTO$UserRequestDTOBuilder.class
 com\project\dao\EmployeeDao.class
 com\project\entity\Gender$GenderBuilder.class
 com\project\entity\Order.class
@@ -50,6 +53,7 @@ com\project\service\orders\OrdersService.class
 com\project\security\JwtFilter.class
 com\project\dto\ApiResponseDTO.class
 com\project\service\product\ProductServiceImpl.class
+com\project\service\user\details\UserDetailsServiceImpl.class
 com\project\custom_exception\AuthenticationException.class
 com\project\entity\Auction.class
 com\project\controller\AuctionController.class
@@ -61,6 +65,7 @@ com\project\dto\product\ProductPostDto.class
 com\project\dao\BidDao.class
 com\project\dto\orders\OrderDto.class
 com\project\entity\EmployeeCategory.class
+com\project\config\StaticResourceConfig.class
 com\project\dto\ApiResponse.class
 com\project\controller\ProductController.class
 com\project\dto\bids\BidReqDTO.class
@@ -72,6 +77,7 @@ com\project\service\user\UserService.class
 com\project\exception_handler\GlobalExceptionHandler.class
 com\project\dao\product\ProductCategoryDao.class
 com\project\entity\User$UserBuilder.class
+com\project\controller\UserController.class
 com\project\entity\ProductCategory.class
 com\project\controller\BidController.class
 com\project\custom_exception\ApiException.class
