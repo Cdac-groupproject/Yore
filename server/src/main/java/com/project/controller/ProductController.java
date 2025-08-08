@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.ProductDTO;
@@ -46,7 +47,7 @@ public class ProductController {
      * - Payload: JSON representation of ProductDTO
      * - Response: SC 201 (CREATED) + created product DTO
      */
-	@PostMapping("/create")
+	@PostMapping("/manager/create")
     @Operation(description = "Add new product")
     public ResponseEntity<?> addNewProduct(@ModelAttribute ProductPostDto productPostDto) throws IOException{
     	return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(productPostDto));
@@ -115,9 +116,18 @@ public class ProductController {
     
     @PutMapping("away-for-auction/{id}")
     @Operation(description = "make a product to go for auction")
-    public ResponseEntity<String> markProductForAuction(@PathVariable Long productId){
+    public ResponseEntity<String> markProductForAuction(@PathVariable("id") Long productId){
     	 productService.markProductAsAuctioned(productId);
          return ResponseEntity.ok("Product marked as auctioned for today.");
     }
-
+    
+    @GetMapping("/auctioneer/auction-products")
+    @Operation(description = "list of all products ready for auction for today")
+    public ResponseEntity<List<ProductGetDto>> getAllProductsMarkedForAuction(){
+    	List<ProductGetDto> products = productService.getAllProductsMarkedForAuction();
+        if(products == null) {
+        	return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(products);
+    }
 } 
