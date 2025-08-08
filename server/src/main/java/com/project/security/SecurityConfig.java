@@ -55,8 +55,7 @@ public class SecurityConfig {
 	}
 
 	
-<<<<<<< Updated upstream
-=======
+
 	@Bean
 	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception {
 	    http
@@ -85,7 +84,7 @@ public class SecurityConfig {
 	    return http.build();
 	}
 	
->>>>>>> Stashed changes
+
 //	@Bean
 //	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception{
 //		http
