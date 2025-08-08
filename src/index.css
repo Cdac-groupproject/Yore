@@ -13,3 +13,31 @@ h3,
 h4 {
   font-family: "Playfair Display", serif;
 }
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+  }
+}
+
+@keyframes fade {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 1.5s infinite;
+}
+
+.animate-fade {
+  animation: fade 2s infinite;
+}
