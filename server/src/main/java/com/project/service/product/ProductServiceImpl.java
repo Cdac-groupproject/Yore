@@ -148,7 +148,7 @@ public class ProductServiceImpl implements ProductService {
         
         if(product.getImageList() != null) {
         	dto.setImageUrl(product.getImageList().stream()
-        			.map(img -> img.getImgUrl())
+        			.map(img -> img.getImgUrl().replace("\\", "/"))
         			.toList());
         }
         return dto;
@@ -157,7 +157,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductGetDto> getAllProducts() {
-List<Product> allProducts = productDao.findAll();
+    	List<Product> allProducts = productDao.findAll();
     	
     	return allProducts.stream().map(product -> {
     		ProductGetDto dto = modelMapper.map(product, ProductGetDto.class);
@@ -181,7 +181,7 @@ List<Product> allProducts = productDao.findAll();
                 dto.setImageUrl(
                     product.getImageList()
                            .stream()
-                           .map(image -> image.getImgUrl()) // Assuming ProductImage has getImageUrl()
+                           .map(image -> image.getImgUrl().replace("\\", "/")) 
                            .toList());
             }
             return dto; 
@@ -243,6 +243,39 @@ List<Product> allProducts = productDao.findAll();
 				.orElseThrow(() -> new ResourceNotFoundException("No product with this id found"));
 		product.setAuctionedForToday(true);
 		productDao.save(product);
+	}
+
+	@Override
+	public List<ProductGetDto> getAllProductsMarkedForAuction() {
+		// TODO Auto-generated method stub
+		List<Product> products = productDao.findByAuctionedForTodayTrue();
+		return products.stream().map(product -> {
+    		ProductGetDto dto = modelMapper.map(product, ProductGetDto.class);
+
+            // Map category
+            if (product.getCategory() != null) {
+                ProductCategoryDto categoryDto = new ProductCategoryDto();
+                categoryDto.setCategoryId(product.getCategory().getCategoryId());
+                categoryDto.setName(product.getCategory().getName());
+                dto.setCategory(categoryDto);
+            }
+
+            // Map country of origin
+            if (product.getCountryOfOrigin() != null) {
+                CountryRefDto countryDto = new CountryRefDto();
+                countryDto.setCountryId(product.getCountryOfOrigin().getCountryId());
+                countryDto.setCountryName(product.getCountryOfOrigin().getCountryName());
+                dto.setCountryOfOrigin(countryDto);
+            }
+            if (product.getImageList() != null) {
+                dto.setImageUrl(
+                    product.getImageList()
+                           .stream()
+                           .map(image -> image.getImgUrl().replace("\\", "/")) 
+                           .toList());
+            }
+            return dto; 
+    	}).toList();
 	}
 
 }
