@@ -6,10 +6,12 @@ import Footer from "../components/Footer";
 import toast from "react-hot-toast";
 import { getUserById, loginUser } from "../services/userService";
 import { jwtDecode } from "jwt-decode";
+import Loader from "../components/Loader";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const logEmail = sessionStorage.getItem("email");
@@ -22,6 +24,7 @@ function Login() {
     }
 
     try {
+      setLoading(true);
       const res = await loginUser({ email, password });
       const token = res.data;
 
@@ -49,12 +52,21 @@ function Login() {
       sessionStorage.setItem("user", JSON.stringify(userDetails));
 
       toast.success("Login successful!");
+      setTimeout(() => {
+        navigate("/");
+        setLoading(false);
+      }, 1000);
       navigate("/");
     } catch (error) {
+      setLoading(false);
       toast.error("Invalid credintials");
       console.log(error);
     }
   };
+
+  if (loading) {
+    return <Loader message="Signing you in..." />;
+  }
 
   return (
     <>

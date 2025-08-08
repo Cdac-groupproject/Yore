@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import toast from "react-hot-toast";
 import { registerUser } from "../services/userService";
+import Loader from "../components/Loader";
 
 function Register() {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ function Register() {
   const [age, setAge] = useState("");
   const [genderId, setGenderId] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const onRegisterHandler = async (e) => {
     e.preventDefault();
 
@@ -24,14 +27,16 @@ function Register() {
     }
 
     const userData = { fullName, email, password, phoneNo, age, genderId };
-
+    setLoading(true);
     try {
       const res = await registerUser(userData);
-      toast.success("Otp send to you r email");
+      toast.success("Otp send to your email");
       sessionStorage.setItem("email", email);
       navigate("/otp-verification");
     } catch (error) {
       toast.error("Registration failed");
+    } finally {
+      setLoading(false); // 🔁 hide loader
     }
     // toast.success("User Registered Successfully");
     // navigate("/login");
@@ -132,12 +137,18 @@ function Register() {
 
             <button
               type="submit"
-              className="w-full bg-yellow-700 hover:bg-yellow-800 text-white py-2 rounded-lg font-semibold transition-all duration-300 shadow"
+              disabled={loading}
+              className={`w-full py-2 rounded-lg font-semibold transition-all duration-300 shadow
+    ${
+      loading
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-yellow-700 hover:bg-yellow-800 text-white"
+    }`}
             >
-              Sign Up
+              {loading ? "Signing up..." : "Sign Up"}
             </button>
           </form>
-
+          {loading && <Loader message="Creating your account..." />}
           <p className="mt-6 text-center text-sm text-gray-700">
             Already have an account?{" "}
             <Link
