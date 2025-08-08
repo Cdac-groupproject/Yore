@@ -36,8 +36,8 @@ public class User implements UserDetails{
 
     private Integer age;
 
-//    @Column(name = "verified", nullable = false)
-//    private boolean verified = false;
+    @Column(name = "verified", nullable = false)
+    private boolean verified = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gender_id", referencedColumnName = "genderId")
@@ -47,8 +47,8 @@ public class User implements UserDetails{
     @JoinColumn(name = "role_id", referencedColumnName = "roleId")
     private Role role ;
 
-    @Column(name = "log1")
-    private String log1;
+    @Column(name = "otp")
+    private String otp;
 
     @Column(name = "log2")
     private String log2;
