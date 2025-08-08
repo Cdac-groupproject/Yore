@@ -56,6 +56,7 @@ public class SecurityConfig {
 	}
 
 	
+
 	@Bean
 	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception {
 	    http
@@ -64,8 +65,10 @@ public class SecurityConfig {
 	        .authorizeHttpRequests(requests -> requests
 	            .requestMatchers(
 	                "/signin", 
-	                "/signup", 
+	                "/signup",
 	                "/verifyuser",
+	                "/edit-profile",
+	                "/get-user",
 	                "/v3/api-docs/**", 
 	                "/swagger-ui/**", 
 	                "/swagger-ui.html"
@@ -81,7 +84,7 @@ public class SecurityConfig {
 
 	    return http.build();
 	}
-	
+
 //	@Bean
 //	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception{
 //		http

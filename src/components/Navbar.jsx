@@ -19,18 +19,8 @@ function Navbar() {
   const isContactUs = location.pathname === "/contact";
 
   const loggedInfo = sessionStorage.getItem("isLoggedIn");
-  // const username = sessionStorage.getItem("name");
-
-  const username = JSON.parse(sessionStorage.getItem("user"))?.fullName;
-  // const onProfileClick = () => {
-  //   navigate("/profile");
-  // };
-
-  // const logoutHandler = () => {
-  //   sessionStorage.clear();
-  //   alert("Logout successfull");
-  //   navigate("/login");
-  // };
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const fullName = user?.fullName;
 
   return (
     <>
@@ -109,7 +99,7 @@ function Navbar() {
           {loggedInfo ? (
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-gray-800 bg-gray-100 px-3 py-1.5 rounded-2xl">
-                {username}
+                {fullName}
               </span>
               <button onClick={() => setShowProfile(true)}>
                 <FiUser className="w-6 h-6 text-gray-700 hover:text-yellow-700 transition-all duration-200 " />

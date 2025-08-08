@@ -20,4 +20,5 @@ public interface BidderService {
 	String signUp(BidderRequestDTO dto);
 	BidderRegisterResDTO verifyUser(String email, String otp);
 	String updateProfile(EditProfileDTO profileDto);
+	BidderLogResDTO getUser(Long id);
 }
