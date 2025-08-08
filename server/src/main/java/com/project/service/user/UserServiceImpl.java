@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         return userDao.save(user);
     }
 
+    /*
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User dbUser = userDao.findByEmail(email)
@@ -76,5 +77,5 @@ public class UserServiceImpl implements UserService {
 		return dbUser;
 	}
 
-
+*/
 }
