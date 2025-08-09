@@ -1,7 +1,10 @@
 package com.project.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,10 +33,23 @@ public class BidController {
 	 * error resp - SC 404 + Apiresp (err mesg)
 	 */
 	@CrossOrigin(origins = "http://localhost:5173")
-    @PostMapping("/place")
-    public ResponseEntity<BidRespDTO> placeBid(@RequestBody BidReqDTO dto) {
-        return ResponseEntity.ok(bidService.placeBid(dto));
-    }
+	@PostMapping("/place")
+	public ResponseEntity<BidRespDTO> placeBid(@RequestBody BidReqDTO dto) {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+	    if (authentication == null || !authentication.isAuthenticated()) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	    }
+
+	    // Principal is userId string from JwtUtil.validateToken()
+	    String userIdStr = (String) authentication.getPrincipal();
+	    Long userId = Long.valueOf(userIdStr);
+
+	    dto.setUserId(userId);
+
+	    return ResponseEntity.ok(bidService.placeBid(dto));
+	}
+
     /*
 	 * REST API end point - desc -get Highest Bid Amount by Auction id 
 	 * URL

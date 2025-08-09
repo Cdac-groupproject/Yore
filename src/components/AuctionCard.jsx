@@ -1,6 +1,6 @@
 import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-function NewCardComp({ image, title, autioneer, sdate, edate }) {
+function NewCardComp({ image, title, autioneer, sdate, edate,auctionId }) {
   const location = useLocation();
 
   const isOnGoingPage = location.pathname == "/ongoing";
@@ -44,7 +44,7 @@ function NewCardComp({ image, title, autioneer, sdate, edate }) {
           </div>
           {isOnGoingPage && (
             <button
-              onClick={() => navigate("/bidder")}
+              onClick={() => navigate("/bidder/" +auctionId)}
               className="mt-4 bg-yellow-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-yellow-700 hover:scale-95 cursor-pointer transition-all duration-200"
             >
               View Auction
