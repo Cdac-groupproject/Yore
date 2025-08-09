@@ -75,9 +75,11 @@ public class SecurityConfig {
 	                "/swagger-ui.html"
 	            ).permitAll()
 	            .requestMatchers("/manager/auctioneer/**").hasAnyRole("MANAGER","AUCTIONEER")
-	            .requestMatchers("/bidder/**").hasRole("BIDDER")
+//	            .requestMatchers("/bidder/**").hasRole("BIDDER")
 	            .requestMatchers("/manager/**").hasRole("MANAGER")
-	            .requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")
+//	            .requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")
+	            .requestMatchers("/auctioneer/**").hasAnyRole("AUCTIONEER", "BIDDER")
+	            .requestMatchers("/bidder/**").hasAnyRole("BIDDER", "AUCTIONEER")
 	            .anyRequest().authenticated()
 	        )
 	        .httpBasic(Customizer.withDefaults())

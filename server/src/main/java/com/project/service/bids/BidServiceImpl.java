@@ -1,5 +1,7 @@
 package com.project.service.bids;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -35,36 +37,68 @@ public class BidServiceImpl implements BidService{
     private ModelMapper modelMapper;
     
 	@Override
+	@Transactional
 	public BidRespDTO placeBid(BidReqDTO dto) {
-	    Auction auction = auctionDao.findById(dto.getAuctionId())
+	    // 1) Lock auction row
+	    Auction auction = auctionDao.findByIdWithLock(dto.getAuctionId())
 	            .orElseThrow(() -> new ApiException("Invalid Auction ID"));
 
 	    if (Boolean.TRUE.equals(auction.getIsClosed())) {
 	        throw new ApiException("Auction is already closed.");
 	    }
 
+	    // 2) Validate bidder
 	    User bidder = userDao.findById(dto.getUserId())
 	            .orElseThrow(() -> new ApiException("Invalid User ID"));
 
-	    // 🔴 NEW: Enforce base price rule
-	    if (dto.getBidAmount().compareTo(auction.getBasePrice()) < 0) {
+	    // 3) Base price enforcement
+	    Double newBidAmount = dto.getBidAmount();
+	    if (newBidAmount.compareTo(auction.getBasePrice()) < 0) {
 	        throw new ApiException("Bid must be at least equal to the base price ₹" + auction.getBasePrice());
 	    }
 
-	    Optional<Bid> currentHighest = bidDao.findHighestBidByAuctionId(dto.getAuctionId());
+	    // 4) Check last bid by same user for this auction (prevent same-amount repeat)
+	    Optional<Bid> lastUserBidOpt = bidDao.findTopByAuction_AuctionIdAndBidder_UserIdOrderByCreatedAtDesc(
+	            auction.getAuctionId(),
+	            bidder.getUserId()
+	    );
 
-	    if (currentHighest.isPresent() && dto.getBidAmount().compareTo(currentHighest.get().getBidAmount()) <= 0) {
-	        throw new ApiException("Bid must be higher than current highest bid ₹" + currentHighest.get().getBidAmount());
+	    if (lastUserBidOpt.isPresent()) {
+	        Bid lastUserBid = lastUserBidOpt.get();
+	        if (Double.compare(lastUserBid.getBidAmount(), newBidAmount) == 0) {
+	            throw new ApiException("You cannot place the same bid amount twice in a row.");
+	        }
 	    }
 
-	    // Map DTO to Bid Entity using ModelMapper
+	    // 5) Fetch and lock current highest bid (if exists)
+	    Optional<Bid> currentHighestOpt = bidDao.findFirstByAuction_AuctionIdOrderByBidAmountDesc(auction.getAuctionId());
+
+	    if (currentHighestOpt.isPresent()) {
+	        Bid highest = currentHighestOpt.get();
+
+	        // If highest is by another user and newBid <= highest, reject
+	        boolean highestBySameUser = highest.getBidder() != null &&
+	                Objects.equals(highest.getBidder().getUserId(), dto.getUserId());
+
+	        if (!highestBySameUser && newBidAmount.compareTo(highest.getBidAmount()) <= 0) {
+	            throw new ApiException("Bid must be higher than current highest bid ₹" + highest.getBidAmount());
+	        }
+
+	        // If highestBySameUser but new amount is lower or equal, reject
+	        if (highestBySameUser && newBidAmount.compareTo(highest.getBidAmount()) <= 0) {
+	            throw new ApiException("You must bid higher than your previous highest bid.");
+	        }
+	    }
+
+	    // 6) Create and save new Bid row
 	    Bid bid = modelMapper.map(dto, Bid.class);
 	    bid.setAuction(auction);
 	    bid.setBidder(bidder);
+	    bid.setCreatedAt(LocalDateTime.now());
 
-	    Bid saved = bidDao.save(bid);
+	    Bid saved = bidDao.saveAndFlush(bid);
 
-	    // Map Entity to Response DTO using ModelMapper
+	    // 7) Build response
 	    BidRespDTO respDTO = modelMapper.map(saved, BidRespDTO.class);
 	    respDTO.setAuctionId(auction.getAuctionId());
 	    respDTO.setUserId(bidder.getUserId());
@@ -72,6 +106,45 @@ public class BidServiceImpl implements BidService{
 
 	    return respDTO;
 	}
+
+//	@Override
+//	public BidRespDTO placeBid(BidReqDTO dto) {
+//	    Auction auction = auctionDao.findById(dto.getAuctionId())
+//	            .orElseThrow(() -> new ApiException("Invalid Auction ID"));
+//
+//	    if (Boolean.TRUE.equals(auction.getIsClosed())) {
+//	        throw new ApiException("Auction is already closed.");
+//	    }
+//
+//	    User bidder = userDao.findById(dto.getUserId())
+//	            .orElseThrow(() -> new ApiException("Invalid User ID"));
+//
+//	    // 🔴 NEW: Enforce base price rule
+//	    if (dto.getBidAmount().compareTo(auction.getBasePrice()) < 0) {
+//	        throw new ApiException("Bid must be at least equal to the base price ₹" + auction.getBasePrice());
+//	    }
+//	    System.out.println("Placed Bid Called");
+//	    Optional<Bid> currentHighest = bidDao.findHighestBidByAuctionId(dto.getAuctionId());
+//
+//	    if (currentHighest.isPresent() && dto.getBidAmount().compareTo(currentHighest.get().getBidAmount()) <= 0) {
+//	        throw new ApiException("Bid must be higher than current highest bid ₹" + currentHighest.get().getBidAmount());
+//	    }
+//
+//	    // Map DTO to Bid Entity using ModelMapper
+//	    Bid bid = modelMapper.map(dto, Bid.class);
+//	    bid.setAuction(auction);
+//	    bid.setBidder(bidder);
+//
+//	    Bid saved = bidDao.save(bid);
+//
+//	    // Map Entity to Response DTO using ModelMapper
+//	    BidRespDTO respDTO = modelMapper.map(saved, BidRespDTO.class);
+//	    respDTO.setAuctionId(auction.getAuctionId());
+//	    respDTO.setUserId(bidder.getUserId());
+//	    respDTO.setUsername(bidder.getFullName());
+//
+//	    return respDTO;
+//	}
 	@Override
 	public BidRespDTO getHighestBid(Long auctionId) {
 	    // load auction (throws if invalid id)
