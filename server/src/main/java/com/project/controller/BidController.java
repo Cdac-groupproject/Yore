@@ -2,7 +2,6 @@ package com.project.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,9 +20,6 @@ import com.project.service.bids.BidService;
 public class BidController {
 	@Autowired
     private BidService bidService;
-	
-	@Autowired
-	private SimpMessagingTemplate messagingTemplate;
 	/*
 	 * REST API end point - desc -Place Bid 
 	 * URL
@@ -36,10 +32,6 @@ public class BidController {
 	@CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/place")
     public ResponseEntity<BidRespDTO> placeBid(@RequestBody BidReqDTO dto) {
-		BidRespDTO placedBid = bidService.placeBid(dto);
-		System.out.println(placedBid);
-		String destination = "/topic/bid-updates/" + placedBid.getAuctionId();
-		messagingTemplate.convertAndSend(destination, placedBid);
         return ResponseEntity.ok(bidService.placeBid(dto));
     }
     /*
