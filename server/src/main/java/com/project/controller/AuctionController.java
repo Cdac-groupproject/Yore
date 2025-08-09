@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.AddAuctionDTO;
 import com.project.dto.ApiResponse;
+import com.project.dto.AuctionCloseResponseDTO;
 import com.project.dto.AuctionRespDTO;
 import com.project.service.AuctionService;
 import com.project.service.AuctionServiceImpl;
@@ -108,9 +109,10 @@ public class AuctionController {
 	 * error resp - SC 404 + Apiresp (err mesg)
 	 */
 	@PutMapping("/close/{id}")
-    public ApiResponse closeAuction(@PathVariable Long id) {
-        return auctionService.closeAuction(id);
-    }
+	public ResponseEntity<AuctionCloseResponseDTO> closeAuction(@PathVariable Long id) {
+	    AuctionCloseResponseDTO response = auctionService.closeAuction(id);
+	    return ResponseEntity.ok(response);
+	}
 	
 	
 	/*

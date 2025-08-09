@@ -1,94 +1,255 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
-import image from "../../assets/Homepage/car.png";
+import { useParams } from "react-router-dom";
+import { getAuctionDetailsById, getHighestBid } from "../../api/api";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const fallbackImages = [
+  "/src/assets/Homepage/car.png",
+  "/src/assets/Homepage/list1.png",
+  "/src/assets/Homepage/list2.jpg",
+  "/src/assets/Homepage/list3.png",
+];
+
+const navButtonStyle = {
+  fontSize: '24px',
+  padding: '10px 20px',
+  cursor: 'pointer',
+  border: 'none',
+  backgroundColor: '#eee',
+  borderRadius: '8px',
+  boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+};
+const auctionCardStyle = {
+  width: 450,
+  background: "white",
+  padding: 20,
+  borderRadius: 8,
+};
+const inputStyle = {
+  width: "100%",
+  padding: "0.5rem",
+  borderRadius: 4,
+  border: "1px solid #ccc",
+};
+const textareaStyle = {
+  ...inputStyle,
+  resize: "none",
+  height: 60,
+};
+
 const AuctioneerOngoingPage = () => {
+  const { auctionId } = useParams();
+  const [auction, setAuction] = useState(null);
+  const [highestBid, setHighestBid] = useState(null);
+  const [highestBidder, setHighestBidder] = useState("Loading...");
+  const [loading, setLoading] = useState(true);
+  const [terminateLoading, setTerminateLoading] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
+  const [isClosed, setIsClosed] = useState(false);
+
+  // Winner info state
+  const [winnerName, setWinnerName] = useState("");
+  const [winningBidAmount, setWinningBidAmount] = useState("");
+  const [showWinner, setShowWinner] = useState(false);
+
+  // Fetch auction details once
+  useEffect(() => {
+    if (!auctionId) return;
+
+    const fetchAuction = async () => {
+      try {
+        const data = await getAuctionDetailsById(auctionId);
+        setAuction(data);
+        setIsClosed(data.isClosed); // Track closed state
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+        console.error(err);
+      }
+    };
+
+    fetchAuction();
+  }, [auctionId]);
+
+  // Poll highest bid every 5 seconds, but stop if auction is closed
+  useEffect(() => {
+    if (!auctionId || isClosed) return;
+
+    const fetchHighest = async () => {
+      try {
+        const data = await getHighestBid(auctionId);
+        setHighestBid(data.bidAmount || auction?.basePrice || 0);
+        setHighestBidder(data.bidderName || "No bids yet");
+      } catch (err) {
+        console.error("Error fetching highest bid", err);
+      }
+    };
+
+    fetchHighest();
+    const interval = setInterval(fetchHighest, 5000);
+
+    return () => clearInterval(interval);
+  }, [auctionId, auction?.basePrice, isClosed]);
+
+  // Terminate auction handler
+  const terminateAuction = async () => {
+    if (!auctionId) return;
+    setTerminateLoading(true);
+    try {
+      const token = localStorage.getItem("token"); 
+      const result = await axios.put(
+        `http://localhost:8080/auctioneer/auctions/close/${auctionId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Check for "already closed" in response
+      if (
+        result.data.message &&
+        result.data.message.toLowerCase().includes("already closed")
+      ) {
+        toast.error("Auction already closed");
+      } else {
+        setWinnerName(result.data.winnerName || "No winner");
+        setWinningBidAmount(result.data.winningBidAmount != null ? result.data.winningBidAmount : "--");
+        setShowWinner(true);
+        setIsClosed(true);
+        toast.success("Auction terminated successfully");
+      }
+      setTerminateLoading(false);
+    } catch (err) {
+      // Show error from backend if available
+      if (
+        err.response &&
+        err.response.data &&
+        err.response.data.message &&
+        err.response.data.message.toLowerCase().includes("already closed")
+      ) {
+        toast.error("Auction already closed");
+      } else {
+        toast.error("Failed to terminate auction");
+      }
+      setTerminateLoading(false);
+    }
+  };
+
+  const getImages = () => {
+    return auction?.productImages?.length ? auction.productImages : fallbackImages;
+  };
+
+  const handlePrev = () => {
+    setCurrentImage((prev) => (prev === 0 ? getImages().length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentImage((prev) => (prev + 1) % getImages().length);
+  };
+
+  if (loading || !auction) {
+    return (
+      <>
+        <Navbar />
+        <div style={{ padding: 20 }}>Loading auction details...</div>
+      </>
+    );
+  }
+
   return (
     <>
+      <ToastContainer />
       <Navbar />
-      <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 font-body">
-        {/* Image Section */}
-        <div className="w-full md:w-1/2 p-4 flex justify-center bg-white">
-          <div className="relative w-full h-[400px] md:h-[600px] overflow-hidden rounded-lg shadow-xl transition-transform duration-300 hover:scale-[1.02]">
-            <img
-              src={image}
-              alt="Auction Item"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-              <span className="inline-block bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                Active Auction
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Auction Details Section */}
-        <div className="w-full md:w-1/2 p-6 md:p-10 bg-white shadow-lg">
-          <div className="space-y-6">
-            {/* Description */}
-            <div className="space-y-2">
-              <label className="block text-lg font-medium text-gray-700">
-                Description
-              </label>
-              <textarea
-                readOnly
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                placeholder="Enter item description"
-                rows="3"
-              />
-            </div>
-
-            {/* Base Price */}
-            <div className="space-y-2">
-              <label className="block text-lg font-medium text-gray-700">
-                Base Price:
-              </label>
-              <div className="flex items-center bg-gray-100 p-3 rounded-lg">
-                <span className="text-xl font-semibold">$120,000</span>
-              </div>
-            </div>
-
-            {/* Current Price */}
-            <div className="space-y-2">
-              <label className="block text-lg font-medium text-gray-700">
-                Current Price:
-              </label>
-              <div className="flex items-center bg-primary-50 p-3 rounded-lg border-l-4 border-primary-500">
-                <span className="text-xl font-semibold text-primary-700">
-                  $145,500
-                </span>
-              </div>
-            </div>
-
-            {/* Highest Bidder */}
-            <div className="space-y-2">
-              <label className="block text-lg font-medium text-gray-700">
-                Highest Bidder:
-              </label>
-              <div className="flex items-center bg-gray-100 p-3 rounded-lg">
-                <div className="w-10 h-10 rounded-full bg-primary-200 flex items-center justify-center mr-3"></div>
-                <span className="text-xl font-semibold">John Doe</span>
-              </div>
-            </div>
-
-            {/* for bidder's pov to bid the amount. Add "items-center" to image section div to make it look good */}
-            {/* <div className="space-y-2">
-            <label className="block text-lg font-medium text-gray-700">Bid Price</label>
-            <div className="flex items-center bg-gray-100 p-3 rounded-lg">
-                <div className="w-10 h-10 rounded-full bg-primary-200 flex items-center justify-center mr-3">
+      <div style={{ display: "flex", height: "100vh", backgroundColor: "#f5f0e1" }}>
+        <div style={{ flex: 1, padding: "1.5rem" }}>
+          <div style={{ display: "flex", gap: "2rem" }}>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: 650,
+                  height: 450,
+                  border: "1px solid #ccc",
+                  borderRadius: 8,
+                  background: "#fafafa",
+                  position: "relative",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+                  <button onClick={handlePrev} style={navButtonStyle}>{"<"}</button>
+                  <img
+                    src={
+                      getImages()[currentImage]?.startsWith("http")
+                        ? getImages()[currentImage]
+                        : `http://localhost:8080/${getImages()[currentImage]}`
+                    }
+                    alt="Product"
+                    style={{ width: 550, height: 400, objectFit: "contain" }}
+                  />
+                  <button onClick={handleNext} style={navButtonStyle}>{">"}</button>
                 </div>
-                <input
-                type="text"
-                className="text-xl font-semibold bg-transparent focus:outline-none focus:ring-0"
-                />
+              </div>
             </div>
-        </div> */}
 
-            {/* Terminate Auction Button */}
-            <button className="mt-8 w-full bg-red-600 hover:bg-red-700 text-white py-4 px-6 rounded-lg font-bold shadow-lg transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl flex items-center justify-center">
-              <span className="material-symbols-outlined mr-2"></span> Terminate
-              Auction
-            </button>
+            <div style={auctionCardStyle}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <input type="text" value={auction.productName} readOnly style={inputStyle} />
+                <textarea value={auction.description} readOnly style={textareaStyle} />
+
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <div style={{ flex: 1 }}>
+                    <label>Base Price</label>
+                    <input value={`$${auction.basePrice}`} readOnly style={inputStyle} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label>Highest Bid</label>
+                    <input
+                      value={`$${highestBid}`}
+                      readOnly
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <button
+                    onClick={terminateAuction}
+                    disabled={terminateLoading}
+                    style={{
+                      flex: 1,
+                      padding: "0.5rem",
+                      borderRadius: 4,
+                      border: "1px solid #888",
+                      background: "#f44336",
+                      color: "white",
+                      cursor: "pointer",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {terminateLoading ? "Terminating..." : "Terminate Auction"}
+                  </button>
+                </div>
+
+                {/* Winner info, only visible after termination */}
+                {showWinner && (
+                  <div style={{ marginTop: 20, padding: 10, background: "#f9f9f9", borderRadius: 6 }}>
+                    <div>
+                      <label>Winner Name</label>
+                      <input value={winnerName} readOnly style={inputStyle} />
+                    </div>
+                    <div style={{ marginTop: 10 }}>
+                      <label>Winning Bid Amount</label>
+                      <input value={`$${winningBidAmount}`} readOnly style={inputStyle} />
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ marginTop: 12, color: "#666" }}>
+                  <small>Viewing Auction ID: {auctionId}</small>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
