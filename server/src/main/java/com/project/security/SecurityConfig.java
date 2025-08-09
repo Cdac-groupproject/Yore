@@ -63,21 +63,23 @@ public class SecurityConfig {
 	    http
 	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 	        .csrf(csrf -> csrf.disable())
-	        .authorizeHttpRequests(requests -> requests
+	        .authorizeHttpRequests(auth -> auth
 	            .requestMatchers(
 	                "/signin", 
 	                "/signup",
 	                "/verifyuser",
 	                "/edit-profile",
 	                "/get-user",
+	                "/uploads/images/**",   // allow static images
+	                "/css/**",      // allow CSS
+	                "/js/**",       // allow JavaScript
+	                "/assets/**",   // allow assets
 	                "/v3/api-docs/**", 
 	                "/swagger-ui/**", 
 	                "/swagger-ui.html"
 	            ).permitAll()
 	            .requestMatchers("/manager/auctioneer/**").hasAnyRole("MANAGER","AUCTIONEER")
-//	            .requestMatchers("/bidder/**").hasRole("BIDDER")
 	            .requestMatchers("/manager/**").hasRole("MANAGER")
-//	            .requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")
 	            .requestMatchers("/auctioneer/**").hasAnyRole("AUCTIONEER", "BIDDER")
 	            .requestMatchers("/bidder/**").hasAnyRole("BIDDER", "AUCTIONEER")
 	            .anyRequest().authenticated()
@@ -88,6 +90,7 @@ public class SecurityConfig {
 
 	    return http.build();
 	}
+
 
 //	@Bean
 //	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception{

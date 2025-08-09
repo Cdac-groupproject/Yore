@@ -57,7 +57,7 @@ function Navbar() {
           >
             On-going Auctions
           </Link>
-          <Link
+          {/*<Link
             to="/upcoming"
             className={
               isUpcoming
@@ -66,7 +66,7 @@ function Navbar() {
             }
           >
             Upcoming Auctions
-          </Link>
+          </Link>*/}
 
           <Link
             to="/contact"
