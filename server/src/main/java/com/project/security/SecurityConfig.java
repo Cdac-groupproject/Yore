@@ -45,7 +45,8 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration config = new CorsConfiguration();
-	    config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); 
+	    config.setAllowedOrigins(Arrays.asList("http://localhost:5173","http://127.0.0.1:5500")); 
+//	    config.setAllowedOrigins(Arrays.asList("*"));
 	    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 	    config.setAllowedHeaders(Arrays.asList("*"));
 	    config.setAllowCredentials(true); // Allow cookies
@@ -73,6 +74,7 @@ public class SecurityConfig {
 	                "/swagger-ui/**", 
 	                "/swagger-ui.html"
 	            ).permitAll()
+	            .requestMatchers("/manager/auctioneer/**").hasAnyRole("MANAGER","AUCTIONEER")
 	            .requestMatchers("/bidder/**").hasRole("BIDDER")
 	            .requestMatchers("/manager/**").hasRole("MANAGER")
 	            .requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")

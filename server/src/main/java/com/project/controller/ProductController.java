@@ -30,7 +30,6 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/products")
 @CrossOrigin(origins = "http://localhost:3000")
 @AllArgsConstructor
 @Validated
@@ -47,7 +46,7 @@ public class ProductController {
      * - Payload: JSON representation of ProductDTO
      * - Response: SC 201 (CREATED) + created product DTO
      */
-	@PostMapping("/manager/create")
+	@PostMapping("/manager/products/create")
     @Operation(description = "Add new product")
     public ResponseEntity<?> addNewProduct(@ModelAttribute ProductPostDto productPostDto) throws IOException{
     	return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(productPostDto));
@@ -61,7 +60,7 @@ public class ProductController {
      * - Payload: none
      * - Response: SC 200 + List<ProductDTO> OR SC 204 if empty
      */
-    @GetMapping
+    @GetMapping("/manager/products")
     @Operation(description = "List All Products")
     public ResponseEntity<List<ProductGetDto>> getAllProducts() {
         List<ProductGetDto> products = productService.getAllProducts();
@@ -79,7 +78,7 @@ public class ProductController {
      * - Payload: none
      * - Response: SC 200 + ProductDTO OR SC 404 if not found
      */
-    @GetMapping("/{id}")
+    @GetMapping("/products/{id}")
     @Operation(description = "Get Product by ID")
     public ResponseEntity<ProductGetDto> getProduct(@PathVariable @Min(1) Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
@@ -93,7 +92,7 @@ public class ProductController {
      * - Payload: JSON representation of ProductDTO
      * - Response: SC 200 + Updated ProductDTO
      */
-    @PutMapping("/{id}")
+    @PutMapping("/products/{id}")
     @Operation(description = "Update Product")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductDTO dto) {
         return ResponseEntity.ok(productService.updateProduct(id, dto));
@@ -107,21 +106,21 @@ public class ProductController {
      * - Payload: none
      * - Response: SC 204 (NO_CONTENT)
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/manager/products/{id}")
     @Operation(description = "Delete Product")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
     
-    @PutMapping("away-for-auction/{id}")
+    @PutMapping("/manager/away-for-auction/{id}")
     @Operation(description = "make a product to go for auction")
     public ResponseEntity<String> markProductForAuction(@PathVariable("id") Long productId){
     	 productService.markProductAsAuctioned(productId);
          return ResponseEntity.ok("Product marked as auctioned for today.");
     }
     
-    @GetMapping("/auctioneer/auction-products")
+    @GetMapping("/manager/auctioneer/auction-products")
     @Operation(description = "list of all products ready for auction for today")
     public ResponseEntity<List<ProductGetDto>> getAllProductsMarkedForAuction(){
     	List<ProductGetDto> products = productService.getAllProductsMarkedForAuction();
