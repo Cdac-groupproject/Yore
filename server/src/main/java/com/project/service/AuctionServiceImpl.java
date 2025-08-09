@@ -23,6 +23,7 @@ import com.project.dao.product.ProductDao;
 import com.project.dao.product.ProductImageDao;
 import com.project.dto.AddAuctionDTO;
 import com.project.dto.ApiResponse;
+import com.project.dto.AuctionCloseResponseDTO;
 import com.project.dto.AuctionRespDTO;
 import com.project.entity.Auction;
 import com.project.entity.Bid;
@@ -252,9 +253,8 @@ public class AuctionServiceImpl implements AuctionService {
 
         return dto;
     }
-
     @Override
-    public ApiResponse closeAuction(Long id) {
+    public AuctionCloseResponseDTO closeAuction(Long id) {
         Auction auction = auctionDao.findById(id)
                 .orElseThrow(() -> new ApiException("Auction not found"));
 
@@ -264,12 +264,18 @@ public class AuctionServiceImpl implements AuctionService {
 
         Optional<Bid> highestBidOpt = bidDao.findTopByAuctionOrderByBidAmountDesc(auction);
 
+        String winnerName = null;
+        Double winningBidAmount = null;
+
         if (highestBidOpt.isPresent()) {
             Bid highestBid = highestBidOpt.get();
 
             // Set winner
             User winner = highestBid.getBidder();
             auction.setWinner(winner);
+
+            winnerName = winner != null ? winner.getFullName() : "Unknown";
+            winningBidAmount = highestBid.getBidAmount() != null ? highestBid.getBidAmount() : 0.0;
 
             // Mark product as sold
             Product product = auction.getProduct();
@@ -290,8 +296,48 @@ public class AuctionServiceImpl implements AuctionService {
                         b.getBidAmount() != null ? b.getBidAmount() : 0.0))
                 .orElse("Auction closed successfully. No bids were placed.");
 
-        return new ApiResponse(message);
+        return new AuctionCloseResponseDTO(winnerName, winningBidAmount, message);
     }
+
+//    @Override
+//    public ApiResponse closeAuction(Long id) {
+//        Auction auction = auctionDao.findById(id)
+//                .orElseThrow(() -> new ApiException("Auction not found"));
+//
+//        if (Boolean.TRUE.equals(auction.getIsClosed())) {
+//            throw new ApiException("Auction already closed");
+//        }
+//
+//        Optional<Bid> highestBidOpt = bidDao.findTopByAuctionOrderByBidAmountDesc(auction);
+//
+//        if (highestBidOpt.isPresent()) {
+//            Bid highestBid = highestBidOpt.get();
+//
+//            // Set winner
+//            User winner = highestBid.getBidder();
+//            auction.setWinner(winner);
+//
+//            // Mark product as sold
+//            Product product = auction.getProduct();
+//            if (product != null) {
+//                product.setSold(true);
+//                productDao.save(product);
+//            }
+//        }
+//
+//        // Close the auction
+//        auction.setIsClosed(true);
+//        auction.setUpdatedAt(LocalDateTime.now());
+//        auctionDao.save(auction);
+//
+//        String message = highestBidOpt
+//                .map(b -> String.format("Auction closed successfully.\nWinner: %s\nWinning Bid: ₹%.2f",
+//                        b.getBidder() != null ? b.getBidder().getFullName() : "Unknown",
+//                        b.getBidAmount() != null ? b.getBidAmount() : 0.0))
+//                .orElse("Auction closed successfully. No bids were placed.");
+//
+//        return new ApiResponse(message);
+//    }
 
     @Override
     @Transactional(readOnly = true)

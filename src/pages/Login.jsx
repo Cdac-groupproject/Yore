@@ -47,6 +47,7 @@ function Login() {
         phoneNo: user.phoneNo,
         email: user.email,
         age: user.age,
+        role: user.role,
       };
 
       sessionStorage.setItem("user", JSON.stringify(userDetails));

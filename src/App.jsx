@@ -67,7 +67,7 @@ function App() {
           path="/auctioneer/summary"
           element={<AuctioneerSessionSummary />}
         />
-        <Route path="/auctioneer/ongoing" element={<AuctioneerOngoingPage />} />
+        <Route path="/auctioneer/ongoing/:auctionId" element={<AuctioneerOngoingPage />} />
 
         {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/contact-us" element={<ContactUs />} />
