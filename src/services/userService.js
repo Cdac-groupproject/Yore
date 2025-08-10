@@ -28,8 +28,6 @@ export const getUserById = async (userId) => {
     },
   });
 };
-<<<<<<< Updated upstream
-=======
 
 export const getGenders = async () => {
   return await myAxios.get("/api/genders");
@@ -38,4 +36,3 @@ export const getGenders = async () => {
 export const getRoles = async () => {
   return await myAxios.get("/api/roles");
 };
->>>>>>> Stashed changes

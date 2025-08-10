@@ -22,8 +22,6 @@ public class UserController {
         User createdUser = userService.createUser(userRequestDTO);
         return ResponseEntity.ok("User created with email: " + createdUser.getEmail());
     }
-<<<<<<< Updated upstream
-=======
 
     @GetMapping("/auctioneer/auctioneers")
     public ResponseEntity<List<AuctioneerDto>> getAuctioneers() {
@@ -44,5 +42,4 @@ public class UserController {
         userService.deleteUserById(id);
         return ResponseEntity.ok("User deleted with id: " + id);
     }
->>>>>>> Stashed changes
 }
