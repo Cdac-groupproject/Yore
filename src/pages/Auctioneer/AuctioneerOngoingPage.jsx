@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { useParams } from "react-router-dom";
 import { getAuctionDetailsById, getHighestBid } from "../../api/api";
@@ -55,6 +55,8 @@ const AuctioneerOngoingPage = () => {
   const [winningBidAmount, setWinningBidAmount] = useState("");
   const [showWinner, setShowWinner] = useState(false);
 
+  const intervalRef = useRef();
+
   // Fetch auction details once
   useEffect(() => {
     if (!auctionId) return;
@@ -89,48 +91,49 @@ const AuctioneerOngoingPage = () => {
     };
 
     fetchHighest();
-    const interval = setInterval(fetchHighest, 5000);
+    intervalRef.current = setInterval(fetchHighest, 5000);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [auctionId, auction?.basePrice, isClosed]);
 
   // Terminate auction handler
   const terminateAuction = async () => {
     if (!auctionId) return;
     setTerminateLoading(true);
+
     try {
-      const token = localStorage.getItem("token"); 
+      const token = localStorage.getItem("token");
       const result = await axios.put(
         `http://localhost:8080/auctioneer/auctions/close/${auctionId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Check for "already closed" in response
-      if (
-        result.data.message &&
-        result.data.message.toLowerCase().includes("already closed")
-      ) {
+
+      const { winnerName, winningBidAmount, message } = result.data;
+
+      if (message?.toLowerCase().includes("already closed")) {
         toast.error("Auction already closed");
       } else {
-        setWinnerName(result.data.winnerName || "No winner");
-        setWinningBidAmount(result.data.winningBidAmount != null ? result.data.winningBidAmount : "--");
+        setWinnerName(winnerName || "No winner");
+        setWinningBidAmount(
+          winningBidAmount != null ? winningBidAmount : "--"
+        );
         setShowWinner(true);
-        setIsClosed(true);
-        toast.success("Auction terminated successfully");
+        toast.success(message || "Auction terminated successfully");
       }
-      setTerminateLoading(false);
+      setIsClosed(true); // Set isClosed immediately
+      if (intervalRef.current) clearInterval(intervalRef.current); // Stop polling immediately
     } catch (err) {
-      // Show error from backend if available
       if (
-        err.response &&
-        err.response.data &&
-        err.response.data.message &&
-        err.response.data.message.toLowerCase().includes("already closed")
+        err.response?.data?.message?.toLowerCase().includes("already closed")
       ) {
         toast.error("Auction already closed");
       } else {
         toast.error("Failed to terminate auction");
       }
+    } finally {
       setTerminateLoading(false);
     }
   };
@@ -156,6 +159,9 @@ const AuctioneerOngoingPage = () => {
     );
   }
 
+  const images = getImages();
+  const safeImages = images && images.length ? images : fallbackImages;
+
   return (
     <>
       <ToastContainer />
@@ -180,9 +186,11 @@ const AuctioneerOngoingPage = () => {
                   <button onClick={handlePrev} style={navButtonStyle}>{"<"}</button>
                   <img
                     src={
-                      getImages()[currentImage]?.startsWith("http")
-                        ? getImages()[currentImage]
-                        : `http://localhost:8080/${getImages()[currentImage]}`
+                      safeImages[currentImage]?.startsWith("http")
+                        ? safeImages[currentImage]
+                        : safeImages[currentImage]?.startsWith("/src/assets/")
+                          ? safeImages[currentImage] // Use as-is for local assets
+                          : `http://localhost:8080/${safeImages[currentImage]}` // Prepend for backend images
                     }
                     alt="Product"
                     style={{ width: 550, height: 400, objectFit: "contain" }}
@@ -200,12 +208,12 @@ const AuctioneerOngoingPage = () => {
                 <div style={{ display: "flex", gap: "1rem" }}>
                   <div style={{ flex: 1 }}>
                     <label>Base Price</label>
-                    <input value={`$${auction.basePrice}`} readOnly style={inputStyle} />
+                    <input value={`₹ ${auction.basePrice}`} readOnly style={inputStyle} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <label>Highest Bid</label>
                     <input
-                      value={`$${highestBid}`}
+                      value={`₹ ${highestBid}`}
                       readOnly
                       style={inputStyle}
                     />
