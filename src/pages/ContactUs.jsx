@@ -6,7 +6,9 @@ import Navbar from "../components/Navbar";
 
 const ContactUs = () => {
   const navigate = useNavigate();
-
+  const storedUser = JSON.parse(sessionStorage.getItem("user"));
+  const email = storedUser?.email;
+  const userName = storedUser?.fullName;
   useEffect(() => {
     const loggeInInfo = sessionStorage.getItem("isLoggedIn");
     if (!loggeInInfo) {
@@ -50,6 +52,7 @@ const ContactUs = () => {
                 required
                 className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
                 placeholder="Jane Doe"
+                value={userName}
               />
             </div>
             <div>
@@ -61,6 +64,7 @@ const ContactUs = () => {
                 required
                 className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
                 placeholder="you@email.com"
+                value={email}
               />
             </div>
             <div>
