@@ -1,206 +1,248 @@
 import React, { useState, useEffect } from "react";
-import logo from "../assets/newLogo.png";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
-
-// Mock data for roles and genders (replace with your API call if needed)
-const mockRoles = [
-  { id: 1, name: "Admin" },
-  { id: 2, name: "Auctioneer" },
-  { id: 3, name: "Support" },
-];
-
-const mockGenders = [
-  { id: 1, name: "Male" },
-  { id: 2, name: "Female" },
-  { id: 3, name: "Other" },
-];
+import { getRoles, getGenders } from "../services/userService";
+import { myAxios } from "../services/config";
+import logo from "../assets/newLogo.png";  // import your logo image
 
 export default function AddEmployee() {
-  const [fullName, setFullName] = useState("");
-  const [phoneNo, setPhoneNo] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [age, setAge] = useState("");
-  const [genderId, setGenderId] = useState("");
-  const [roleId, setRoleId] = useState("");
-  const [roles, setRoles] = useState([]);
-  const [genders, setGenders] = useState([]);
-  const [submitted, setSubmitted] = useState(false);
-
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loggedInInfo = sessionStorage.getItem("isLoggedIn");
-    if (!loggedInInfo) {
-      navigate("/login");
-    }
-  }, [navigate]);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    password: "",
+    age: "",
+    gender: "", // Will store genderId as string
+    role: "",   // Will store roleId as string
+  });
+
+  const [roles, setRoles] = useState([]);
+  const [genders, setGenders] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   useEffect(() => {
-    setRoles(mockRoles);
-    setGenders(mockGenders);
+    // Fetch genders
+    getGenders()
+      .then((res) => setGenders(res.data))
+      .catch((err) => {
+        console.error("Error fetching genders:", err);
+      });
+
+    // Fetch roles
+    getRoles()
+      .then((res) => setRoles(res.data))
+      .catch((err) => {
+        console.error("Error fetching roles:", err);
+      });
+
+    fetchUsers(); // Fetch user list on mount
   }, []);
 
-  function handleSubmit(e) {
+  const fetchUsers = () => {
+    setLoadingUsers(true);
+    myAxios.get("/api/users/all")
+      .then(res => {
+        setUsers(res.data);
+      })
+      .catch(err => {
+        console.error("Error fetching users:", err);
+      })
+      .finally(() => setLoadingUsers(false));
+  };
+
+  const handleDeleteUser = (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+    myAxios.delete(`/api/users/${id}`)
+      .then(() => {
+        alert("User deleted successfully");
+        fetchUsers(); // refresh list
+      })
+      .catch((err) => {
+        console.error("Failed to delete user:", err);
+        alert("Failed to delete user");
+      });
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const employeeData = {
-      fullName,
-      phoneNo,
-      email,
-      password,
-      age: Number(age), // convert to number
-      genderId: Number(genderId),
-      roleId: Number(roleId),
+    const payload = {
+      fullName: formData.fullName,
+      phoneNo: formData.phone,
+      email: formData.email,
+      password: formData.password,
+      age: parseInt(formData.age, 10),
+      genderId: parseInt(formData.gender, 10),
+      roleId: parseInt(formData.role, 10),
     };
 
-    console.log("Submitting employee data:", employeeData);
-
-    // TODO: Replace with your API call here to submit employeeData
-    // fetch('/api/employees', { method: 'POST', body: JSON.stringify(employeeData), headers: { 'Content-Type': 'application/json' } })
-
-    setSubmitted(true);
-
-    // Clear form
-    setFullName("");
-    setPhoneNo("");
-    setEmail("");
-    setPassword("");
-    setAge("");
-    setGenderId("");
-    setRoleId("");
-  }
+    try {
+      await myAxios.post("/api/users/manager/addEmployee", payload);
+      alert("Employee added successfully!");
+      setFormData({
+        fullName: "",
+        phone: "",
+        email: "",
+        password: "",
+        age: "",
+        gender: "",
+        role: "",
+      });
+      fetchUsers(); // refresh user list after adding
+      //navigate("/employees"); // if you want to redirect instead
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      alert("Failed to add employee. Please try again.");
+    }
+  };
 
   return (
     <>
       <Navbar />
-      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-[#ece6da] to-[#d1c7b7] py-16 px-4">
-        <div className="bg-white/90 backdrop-blur-lg border border-[#c4b7a6] rounded-3xl shadow-2xl flex flex-col items-center max-w-xl w-full p-8 md:p-12">
+      <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white via-[#ece6da] to-[#d1c7b7] py-16 px-4">
+        <div className="bg-white/90 backdrop-blur-lg border border-[#c4b7a6] rounded-3xl shadow-2xl flex flex-col items-center max-w-lg w-full p-8 md:p-12 mb-10">
           <img
             src={logo}
-            alt="YORE logo"
-            className="h-20 w-auto mb-4 opacity-90 drop-shadow"
+            alt="Logo"
+            className="h-20 w-auto mb-6 opacity-90 drop-shadow"
             style={{ filter: "drop-shadow(0 6px 8px #c4b7a6cc)" }}
           />
-          <h1 className="font-playfair text-3xl text-[#332214] font-extrabold mb-2 tracking-tight text-center">
-            Add Employee
-          </h1>
-          <p className="mb-8 text-[#604a2f] text-center">
-            Register a new team member below—select their role and enter their info.
-          </p>
-          {submitted && (
-            <div className="w-full mb-4 text-green-700 text-center bg-green-100 py-2 rounded shadow">
-              Employee added successfully!
-            </div>
-          )}
-          <form className="space-y-5 w-full" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">Full Name</label>
-              <input
-                type="text"
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
-                value={fullName}
-                placeholder="e.g., Shantaram"
-                onChange={(e) => setFullName(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">Phone No</label>
-              <input
-                type="text"
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
-                value={phoneNo}
-                placeholder="e.g., 2323232323"
-                onChange={(e) => setPhoneNo(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">Email</label>
-              <input
-                type="email"
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
-                value={email}
-                placeholder="e.g., shanta@gmail.com"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">Password</label>
-              <input
-                type="password"
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
-                value={password}
-                placeholder="Enter password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">Age</label>
-              <input
-                type="number"
-                required
-                min={0}
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
-                value={age}
-                placeholder="e.g., 25"
-                onChange={(e) => setAge(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">Gender</label>
-              <select
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16] cursor-pointer"
-                value={genderId}
-                onChange={(e) => setGenderId(e.target.value)}
-              >
-                <option value="" disabled>
-                  Select gender
+          <h2 className="text-2xl font-bold mb-6 text-[#332214]">Add Employee</h2>
+          <form onSubmit={handleSubmit} className="space-y-4 w-full">
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Full Name"
+              value={formData.fullName}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="number"
+              name="age"
+              placeholder="Age"
+              value={formData.age}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="">Select Gender</option>
+              {genders.map((g) => (
+                <option key={g.genderId} value={g.genderId}>
+                  {g.genderName}
                 </option>
-                {genders.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    {g.name.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">Role</label>
-              <select
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16] cursor-pointer"
-                value={roleId}
-                onChange={(e) => setRoleId(e.target.value)}
-              >
-                <option value="" disabled>
-                  Select role
+              ))}
+            </select>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="">Select Role</option>
+              {roles.map((r) => (
+                <option key={r.roleId} value={r.roleId}>
+                  {r.roleName}
                 </option>
-                {roles.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.name.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>
-
+              ))}
+            </select>
             <button
               type="submit"
-              className="w-full py-3 rounded-lg bg-gradient-to-r from-[#b59f77] via-[#e9dfc4] to-[#827058] text-white font-bold text-xl shadow-lg hover:scale-105 transition-transform"
+              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
             >
               Add Employee
             </button>
           </form>
+        </div>
+
+        {/* User List */}
+        <div className="max-w-4xl w-full bg-white p-6 rounded-lg shadow-lg border border-gray-300">
+          <h3 className="text-xl font-semibold mb-4 text-[#332214]">Employees List</h3>
+
+          {loadingUsers ? (
+            <p>Loading users...</p>
+          ) : users.length === 0 ? (
+            <p>No employees found.</p>
+          ) : (
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-gray-300">
+                  <th className="py-2 px-4">Name</th>
+                  <th className="py-2 px-4">Email</th>
+                  <th className="py-2 px-4">Phone</th>
+                  <th className="py-2 px-4">Age</th>
+                  <th className="py-2 px-4">Role</th>
+                  <th className="py-2 px-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.userId} className="border-b border-gray-200 hover:bg-gray-100">
+                    <td className="py-2 px-4">{user.fullName}</td>
+                    <td className="py-2 px-4">{user.email}</td>
+                    <td className="py-2 px-4">{user.phoneNo}</td>
+                    <td className="py-2 px-4">{user.age}</td>
+                    <td className="py-2 px-4">{user.role?.roleName || "N/A"}</td>
+                    <td className="py-2 px-4">
+                      <button
+                        onClick={() => handleDeleteUser(user.userId)}
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </section>
     </>

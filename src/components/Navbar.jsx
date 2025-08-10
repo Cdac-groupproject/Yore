@@ -79,6 +79,7 @@ function Navbar() {
             Contact Us
           </Link>
 
+          {(roleName === "MANAGER") && (
           <Link
             to="/add-employee"
             className={
@@ -89,6 +90,7 @@ function Navbar() {
           >
             Add Employee
           </Link>
+          )}
         </div>
 
         {/* Search + Auth Buttons */}

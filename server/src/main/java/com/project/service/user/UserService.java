@@ -10,4 +10,13 @@ public interface UserService {
 	User getUserByCredentials(Credentials cr);
 	
 	User createUser(UserRequestDTO userDto);
+<<<<<<< Updated upstream
+=======
+
+	List<AuctioneerDto> getAllAuctioneers();
+	
+	List<User> getAllUsers();
+	
+    void deleteUserById(Long id);
+>>>>>>> Stashed changes
 }
