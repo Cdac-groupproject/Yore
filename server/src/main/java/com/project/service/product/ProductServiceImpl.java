@@ -240,7 +240,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productDao.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         if (auctionDao.existsByProduct(product)) {
-            throw new IllegalStateException("Cannot delete product as it is referenced in auctions.");
+            throw new ApiException("Cannot delete product as it is referenced in auctions.");
         }
         productDao.delete(product);
     }
