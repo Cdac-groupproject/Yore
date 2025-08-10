@@ -137,16 +137,7 @@ function Navbar() {
             Upcoming Auctions
           </Link>*/}
 
-          <Link
-            to="/contact"
-            className={
-              isContactUs
-                ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
-                : "text-gray-700 hover:text-yellow-700"
-            }
-          >
-            Contact Us
-          </Link>
+          
 
           {(roleName === "MANAGER") && (
           <Link
@@ -160,6 +151,18 @@ function Navbar() {
             Add Employee
           </Link>
           )}
+        {/* {(roleName === "BIDDER" || roleName === "") && ( */}
+          <Link
+            to="/contact"
+            className={
+              isContactUs
+                ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                : "text-gray-700 hover:text-yellow-700"
+            }
+          >
+            Contact Us
+          </Link>
+          {/* )} */}
         </div>
 
         {/* Search + Auth Buttons */}

@@ -76,7 +76,11 @@ public class SecurityConfig {
 	                "/assets/**",   // allow assets
 	                "/v3/api-docs/**", 
 	                "/swagger-ui/**", 
-	                "/swagger-ui.html"
+	                "/swagger-ui.html",
+	                "/v3/api-docs",
+	                "/webjars/**"
+	                
+	                
 	            ).permitAll()
 	            .requestMatchers("/manager/auctioneer/**").hasAnyRole("MANAGER","AUCTIONEER")
 	            .requestMatchers("/manager/**").hasRole("MANAGER")

@@ -126,7 +126,7 @@ const images = getImages();
     <>
       <Toaster />
       <Navbar />
-      <div style={{ display: "flex", height: "100vh", backgroundColor: "#f5f0e1" }}>
+      <div style={{ display: "flex", height: "auto", backgroundColor: "#f5f0e1" }}>
         <div style={{ flex: 1, padding: "1.5rem" }}>
           <div style={{ display: "flex", gap: "2rem" }}>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>

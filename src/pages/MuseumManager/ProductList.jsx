@@ -98,10 +98,18 @@ const ProductList = () => {
       await axios.delete(`http://localhost:8080/manager/products/${productId}`, authConfig);
       toast.success("Product deleted successfully.");
       setProducts(products.filter(p => p.productId !== productId));
-    } catch (error) {
-      console.error("Failed to delete product:", error);
-      toast.error("Failed to delete product.");
-    } finally {
+    } 
+    catch (err) {
+          if (
+            err.response?.data?.message?.toLowerCase().includes("referenced in auctions")
+          ) {
+            toast.error("Product Present For Auction, Cannot Delete");
+          }
+        }
+    // catch (error) {
+    //   console.error("Failed to delete product:", error);
+    //   toast.error("Failed to delete product.");
+     finally {
       setActionLoadingId(null);
     }
   };
@@ -131,7 +139,7 @@ const ProductList = () => {
     return (
       <>
         <Navbar />
-        <div className="p-10 text-center text-gray-500">No products found.</div>
+        <div className="p-10 text-center text-gray-500 ">No products found.</div>
       </>
     );
   }
@@ -140,7 +148,9 @@ const ProductList = () => {
     <>
       <ToastContainer position="top-right" autoClose={3000} />
       <Navbar />
-      <div className="max-w-7xl mx-auto p-6 bg-[#fdf6ec] min-h-screen">
+      <div className="bg-gradient-to-br from-white via-[#ece6da] to-[#d1c7b7]">
+      <div className="flex items-center justify-center"></div>
+      <div className="max-w-5xl  mx-auto p-6  shadow-lg rounded-lg mt-10 mb-10">
         <h1 className="text-3xl font-bold mb-8 text-center">Museum Product List</h1>
 
         <div className="flex flex-col gap-6">
@@ -174,6 +184,12 @@ const ProductList = () => {
                       </p>
                       <p>
                         <strong>Year Made:</strong> {product.yearMade || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Price:</strong> {product.price || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Sold:</strong> {product.sold ? "Yes" : "No"}
                       </p>
                       <p>
                         <strong>Country of Origin:</strong>{" "}
@@ -221,6 +237,7 @@ const ProductList = () => {
             );
           })}
         </div>
+      </div>
       </div>
     </>
   );
