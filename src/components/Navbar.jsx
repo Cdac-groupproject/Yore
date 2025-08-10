@@ -15,6 +15,7 @@ function Navbar() {
   const isOnGoing = location.pathname === "/ongoing";
   const isCreateAuction = location.pathname === "/create-auction";
   const isAuctionList = location.pathname === "/auction-list";
+  const isProductList = location.pathname === "/museummanager/productlist";
   const isUpcoming = location.pathname === "/upcoming";
   const isBidder = location.pathname === "/bidder";
   const isAddEmp = location.pathname === "/add-employee";
@@ -97,7 +98,18 @@ function Navbar() {
                 Auction Summary
               </Link>
             )}
-
+            {(roleName === "MANAGER") && (
+              <Link
+                to="/museummanager/productlist"
+                className={
+                  isProductList
+                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                    : "text-gray-700 hover:text-yellow-700"
+                }
+              >
+                Product List
+              </Link>
+            )}
 
 
 
