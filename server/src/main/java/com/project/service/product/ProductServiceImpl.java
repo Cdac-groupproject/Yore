@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.project.custom_exception.ApiException;
 import com.project.custom_exception.ResourceNotFoundException;
+import com.project.dao.AuctionDao;
 import com.project.dao.product.CountryRefDao;
 import com.project.dao.product.ProductCategoryDao;
 import com.project.dao.product.ProductDao;
@@ -62,10 +63,12 @@ public class ProductServiceImpl implements ProductService {
     private final CountryRefDao countryDao;
     private final ProductImageDao productImageDao;
     private final String uploadDir;
+    private final AuctionDao auctionDao;
     private final ModelMapper modelMapper;
 
     public ProductServiceImpl(
         ProductDao productDao,
+        AuctionDao auctionDao,
         ProductCategoryDao categoryDao,
         CountryRefDao countryDao,
         ProductImageDao productImageDao,
@@ -77,6 +80,8 @@ public class ProductServiceImpl implements ProductService {
         this.countryDao = countryDao;
         this.productImageDao = productImageDao;
         this.uploadDir = uploadDir;
+        
+        this.auctionDao=auctionDao;
         this.modelMapper = modelMapper;
     }
 
@@ -234,6 +239,9 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long productId) {
         Product product = productDao.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+        if (auctionDao.existsByProduct(product)) {
+            throw new IllegalStateException("Cannot delete product as it is referenced in auctions.");
+        }
         productDao.delete(product);
     }
 
