@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getRoles, getGenders } from "../services/userService";
 import { myAxios } from "../services/config";
-import logo from "../assets/newLogo.png";  // import your logo image
+import logo from "../assets/newLogo.png"; // import your logo image
 
 export default function AddEmployee() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -14,57 +15,55 @@ export default function AddEmployee() {
     email: "",
     password: "",
     age: "",
-    gender: "", // Will store genderId as string
-    role: "",   // Will store roleId as string
+    gender: "", // genderId as string
+    role: "",   // roleId as string
   });
 
   const [roles, setRoles] = useState([]);
   const [genders, setGenders] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [loadingUsers, setLoadingUsers] = useState(false);
+
+  // Edit mode state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingUserId, setEditingUserId] = useState(null);
 
   useEffect(() => {
-    // Fetch genders
     getGenders()
       .then((res) => setGenders(res.data))
-      .catch((err) => {
-        console.error("Error fetching genders:", err);
-      });
+      .catch((err) => console.error("Error fetching genders:", err));
 
-    // Fetch roles
     getRoles()
       .then((res) => setRoles(res.data))
-      .catch((err) => {
-        console.error("Error fetching roles:", err);
+      .catch((err) => console.error("Error fetching roles:", err));
+
+    // Prefill form if navigating with state (for editing)
+    if (location.state && location.state.user) {
+      const user = location.state.user;
+      setIsEditing(true);
+      setEditingUserId(user.userId);
+      setFormData({
+        fullName: user.fullName || "",
+        phone: user.phoneNo || "",
+        email: user.email || "",
+        password: "", // don't prefill password
+        age: user.age ? String(user.age) : "",
+        gender: user.gender?.genderId ? String(user.gender.genderId) : "",
+        role: user.role?.roleId ? String(user.role.roleId) : "",
       });
+    }
+  }, [location.state]);
 
-    fetchUsers(); // Fetch user list on mount
-  }, []);
-
-  const fetchUsers = () => {
-    setLoadingUsers(true);
-    myAxios.get("/api/users/all")
-      .then(res => {
-        setUsers(res.data);
-      })
-      .catch(err => {
-        console.error("Error fetching users:", err);
-      })
-      .finally(() => setLoadingUsers(false));
-  };
-
-  const handleDeleteUser = (id) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-
-    myAxios.delete(`/api/users/${id}`)
-      .then(() => {
-        alert("User deleted successfully");
-        fetchUsers(); // refresh list
-      })
-      .catch((err) => {
-        console.error("Failed to delete user:", err);
-        alert("Failed to delete user");
-      });
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setEditingUserId(null);
+    setFormData({
+      fullName: "",
+      phone: "",
+      email: "",
+      password: "",
+      age: "",
+      gender: "",
+      role: "",
+    });
   };
 
   const handleChange = (e) => {
@@ -88,22 +87,18 @@ export default function AddEmployee() {
     };
 
     try {
-      await myAxios.post("/api/users/manager/addEmployee", payload);
-      alert("Employee added successfully!");
-      setFormData({
-        fullName: "",
-        phone: "",
-        email: "",
-        password: "",
-        age: "",
-        gender: "",
-        role: "",
-      });
-      fetchUsers(); // refresh user list after adding
-      //navigate("/employees"); // if you want to redirect instead
+      if (isEditing) {
+        await myAxios.put(`/api/users/${editingUserId}`, payload);
+        alert("Employee updated successfully!");
+      } else {
+        await myAxios.post("/api/users/manager/addEmployee", payload);
+        alert("Employee added successfully!");
+      }
+      cancelEdit();
+      navigate("/employees"); // Redirect to employees table after add/update
     } catch (error) {
-      console.error("Error adding employee:", error);
-      alert("Failed to add employee. Please try again.");
+      console.error("Error saving employee:", error);
+      alert("Failed to save employee. Please try again.");
     }
   };
 
@@ -118,7 +113,9 @@ export default function AddEmployee() {
             className="h-20 w-auto mb-6 opacity-90 drop-shadow"
             style={{ filter: "drop-shadow(0 6px 8px #c4b7a6cc)" }}
           />
-          <h2 className="text-2xl font-bold mb-6 text-[#332214]">Add Employee</h2>
+          <h2 className="text-2xl font-bold mb-6 text-[#332214]">
+            {isEditing ? "Edit Employee" : "Add Employee"}
+          </h2>
           <form onSubmit={handleSubmit} className="space-y-4 w-full">
             <input
               type="text"
@@ -154,7 +151,7 @@ export default function AddEmployee() {
               value={formData.password}
               onChange={handleChange}
               className="w-full p-2 border rounded"
-              required
+              required={!isEditing}
             />
             <input
               type="number"
@@ -195,54 +192,24 @@ export default function AddEmployee() {
             </select>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+              className={`w-full ${
+                isEditing
+                  ? "bg-yellow-600 hover:bg-yellow-700"
+                  : "bg-blue-600 hover:bg-blue-700"
+              } text-white p-2 rounded`}
             >
-              Add Employee
+              {isEditing ? "Update Employee" : "Add Employee"}
             </button>
+            {isEditing && (
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="w-full bg-gray-400 text-white p-2 rounded hover:bg-gray-500"
+              >
+                Cancel
+              </button>
+            )}
           </form>
-        </div>
-
-        {/* User List */}
-        <div className="max-w-4xl w-full bg-white p-6 rounded-lg shadow-lg border border-gray-300">
-          <h3 className="text-xl font-semibold mb-4 text-[#332214]">Employees List</h3>
-
-          {loadingUsers ? (
-            <p>Loading users...</p>
-          ) : users.length === 0 ? (
-            <p>No employees found.</p>
-          ) : (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-gray-300">
-                  <th className="py-2 px-4">Name</th>
-                  <th className="py-2 px-4">Email</th>
-                  <th className="py-2 px-4">Phone</th>
-                  <th className="py-2 px-4">Age</th>
-                  <th className="py-2 px-4">Role</th>
-                  <th className="py-2 px-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.userId} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-2 px-4">{user.fullName}</td>
-                    <td className="py-2 px-4">{user.email}</td>
-                    <td className="py-2 px-4">{user.phoneNo}</td>
-                    <td className="py-2 px-4">{user.age}</td>
-                    <td className="py-2 px-4">{user.role?.roleName || "N/A"}</td>
-                    <td className="py-2 px-4">
-                      <button
-                        onClick={() => handleDeleteUser(user.userId)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
         </div>
       </section>
     </>

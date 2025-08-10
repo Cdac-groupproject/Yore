@@ -15,6 +15,9 @@ import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
 import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuction";
 
 //import ContactUs from "./pages/ContactUs";
+import EmployeesList from "./pages/EmployeesList";
+
+
 
 import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
@@ -75,6 +78,7 @@ function App() {
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/bidders/:auctionId" element={<BiddersAuction />} />
         <Route path="/add-employee" element={<AddEmployee />} />
+        <Route path="/employees" element={<EmployeesList />} />
         <Route path="/museummanager/addproduct" element={<AddProduct />} />
         <Route path="/museummanager/productlist" element={<ProductList />} />
         <Route path="/update-product" element={<UpdateProduct />} />
