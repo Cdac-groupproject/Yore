@@ -1,10 +1,31 @@
 import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-function NewCardComp({ image, title, autioneer, sdate, edate }) {
-  const location = useLocation();
 
-  const isOnGoingPage = location.pathname == "/ongoing";
+function extractRoleName(roleStr) {
+  const match = roleStr?.match(/roleName=([^,)]+)/);
+  return match ? match[1] : null;
+}
+
+function AuctionCard({ image, title, autioneer, sdate, edate, auctionId, basePrice, currentHighestBid }) {
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const isOnGoingPage = location.pathname === "/ongoing";
+
+  // Get user role from sessionStorage
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const roleName = extractRoleName(user?.role);
+
+  const handleViewAuction = () => {
+    if (roleName === "AUCTIONEER") {
+      navigate(`/auctioneer/ongoing/${auctionId}`);
+    } else if (roleName === "BIDDER") {
+      navigate(`/bidder/${auctionId}`);
+    } else {
+      // default fallback or alert
+      alert("Access denied: unknown role");
+    }
+  };
 
   return (
     <div className="bg-[#fdf6ec] py-8 px-4 flex justify-center">
@@ -35,6 +56,23 @@ function NewCardComp({ image, title, autioneer, sdate, edate }) {
               Start Date: <span className="font-medium">{sdate}</span>
             </p>
           </div>
+    <div className="mt-3 flex items-center justify-between">
+          <div>
+            <div className="text-xs text-gray-500">Base Price</div>
+            <div className="text-sm font-medium">
+              ₹{basePrice != null ? basePrice.toFixed(2) : "--"}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-xs text-gray-500">Highest Bid</div>
+            <div className="text-sm font-medium text-green-600">
+              {currentHighestBid != null
+                ? `₹${currentHighestBid.toFixed(2)}`
+                : "No bids"}
+            </div>
+          </div>
+        </div>
 
           <div className="flex items-center text-[#5e3b1e] gap-2">
             <FaCalendarAlt className="text-yellow-600" />
@@ -44,7 +82,7 @@ function NewCardComp({ image, title, autioneer, sdate, edate }) {
           </div>
           {isOnGoingPage && (
             <button
-              onClick={() => navigate("/bidder")}
+              onClick={handleViewAuction}
               className="mt-4 bg-yellow-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-yellow-700 hover:scale-95 cursor-pointer transition-all duration-200"
             >
               View Auction
@@ -56,4 +94,4 @@ function NewCardComp({ image, title, autioneer, sdate, edate }) {
   );
 }
 
-export default NewCardComp;
+export default AuctionCard;

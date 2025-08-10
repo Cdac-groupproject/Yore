@@ -21,7 +21,16 @@ function Navbar() {
   const loggedInfo = sessionStorage.getItem("isLoggedIn");
   const user = JSON.parse(sessionStorage.getItem("user"));
   const fullName = user?.fullName;
-
+  const roleName = extractRoleName(user?.role);
+  
+  function extractRoleName(roleStr) {
+  // roleStr example: "Role(roleId=3, roleName=AUCTIONEER)"
+  if (typeof roleStr !== "string") return null;
+  const match = roleStr.match(/roleName=([^,)]+)/);
+  return match ? match[1] : null;
+}
+  
+  
   return (
     <>
       <nav className="flex items-center justify-between px-6 py-3 shadow-md bg-white">
@@ -47,7 +56,27 @@ function Navbar() {
           >
             Home
           </Link>
-          <Link
+
+            {(roleName === "BIDDER" || roleName === "AUCTIONEER") && (
+              <Link
+                to="/ongoing"
+                className={
+                  isOnGoing
+                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                    : "text-gray-700 hover:text-yellow-700"
+                }
+              >
+                On-going Auctions
+              </Link>
+            )}
+
+
+
+
+
+
+
+          {/* <Link
             to="/ongoing"
             className={
               isOnGoing
@@ -56,8 +85,8 @@ function Navbar() {
             }
           >
             On-going Auctions
-          </Link>
-          <Link
+          </Link> */}
+          {/*<Link
             to="/upcoming"
             className={
               isUpcoming
@@ -66,7 +95,7 @@ function Navbar() {
             }
           >
             Upcoming Auctions
-          </Link>
+          </Link>*/}
 
           <Link
             to="/contact"

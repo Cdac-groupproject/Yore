@@ -20,6 +20,7 @@ import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
 import AddEmployee from "./pages/AddEmployee";
 import OtpVerification from "./components/OtpVerification";
+import AuctionDetail from "./components/Bidder/AuctionDetail";
 
 function App() {
   return (
@@ -55,7 +56,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/ongoing" element={<OnGoingAuction />} />
         <Route path="/upcoming" element={<UpcomingAuction />} />
-        <Route path="/bidder" element={<BiddersAuction />} />
+        <Route path="/bidder/:auctionId" element={<BiddersAuction />} />
         <Route path="/contact" element={<ContactUs />} />
 
         <Route
@@ -66,16 +67,16 @@ function App() {
           path="/auctioneer/summary"
           element={<AuctioneerSessionSummary />}
         />
-        <Route path="/auctioneer/ongoing" element={<AuctioneerOngoingPage />} />
+        <Route path="/auctioneer/ongoing/:auctionId" element={<AuctioneerOngoingPage />} />
 
         {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/contact-us" element={<ContactUs />} />
-
+        <Route path="/bidders/:auctionId" element={<BiddersAuction />} />
         <Route path="/add-employee" element={<AddEmployee />} />
         <Route path="/museummanager/addproduct" element={<AddProduct />} />
         <Route path="/museummanager/productlist" element={<ProductList />} />
         <Route path="/update-product" element={<UpdateProduct />} />
-
+        <Route path="/auctions/:auctionId" element={<AuctionDetail />} />
         <Route path="/otp-verification" element={<OtpVerification />} />
       </Routes>
     </div>
