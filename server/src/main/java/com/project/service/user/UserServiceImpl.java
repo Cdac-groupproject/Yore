@@ -86,6 +86,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 */
+<<<<<<< Updated upstream
+=======
     
     
     public List<AuctioneerDto> getAllAuctioneers() {
@@ -94,4 +96,18 @@ public class UserServiceImpl implements UserService {
                 .map(user -> modelMapper.map(user, AuctioneerDto.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userDao.findAll();
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        if (!userDao.existsById(id)) {
+            throw new ResourceNotFoundException("User not found with id: " + id);
+        }
+        userDao.deleteById(id);
+    }
+>>>>>>> Stashed changes
 }
