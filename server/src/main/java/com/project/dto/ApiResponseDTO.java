@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApiResponseDTO {
-	private String msg;
+	private String message;
 
-	public ApiResponseDTO(String msg) {
-		this.msg = msg;
+	public ApiResponseDTO(String message) {
+		this.message = message;
 	}
 }

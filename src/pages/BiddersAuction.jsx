@@ -120,7 +120,8 @@ useEffect(() => {
       </>
     );
   }
-
+const images = getImages();
+  const safeImages = images && images.length ? images : fallbackImages;
   return (
     <>
       <Toaster />
@@ -145,9 +146,12 @@ useEffect(() => {
                   <button onClick={handlePrev} style={navButtonStyle}>{"<"}</button>
                   <img
                     src={
-                      getImages()[currentImage]?.startsWith("http")
-                        ? getImages()[currentImage]
-                        : `http://localhost:8080/${getImages()[currentImage]}`
+                      safeImages[currentImage]?.startsWith("http")
+                        ? safeImages[currentImage]
+                        : safeImages[currentImage]?.startsWith("/src/assets/")
+                          ? safeImages[currentImage] // Use as-is for local assets
+                          : `http://localhost:8080/${safeImages[currentImage]}` // Prepend for backend images
+                    
                     }
                     alt="Product"
                     style={{ width: 550, height: 400, objectFit: "contain" }}
@@ -165,12 +169,12 @@ useEffect(() => {
                 <div style={{ display: "flex", gap: "1rem" }}>
                   <div style={{ flex: 1 }}>
                     <label>Base Price</label>
-                    <input value={`$${auction.basePrice}`} readOnly style={inputStyle} />
+                    <input value={`₹ ${auction.basePrice}`} readOnly style={inputStyle} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <label>Highest Bid</label>
                     <input
-                      value={loadingHighest ? "Loading..." : `$${highestBid}`}
+                      value={loadingHighest ? "Loading..." : `₹ ${highestBid}`}
                       readOnly
                       style={inputStyle}
                     />

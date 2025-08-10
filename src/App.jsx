@@ -21,6 +21,7 @@ import { Toaster } from "react-hot-toast";
 import AddEmployee from "./pages/AddEmployee";
 import OtpVerification from "./components/OtpVerification";
 import AuctionDetail from "./components/Bidder/AuctionDetail";
+import AddAuctionPage from "./pages/Auctioneer/AddAuctionPage";
 
 function App() {
   return (
@@ -78,6 +79,7 @@ function App() {
         <Route path="/update-product" element={<UpdateProduct />} />
         <Route path="/auctions/:auctionId" element={<AuctionDetail />} />
         <Route path="/otp-verification" element={<OtpVerification />} />
+        <Route path="/create-auction" element={<AddAuctionPage />} />
       </Routes>
     </div>
   );

@@ -69,6 +69,18 @@ function Navbar() {
                 On-going Auctions
               </Link>
             )}
+            {(roleName === "AUCTIONEER") && (
+              <Link
+                to="/create-auction"
+                className={
+                  isOnGoing
+                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                    : "text-gray-700 hover:text-yellow-700"
+                }
+              >
+                Create Auction
+              </Link>
+            )}
 
 
 

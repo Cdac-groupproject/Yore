@@ -17,7 +17,7 @@ public interface AuctionService {
 	List<AuctionRespDTO> getAllAuctions();
 
 	AuctionRespDTO getAuctionDetails(@Min(1) @Max(100) Long auctionId);
-
+	
 	AuctionCloseResponseDTO closeAuction(Long id);
 
 	List<AuctionRespDTO> getActiveAuctions();
