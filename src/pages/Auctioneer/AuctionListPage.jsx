@@ -61,7 +61,7 @@ export default function AuctionListPage() {
   return (
     <>
       <Navbar />
-      <div className="max-w-7xl mx-auto px-6 py-10">
+      <div className="max-w-7xl mx-auto bg-[#fdf6ec] px-6 py-10">
         <ToastContainer />
         <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
           Auctions Summary
