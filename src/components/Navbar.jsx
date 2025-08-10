@@ -13,6 +13,8 @@ function Navbar() {
   const isLoginPage = location.pathname == "/login";
   const isHome = location.pathname === "/";
   const isOnGoing = location.pathname === "/ongoing";
+  const isCreateAuction = location.pathname === "/create-auction";
+  const isAuctionList = location.pathname === "/auction-list";
   const isUpcoming = location.pathname === "/upcoming";
   const isBidder = location.pathname === "/bidder";
   const isAddEmp = location.pathname === "/add-employee";
@@ -62,23 +64,37 @@ function Navbar() {
                 to="/ongoing"
                 className={
                   isOnGoing
-                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
                     : "text-gray-700 hover:text-yellow-700"
                 }
               >
                 On-going Auctions
               </Link>
             )}
+
             {(roleName === "AUCTIONEER") && (
               <Link
                 to="/create-auction"
                 className={
-                  isOnGoing
-                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                  isCreateAuction
+                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
                     : "text-gray-700 hover:text-yellow-700"
                 }
               >
                 Create Auction
+              </Link>
+            )}
+
+            {(roleName === "AUCTIONEER") && (
+              <Link
+                to="/auction-list"
+                className={
+                  isAuctionList
+                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                    : "text-gray-700 hover:text-yellow-700"
+                }
+              >
+                Auction Summary
               </Link>
             )}
 
