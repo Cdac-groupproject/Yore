@@ -86,8 +86,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 */
-<<<<<<< Updated upstream
-=======
     
     
     public List<AuctioneerDto> getAllAuctioneers() {
@@ -109,5 +107,4 @@ public class UserServiceImpl implements UserService {
         }
         userDao.deleteById(id);
     }
->>>>>>> Stashed changes
 }
