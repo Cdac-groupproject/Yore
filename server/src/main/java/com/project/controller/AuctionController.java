@@ -109,7 +109,7 @@ public class AuctionController {
 	 * error resp - SC 404 + Apiresp (err mesg)
 	 */
 	@PutMapping("/close/{id}")
-	public ResponseEntity<AuctionCloseResponseDTO> closeAuction(@PathVariable Long id) {
+	public ResponseEntity<?> closeAuction(@PathVariable Long id) {
 	    AuctionCloseResponseDTO response = auctionService.closeAuction(id);
 	    return ResponseEntity.ok(response);
 	}

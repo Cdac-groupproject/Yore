@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 import AuctionCard from "../components/AuctionCard";
 import car from "../assets/Homepage/car.png";
@@ -10,6 +10,42 @@ function UpcomingAuction() {
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const intervalRef = useRef();
+
+  const fetchActive = async (controller) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("http://localhost:8080/auctioneer/auctions/active", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        signal: controller?.signal,
+      });
+
+      if (res.status === 204) {
+        setAuctions([]);
+        setLoading(false);
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      setAuctions(Array.isArray(data) ? data : []);
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.error("Failed to fetch active auctions:", err);
+        setError("Failed to load auctions");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const loggeInInfo = sessionStorage.getItem("isLoggedIn");
@@ -19,44 +55,17 @@ function UpcomingAuction() {
     }
 
     const controller = new AbortController();
-    const fetchActive = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch("http://localhost:8080/auctioneer/auctions/active", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // If you use token-based auth, send it here:
-             "Authorization": `Bearer ${localStorage.getItem("token")}`
-          },
-          signal: controller.signal,
-        });
+    fetchActive(controller);
 
-        if (res.status === 204) {
-          setAuctions([]);
-          setLoading(false);
-          return;
-        }
+    // Poll every 5 seconds
+    intervalRef.current = setInterval(() => {
+      fetchActive();
+    }, 5000);
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-
-        const data = await res.json(); // expected: array of AuctionRespDTO
-        setAuctions(Array.isArray(data) ? data : []);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          console.error("Failed to fetch active auctions:", err);
-          setError("Failed to load auctions");
-        }
-      } finally {
-        setLoading(false);
-      }
+    return () => {
+      controller.abort();
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-
-    fetchActive();
-    return () => controller.abort();
   }, [navigate]);
 
   const fmtDate = (isoStr) => {
@@ -92,7 +101,7 @@ function UpcomingAuction() {
         {loading && <div className="text-gray-600 mb-4">Loading auctions...</div>}
         {error && <div className="text-red-600 mb-4">{error}</div>}
 
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center">
           {/* If no auctions, show two sample cards (keeps same UI as before) */}
           {!loading && auctions.length === 0 ? (
             <>
@@ -103,6 +112,7 @@ function UpcomingAuction() {
                 sdate="25-07-2025"
                 edate="27-07-2025"
                 onView={() => navigate("/auctions/sample/1")}
+                cardWidth="w-full"
               />
               <AuctionCard
                 image={paint}
@@ -111,6 +121,7 @@ function UpcomingAuction() {
                 sdate="25-08-2025"
                 edate="27-08-2025"
                 onView={() => navigate("/auctions/sample/2")}
+                cardWidth="w-full"
               />
             </>
           ) : (
@@ -126,6 +137,7 @@ function UpcomingAuction() {
                 auctionId={a.auctionId}
                 currentHighestBid={a.currentHighestBid}
                 onView={() => navigate(`/bidder/${a.auctionId}`)}
+                cardWidth="w-full"
               />
             ))
           )}

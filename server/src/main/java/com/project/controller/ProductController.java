@@ -120,7 +120,7 @@ public class ProductController {
          return ResponseEntity.ok("Product marked as auctioned for today.");
     }
     
-    @GetMapping("/manager/auctioneer/auction-products")
+    @GetMapping("/auctioneer/auction-products")
     @Operation(description = "list of all products ready for auction for today")
     public ResponseEntity<List<ProductGetDto>> getAllProductsMarkedForAuction(){
     	List<ProductGetDto> products = productService.getAllProductsMarkedForAuction();

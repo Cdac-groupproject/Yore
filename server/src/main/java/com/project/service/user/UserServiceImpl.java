@@ -1,5 +1,9 @@
 package com.project.service.user;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.project.dao.UserDao;
 import com.project.dao.GenderDao;
 import com.project.dao.RoleDao;
+import com.project.dto.AuctioneerDto;
 import com.project.dto.Credentials;
 import com.project.dto.user.UserRequestDTO;
 import com.project.entity.Gender;
@@ -29,7 +34,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    
+    @Autowired
+    private ModelMapper modelMapper;
+    
     @Override
     public User getUserByEmail(String email) {
         return userDao.findByEmail(email)
@@ -78,4 +86,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 */
+    
+    
+    public List<AuctioneerDto> getAllAuctioneers() {
+        List<User> auctioneers = userDao.findByRole_RoleNameIgnoreCase("AUCTIONEER");
+		return auctioneers.stream()
+                .map(user -> modelMapper.map(user, AuctioneerDto.class))
+                .collect(Collectors.toList());
+    }
 }

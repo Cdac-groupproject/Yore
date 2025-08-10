@@ -6,7 +6,7 @@ function extractRoleName(roleStr) {
   return match ? match[1] : null;
 }
 
-function AuctionCard({ image, title, autioneer, sdate, edate, auctionId, basePrice, currentHighestBid }) {
+function AuctionCard({ image, title, autioneer, sdate, edate, auctionId, basePrice, currentHighestBid, onView, cardWidth }) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -28,8 +28,8 @@ function AuctionCard({ image, title, autioneer, sdate, edate, auctionId, basePri
   };
 
   return (
-    <div className="bg-[#fdf6ec] py-8 px-4 flex justify-center">
-      <div className="flex flex-col md:flex-row items-center bg-white border border-yellow-600 rounded-2xl shadow-md w-full max-w-4xl overflow-hidden hover:shadow-xl transition duration-300">
+    <div className={`bg-[#fdf6ec] py-8 px-4 flex justify-center ${cardWidth || "w-full"}`}>
+      <div className="flex flex-col md:flex-row items-center bg-white border border-yellow-600 rounded-2xl shadow-md w-full max-w-xl overflow-hidden hover:shadow-xl transition duration-300">
         {/* Left Image Section */}
         <div className="w-full md:w-1/2">
           <img
