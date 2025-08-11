@@ -33,6 +33,7 @@ export const getAllUsers = async () => {
   const token = localStorage.getItem("token");
   return await myAxios.get("/users");
 };
+
 export const getGenders = async () => {
   return await myAxios.get("/api/genders");
 };
