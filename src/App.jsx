@@ -9,7 +9,7 @@ import ContactUs from "./pages/ContactUs";
 import UpdateProduct from "./pages/MuseumManager/UpdateProduct";
 import AddProduct from "./pages/MuseumManager/AddProduct";
 import ProductList from "./pages/MuseumManager/ProductList";
-
+import OrdersPage from "./pages/MuseumManager/OrdersPage";
 import AuctioneerSessionSummary from "./pages/Auctioneer/AuctioneerSessionSummary";
 import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
 import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuction";
@@ -74,6 +74,7 @@ function App() {
         <Route path="/add-employee" element={<AddEmployee />} />
         <Route path="/museummanager/addproduct" element={<AddProduct />} />
         <Route path="/museummanager/productlist" element={<ProductList />} />
+        <Route path="/museummanager/orders" element={<OrdersPage />} />
         <Route path="/update-product" element={<UpdateProduct />} />
 
         <Route path="/otp-verification" element={<OtpVerification />} />
