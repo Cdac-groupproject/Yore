@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.project.dto.AddAuctionDTO;
 import com.project.dto.ApiResponse;
+import com.project.dto.AuctionCloseResponseDTO;
 import com.project.dto.AuctionRespDTO;
 
 import jakarta.validation.constraints.Max;
@@ -16,8 +17,8 @@ public interface AuctionService {
 	List<AuctionRespDTO> getAllAuctions();
 
 	AuctionRespDTO getAuctionDetails(@Min(1) @Max(100) Long auctionId);
-
-	ApiResponse closeAuction(Long id);
+	
+	AuctionCloseResponseDTO closeAuction(Long id);
 
 	List<AuctionRespDTO> getActiveAuctions();
 

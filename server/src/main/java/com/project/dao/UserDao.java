@@ -17,4 +17,5 @@ public interface UserDao extends JpaRepository<User, Long> {
 
 	Optional<User> findById(Long auctioneerId);
 
+	List<User> findByRole_RoleNameIgnoreCase(String roleName);
 }

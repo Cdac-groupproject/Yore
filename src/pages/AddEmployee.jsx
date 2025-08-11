@@ -1,123 +1,214 @@
 import React, { useState, useEffect } from "react";
-
-// Replace with your real logo import
-import logo from "../assets/newLogo.png";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
-
-const mockCategories = [
-  { emp_cat_id: 1, emp_cat_name: "Admin" },
-  { emp_cat_id: 2, emp_cat_name: "Auctioneer" },
-  { emp_cat_id: 3, emp_cat_name: "Support" },
-];
+import { useNavigate, useLocation } from "react-router-dom";
+import { getRoles, getGenders } from "../services/userService";
+import { myAxios } from "../services/config";
+import logo from "../assets/newLogo.png"; // import your logo image
 
 export default function AddEmployee() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [submitted, setSubmitted] = useState(false);
-
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    password: "",
+    age: "",
+    gender: "", // genderId as string
+    role: "",   // roleId as string
+  });
+
+  const [roles, setRoles] = useState([]);
+  const [genders, setGenders] = useState([]);
+
+  // Edit mode state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingUserId, setEditingUserId] = useState(null);
+
   useEffect(() => {
-    const loggeInInfo = sessionStorage.getItem("isLoggedIn");
-    if (!loggeInInfo) {
-      navigate("/login");
+    getGenders()
+      .then((res) => setGenders(res.data))
+      .catch((err) => console.error("Error fetching genders:", err));
+
+    getRoles()
+      .then((res) => setRoles(res.data))
+      .catch((err) => console.error("Error fetching roles:", err));
+
+    // Prefill form if navigating with state (for editing)
+    if (location.state && location.state.user) {
+      const user = location.state.user;
+      setIsEditing(true);
+      setEditingUserId(user.userId);
+      setFormData({
+        fullName: user.fullName || "",
+        phone: user.phoneNo || "",
+        email: user.email || "",
+        password: "", // don't prefill password
+        age: user.age ? String(user.age) : "",
+        gender: user.gender?.genderId ? String(user.gender.genderId) : "",
+        role: user.role?.roleId ? String(user.role.roleId) : "",
+      });
     }
-  }, [navigate]);
+  }, [location.state]);
 
-  // Simulate fetching categories (replace with real API call if you have backend)
-  useEffect(() => {
-    // fetch('/api/employee-categories').then(...)
-    setCategories(mockCategories);
-  }, []);
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setEditingUserId(null);
+    setFormData({
+      fullName: "",
+      phone: "",
+      email: "",
+      password: "",
+      age: "",
+      gender: "",
+      role: "",
+    });
+  };
 
-  function handleSubmit(e) {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you'd POST to your backend API
-    console.log({ name, email, category }); // remove in prod!
-    setSubmitted(true);
-    setName("");
-    setEmail("");
-    setCategory("");
-  }
+
+    const payload = {
+      fullName: formData.fullName,
+      phoneNo: formData.phone,
+      email: formData.email,
+      password: formData.password,
+      age: parseInt(formData.age, 10),
+      genderId: parseInt(formData.gender, 10),
+      roleId: parseInt(formData.role, 10),
+    };
+
+    try {
+      if (isEditing) {
+        await myAxios.put(`/api/users/${editingUserId}`, payload);
+        alert("Employee updated successfully!");
+      } else {
+        await myAxios.post("/api/users/manager/addEmployee", payload);
+        alert("Employee added successfully!");
+      }
+      cancelEdit();
+      navigate("/employees"); // Redirect to employees table after add/update
+    } catch (error) {
+      console.error("Error saving employee:", error);
+      alert("Failed to save employee. Please try again.");
+    }
+  };
 
   return (
     <>
       <Navbar />
-      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-[#ece6da] to-[#d1c7b7] py-16 px-4">
-        <div className="bg-white/90 backdrop-blur-lg border border-[#c4b7a6] rounded-3xl shadow-2xl flex flex-col items-center max-w-xl w-full p-8 md:p-12">
+      <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white via-[#ece6da] to-[#d1c7b7] py-16 px-4">
+        <div className="bg-white/90 backdrop-blur-lg border border-[#c4b7a6] rounded-3xl shadow-2xl flex flex-col items-center max-w-lg w-full p-8 md:p-12 mb-10">
           <img
             src={logo}
-            alt="YORE logo"
-            className="h-20 w-auto mb-4 opacity-90 drop-shadow"
+            alt="Logo"
+            className="h-20 w-auto mb-6 opacity-90 drop-shadow"
             style={{ filter: "drop-shadow(0 6px 8px #c4b7a6cc)" }}
           />
-          <h1 className="font-playfair text-3xl text-[#332214] font-extrabold mb-2 tracking-tight text-center">
-            Add Employee
-          </h1>
-          <p className="mb-8 text-[#604a2f] text-center">
-            Register a new team member below—select their role and enter their
-            info.
-          </p>
-          {submitted && (
-            <div className="w-full mb-4 text-green-700 text-center bg-green-100 py-2 rounded shadow">
-              Employee added successfully!
-            </div>
-          )}
-          <form className="space-y-5 w-full" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">
-                Name
-              </label>
-              <input
-                type="text"
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
-                value={name}
-                placeholder="e.g., Priya Sharma"
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
-                value={email}
-                placeholder="e.g., priya@email.com"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-[#795b33] font-medium mb-1">
-                Category
-              </label>
-              <select
-                required
-                className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16] cursor-pointer"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value="" disabled>
-                  Select category
+          <h2 className="text-2xl font-bold mb-6 text-[#332214]">
+            {isEditing ? "Edit Employee" : "Add Employee"}
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4 w-full">
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Full Name"
+              value={formData.fullName}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required={!isEditing}
+            />
+            <input
+              type="number"
+              name="age"
+              placeholder="Age"
+              value={formData.age}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="">Select Gender</option>
+              {genders.map((g) => (
+                <option key={g.genderId} value={g.genderId}>
+                  {g.genderName}
                 </option>
-                {categories.map((cat) => (
-                  <option key={cat.emp_cat_id} value={cat.emp_cat_id}>
-                    {cat.emp_cat_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+              ))}
+            </select>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="">Select Role</option>
+              {roles.map((r) => (
+                <option key={r.roleId} value={r.roleId}>
+                  {r.roleName}
+                </option>
+              ))}
+            </select>
             <button
               type="submit"
-              className="w-full py-3 rounded-lg bg-gradient-to-r from-[#b59f77] via-[#e9dfc4] to-[#827058] text-white font-bold text-xl shadow-lg hover:scale-105 transition-transform"
+              className={`w-full ${
+                isEditing
+                  ? "bg-yellow-600 hover:bg-yellow-700"
+                  : "bg-blue-600 hover:bg-blue-700"
+              } text-white p-2 rounded`}
             >
-              Add Employee
+              {isEditing ? "Update Employee" : "Add Employee"}
             </button>
+            {isEditing && (
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="w-full bg-gray-400 text-white p-2 rounded hover:bg-gray-500"
+              >
+                Cancel
+              </button>
+            )}
           </form>
         </div>
       </section>

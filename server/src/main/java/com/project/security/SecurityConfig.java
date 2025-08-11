@@ -45,7 +45,8 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration config = new CorsConfiguration();
-	    config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); 
+	    config.setAllowedOrigins(Arrays.asList("http://localhost:5173","http://127.0.0.1:5500","http://localhost:5174")); 
+//	    config.setAllowedOrigins(Arrays.asList("*"));
 	    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 	    config.setAllowedHeaders(Arrays.asList("*"));
 	    config.setAllowCredentials(true); // Allow cookies
@@ -56,29 +57,35 @@ public class SecurityConfig {
 	}
 
 	
-<
+
 	@Bean
 	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception {
 	    http
 	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 	        .csrf(csrf -> csrf.disable())
-	        .authorizeHttpRequests(requests -> requests
+	        .authorizeHttpRequests(auth -> auth
 	            .requestMatchers(
 	                "/signin", 
-
-	                "/signup",
+	                "/signup/**",
 	                "/verifyuser",
 	                "/edit-profile",
 	                "/get-user",
-	                "/signup", 
-	                "/verifyuser",
+	                "/uploads/images/**",   // allow static images
+	                "/css/**",      // allow CSS
+	                "/js/**",       // allow JavaScript
+	                "/assets/**",   // allow assets
 	                "/v3/api-docs/**", 
 	                "/swagger-ui/**", 
-	                "/swagger-ui.html"
+	                "/swagger-ui.html",
+	                "/v3/api-docs",
+	                "/webjars/**"
+	                
+	                
 	            ).permitAll()
-	            .requestMatchers("/bidder/**").hasRole("BIDDER")
+	            .requestMatchers("/manager/auctioneer/**").hasAnyRole("MANAGER","AUCTIONEER")
 	            .requestMatchers("/manager/**").hasRole("MANAGER")
-	            .requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")
+	            .requestMatchers("/auctioneer/**").hasAnyRole("AUCTIONEER", "BIDDER")
+	            .requestMatchers("/bidder/**").hasAnyRole("BIDDER", "AUCTIONEER")
 	            .anyRequest().authenticated()
 	        )
 	        .httpBasic(Customizer.withDefaults())
@@ -87,7 +94,7 @@ public class SecurityConfig {
 
 	    return http.build();
 	}
-	
+
 
 //	@Bean
 //	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception{

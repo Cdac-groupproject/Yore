@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.AddAuctionDTO;
 import com.project.dto.ApiResponse;
+import com.project.dto.AuctionCloseResponseDTO;
 import com.project.dto.AuctionRespDTO;
 import com.project.service.AuctionService;
 import com.project.service.AuctionServiceImpl;
@@ -38,7 +39,7 @@ public class AuctionController {
 	/*
 	 * Request handling method (REST API end point) 
 	 * - desc - Add new Auction 
-	 * URL -http://host:port/auctions/create 
+	 * URL -http://host:port/auctioneer/auctions/create 
 	 * Method - POST 
 	 * Payload -JSON representation of auction 
 	 * Resp - in case failure (dup product name/id) - ApiResp DTO
@@ -59,7 +60,7 @@ public class AuctionController {
 	
 	/*
 	 * Request handling method (REST API end point) URL -
-	 * http://host:port/auctions/ 
+	 * http://host:port/auctioneer/auctions/ 
 	 * Method - GET 
 	 * Payload - none 
 	 * Resp - in case of empty list - SC204 (NO_CONTENT) 
@@ -80,7 +81,7 @@ public class AuctionController {
 	/*
 	 * REST API end point - desc -get auction details by id 
 	 * URL
-	 * -http://host:port/auctions/{auctionId} 
+	 * -http://host:port/auctioneer/auctions/{auctionId} 
 	 * Method - GET 
 	 * Payload - none 
 	 * successful Resp - SC 200 +Auction Resp dto-> JSON
@@ -101,21 +102,22 @@ public class AuctionController {
 	/*
 	 * REST API end point - desc -close auction by id 
 	 * URL
-	 * -http://host:port/auctions/close/{auctionId} 
+	 * -http://host:port/auctioneer/auctions/close/{auctionId} 
 	 * Method - PUT 
 	 * Payload - none 
 	 * successful Resp - SC 200 +Apiresp Succesfully Closed message
 	 * error resp - SC 404 + Apiresp (err mesg)
 	 */
 	@PutMapping("/close/{id}")
-    public ApiResponse closeAuction(@PathVariable Long id) {
-        return auctionService.closeAuction(id);
-    }
+	public ResponseEntity<?> closeAuction(@PathVariable Long id) {
+	    AuctionCloseResponseDTO response = auctionService.closeAuction(id);
+	    return ResponseEntity.ok(response);
+	}
 	
 	
 	/*
 	 * Request handling method (REST API end point) URL -
-	 * http://host:port/auctions/active 
+	 * http://host:port/auctioneer/auctions/active 
 	 * Method - GET 
 	 * Payload - none 
 	 * Resp - in case of empty list - SC204 (NO_CONTENT) 
@@ -129,7 +131,7 @@ public class AuctionController {
 	/*
 	 * REST API end point - 
 	 * desc -soft delete auction details 
-	 * URL-http://host:port/auctions/{auctionId} 
+	 * URL-http://host:port/auctioneer/auctions/{auctionId} 
 	 * Method - DELETE 
 	 * Payload - none
 	 * Resp - ApiResponse

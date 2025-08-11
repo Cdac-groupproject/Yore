@@ -1,136 +1,135 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import toast, { Toaster } from "react-hot-toast";
-import { getHighestBid, placeBid } from "../api/api";
+import { placeBid, getAuctionDetailsById, getHighestBid } from "../api/api";
 
-const productImages = [
+const fallbackImages = [
   "/src/assets/Homepage/car.png",
   "/src/assets/Homepage/list1.png",
   "/src/assets/Homepage/list2.jpg",
   "/src/assets/Homepage/list3.png",
-  "/src/assets/Homepage/list4.png",
 ];
 
-const mockAuction = {
-  auctionId: 6, // fixed testing auction id
-  productName: "Vintage Car",
-  productDescription: "Classic 1985 Toyota Land Cruiser.",
-  initialBid: 20000,
-  highestBid: 25000,
-};
-
 const BiddersAuction = () => {
+  const { auctionId } = useParams();
+  const userId = parseInt(localStorage.getItem("userId"), 10);
+
+  const STEP = 500;
+
+  const [auction, setAuction] = useState(null);
   const [currentImage, setCurrentImage] = useState(0);
   const [yourBid, setYourBid] = useState("");
-  const [highestBid, setHighestBid] = useState(mockAuction.highestBid);
+  const [highestBid, setHighestBid] = useState(null);
   const [loadingHighest, setLoadingHighest] = useState(false);
   const [placing, setPlacing] = useState(false);
 
-  // fixed test user
-  const userId = 4;
-  const auctionId = mockAuction.auctionId;
-  const STEP = 500;
 
-  useEffect(() => {
+useEffect(() => {
+  if (!auctionId) return;
+  fetchAuctionDetails();
+  fetchHighestBid();
+}, [auctionId]);
+
+//useEffect to poll highest bid
+useEffect(() => {
+  if (!auctionId) return;
+
+  const interval = setInterval(() => {
     fetchHighestBid();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, 1000); // fetch every 5 seconds
+
+  return () => clearInterval(interval);
+}, [auctionId]);
+
+  const fetchAuctionDetails = async () => {
+    try {
+      const data = await getAuctionDetailsById(auctionId);
+      setAuction(data);
+    } catch (err) {
+      console.error("Failed to fetch auction details:", err);
+      toast.error("Could not load auction details");
+    }
+  };
 
   const fetchHighestBid = async () => {
     setLoadingHighest(true);
     try {
-      const data = await getHighestBid(auctionId);
-      // normalize response shapes (adjust if your API returns different keys)
-      const amount = data?.bidAmount ?? data?.bid_amount ?? data?.amount ?? mockAuction.initialBid;
+      const res = await getHighestBid(auctionId);
+      // Try various possible keys for amount
+      const amount = res?.bidAmount ?? res?.bid_amount ?? res?.amount ?? 0;
       setHighestBid(Number(amount));
     } catch (err) {
       console.error("fetchHighestBid error:", err);
-      toast.error("Failed to fetch highest bid. Check backend/CORS.");
-      // fallback to initial bid to keep UI usable
-      setHighestBid(mockAuction.initialBid);
+      toast.error("Failed to fetch highest bid");
     } finally {
       setLoadingHighest(false);
     }
   };
 
-  const handlePrev = () => {
-    setCurrentImage((prev) =>
-      prev === 0 ? productImages.length - 1 : prev - 1
-    );
-  };
-
-  const handleNext = () => {
-    setCurrentImage((prev) =>
-      prev === productImages.length - 1 ? 0 : prev + 1
-    );
-  };
-
   const handleBid = async () => {
+   
+
     const bidValue = Number(yourBid);
+
     if (isNaN(bidValue) || bidValue <= highestBid) {
       toast.error("Your bid must be higher than the current highest bid");
       return;
     }
 
     const previousHighest = highestBid;
-    setHighestBid(bidValue); // optimistic UI
+    setHighestBid(bidValue);
     setPlacing(true);
 
     try {
-      const payload = {
-        auctionId,
-        userId,
-        bidAmount: bidValue,
-      };
-      const resp = await placeBid(payload);
-      // resp handling depends on backend; we refresh the highest to be sure
-      await fetchHighestBid();
-      setYourBid("");
+      await placeBid(auctionId, bidValue);
       toast.success("Bid Placed Successfully!");
-      return resp;
+      setYourBid("");
+      await fetchHighestBid(); // refresh latest from server
     } catch (err) {
       console.error("placeBid error:", err);
       setHighestBid(previousHighest); // rollback
-      const message = err?.response?.data || err?.message || "Failed to place bid.";
-      toast.error(String(message));
+      toast.error("Failed to place bid");
     } finally {
       setPlacing(false);
     }
   };
 
-  const handleIncrease = () => {
-    const current = Number(yourBid) || 0;
-    // ensure increase from either input or current highest
-    const base = current <= 0 ? highestBid : current;
-    setYourBid(String(Number(base) + STEP));
+  const handlePrev = () => {
+    setCurrentImage((prev) => (prev === 0 ? getImages().length - 1 : prev - 1));
   };
 
+  const handleNext = () => {
+    setCurrentImage((prev) => (prev + 1) % getImages().length);
+  };
+
+  const handleIncrease = () => {
+    const current = Number(yourBid) || highestBid || 0;
+    setYourBid(String(current + STEP));
+  };
+
+  const getImages = () => {
+    return auction?.productImages?.length ? auction.productImages : fallbackImages;
+  };
+
+  if (!auction) {
+    return (
+      <>
+        <Navbar />
+        <div style={{ padding: 20 }}>Loading auction details...</div>
+      </>
+    );
+  }
+const images = getImages();
+  const safeImages = images && images.length ? images : fallbackImages;
   return (
     <>
       <Toaster />
       <Navbar />
-      <div
-        style={{
-          display: "flex",
-          height: "100vh",
-          backgroundColor: "#f5f0e1",
-          fontFamily: "sans-serif",
-        }}
-      >
-        {/* Main Content */}
+      <div style={{ display: "flex", height: "auto", backgroundColor: "#f5f0e1" }}>
         <div style={{ flex: 1, padding: "1.5rem" }}>
-          {/* Header */}
           <div style={{ display: "flex", gap: "2rem" }}>
-            {/* Carousel */}
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div
                 style={{
                   display: "flex",
@@ -143,195 +142,110 @@ const BiddersAuction = () => {
                   position: "relative",
                 }}
               >
-                <button
-                  onClick={handlePrev}
-                  style={{
-                    position: "absolute",
-                    left: 10,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: 24,
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  {"<"}
-                </button>
-                <img
-                  src={productImages[currentImage]}
-                  alt="Product"
-                  style={{
-                    width: 550,
-                    height: 400,
-                    objectFit: "contain",
-                    margin: "0 auto",
-                  }}
-                />
-                <button
-                  onClick={handleNext}
-                  style={{
-                    position: "absolute",
-                    right: 10,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    fontSize: 24,
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  {">"}
-                </button>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+                  <button onClick={handlePrev} style={navButtonStyle}>{"<"}</button>
+                  <img
+                    src={
+                      safeImages[currentImage]?.startsWith("http")
+                        ? safeImages[currentImage]
+                        : safeImages[currentImage]?.startsWith("/src/assets/")
+                          ? safeImages[currentImage] // Use as-is for local assets
+                          : `http://localhost:8080/${safeImages[currentImage]}` // Prepend for backend images
+                    
+                    }
+                    alt="Product"
+                    style={{ width: 550, height: 400, objectFit: "contain" }}
+                  />
+                  <button onClick={handleNext} style={navButtonStyle}>{">"}</button>
+                </div>
               </div>
             </div>
 
-            {/* Auction Details */}
-            <div
-              style={{
-                width: 450,
-                background: "white",
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <div
-                style={{
-                  width: 450,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                }}
-              >
-                <input
-                  type="text"
-                  value={mockAuction.productName}
-                  readOnly
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 18,
-                    padding: "0.5rem",
-                    borderRadius: 4,
-                    border: "0px solid #ccc",
-                  }}
-                />
-                <textarea
-                  value={mockAuction.productDescription}
-                  readOnly
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 16,
-                    padding: "0.5rem",
-                    borderRadius: 4,
-                    border: "0px solid #ccc",
-                    resize: "none",
-                    height: 60,
-                  }}
-                />
+            <div style={auctionCardStyle}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <input type="text" value={auction.productName} readOnly style={inputStyle} />
+                <textarea value={auction.description} readOnly style={textareaStyle} />
+
                 <div style={{ display: "flex", gap: "1rem" }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: 14 }}>Initial Bid Price</label>
-                    <input
-                      type="text"
-                      value={`$${mockAuction.initialBid}`}
-                      readOnly
-                      style={{
-                        width: "100%",
-                        padding: "0.5rem",
-                        borderRadius: 4,
-                        border: "1px solid #ccc",
-                        marginTop: 4,
-                      }}
-                    />
+                    <label>Base Price</label>
+                    <input value={`₹ ${auction.basePrice}`} readOnly style={inputStyle} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: 14 }}>Highest Bid Price</label>
+                    <label>Highest Bid</label>
                     <input
-                      type="text"
-                      value={loadingHighest ? "Loading..." : `$${highestBid}`}
+                      value={loadingHighest ? "Loading..." : `₹ ${highestBid}`}
                       readOnly
-                      style={{
-                        width: "100%",
-                        padding: "0.5rem",
-                        borderRadius: 4,
-                        border: "1px solid #ccc",
-                        marginTop: 4,
-                      }}
+                      style={inputStyle}
                     />
                   </div>
                 </div>
+
                 <div>
-                  <label style={{ fontSize: 14 }}>Your Bid Price</label>
+                  <label>Your Bid</label>
                   <input
                     type="number"
                     value={yourBid}
                     onChange={(e) => setYourBid(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.5rem",
-                      borderRadius: 4,
-                      border: "1px solid #ccc",
-                      marginTop: 4,
-                    }}
+                    style={inputStyle}
                     min={highestBid + 1}
                   />
                 </div>
+
                 <div style={{ display: "flex", gap: "1rem" }}>
-                  <button
-                    onClick={handleBid}
-                    disabled={placing}
-                    style={{
-                      flex: 1,
-                      padding: "0.5rem",
-                      borderRadius: 4,
-                      border: "1px solid #888",
-                      background: "#eee",
-                      cursor: placing ? "not-allowed" : "pointer",
-                    }}
-                  >
-                    {placing ? "Placing..." : `Place Bid (user ${userId})`}
+                  <button onClick={handleBid} disabled={placing} style={buttonStyle}>
+                    {placing ? "Placing..." : `Place Bid`}
                   </button>
-                  <button
-                    onClick={handleIncrease}
-                    style={{
-                      flex: 1,
-                      padding: "0.5rem",
-                      borderRadius: 4,
-                      border: "1px solid #888",
-                      background: "#eee",
-                    }}
-                  >
-                    Increase
-                  </button>
-                  <button
-                    onClick={fetchHighestBid}
-                    style={{
-                      flex: 1,
-                      padding: "0.5rem",
-                      borderRadius: 4,
-                      border: "1px solid #888",
-                      background: "#eee",
-                    }}
-                  >
-                    Refresh
-                  </button>
+                  <button onClick={handleIncrease} style={buttonStyle}>Increase</button>
+                  <button onClick={fetchHighestBid} style={buttonStyle}>Refresh</button>
                 </div>
 
                 <div style={{ marginTop: 12, color: "#666" }}>
-                  <small>
-                    Testing with auctionId = {auctionId}, userId = {userId}
-                  </small>
+                  <small>Viewing Auction ID: {auctionId}</small>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div> 
+      </div>
     </>
   );
+};
+
+// Styles
+const navButtonStyle = {
+  fontSize: '24px',
+  padding: '10px 20px',
+  cursor: 'pointer',
+  border: 'none',
+  backgroundColor: '#eee',
+  borderRadius: '8px',
+  boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+};
+const auctionCardStyle = {
+  width: 450,
+  background: "white",
+  padding: 20,
+  borderRadius: 8,
+};
+const inputStyle = {
+  width: "100%",
+  padding: "0.5rem",
+  borderRadius: 4,
+  border: "1px solid #ccc",
+};
+const textareaStyle = {
+  ...inputStyle,
+  resize: "none",
+  height: 60,
+};
+const buttonStyle = {
+  flex: 1,
+  padding: "0.5rem",
+  borderRadius: 4,
+  border: "1px solid #888",
+  background: "#eee",
+  cursor: "pointer",
 };
 
 export default BiddersAuction;

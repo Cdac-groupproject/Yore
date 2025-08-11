@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@syncfusion/ej2-react-grids": "^30.2.4",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
     "express": "^5.1.0",
@@ -20,11 +21,11 @@
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.7.0",
-<<<<<<< Updated upstream
-=======
     "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
->>>>>>> Stashed changes
+
+    "react-toastify": "^11.0.5",
+
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
