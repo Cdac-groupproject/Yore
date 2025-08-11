@@ -114,7 +114,7 @@ function AddProduct() {
                 fontWeight: "bold"
               }}
             >
-              🏺 Add Museum Product
+               Add Museum Product
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-3">

@@ -100,6 +100,18 @@ function Navbar() {
           )}
           {roleName === "MANAGER" && (
             <Link
+              to="/museummanager/addProduct"
+              className={
+                isProductList
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              Add Product
+            </Link>
+          )}
+          {roleName === "MANAGER" && (
+            <Link
               to="/museummanager/productlist"
               className={
                 isProductList
@@ -144,6 +156,18 @@ function Navbar() {
               }
             >
               Add Employee
+            </Link>
+          )}
+          {roleName === "MANAGER" && (
+            <Link
+              to="/museummanager/orders"
+              className={
+                isProductList
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              Product Summary
             </Link>
           )}
 

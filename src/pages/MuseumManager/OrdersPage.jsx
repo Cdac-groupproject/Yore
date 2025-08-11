@@ -21,7 +21,7 @@ export default function OrdersPage() {
         <Navbar />
     <div className="min-h-screen bg-gradient-to-b from-[#fdf6e3] to-[#f5e6ca] p-6 font-serif">
       <h1 className="text-4xl font-bold text-center mb-8 text-[#5a4636] drop-shadow-lg">
-        📜 Auction Orders
+         Auction Orders
       </h1>
 
       <div className="overflow-x-auto">
