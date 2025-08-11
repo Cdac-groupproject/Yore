@@ -26,6 +26,7 @@ import OtpVerification from "./components/OtpVerification";
 import AuctionDetail from "./components/Bidder/AuctionDetail";
 import AddAuctionPage from "./pages/Auctioneer/AddAuctionPage";
 import AuctionListPage from "./pages/Auctioneer/AuctionListPage";
+import AllUsers from "./pages/AllUsers";
 
 function App() {
   return (
@@ -72,7 +73,10 @@ function App() {
           path="/auctioneer/summary"
           element={<AuctioneerSessionSummary />}
         />
-        <Route path="/auctioneer/ongoing/:auctionId" element={<AuctioneerOngoingPage />} />
+        <Route
+          path="/auctioneer/ongoing/:auctionId"
+          element={<AuctioneerOngoingPage />}
+        />
 
         {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/contact-us" element={<ContactUs />} />
@@ -86,6 +90,8 @@ function App() {
         <Route path="/otp-verification" element={<OtpVerification />} />
         <Route path="/create-auction" element={<AddAuctionPage />} />
         <Route path="/auction-list" element={<AuctionListPage />} />
+
+        <Route path="/all-users" element={<AllUsers />} />
       </Routes>
     </div>
   );

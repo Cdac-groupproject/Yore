@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/newLogo.png"; // Make sure path matches your asset folder
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -7,10 +7,21 @@ import Navbar from "../components/Navbar";
 const ContactUs = () => {
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [message, setMessage] = useState("");
+
   useEffect(() => {
     const loggeInInfo = sessionStorage.getItem("isLoggedIn");
     if (!loggeInInfo) {
       navigate("/login");
+      return;
+    }
+    const user = JSON.parse(sessionStorage.getItem("user"));
+
+    if (user) {
+      setFullName(user.fullName || "");
+      setEmail(user.email || "");
     }
   }, [navigate]);
   return (
@@ -38,6 +49,9 @@ const ContactUs = () => {
               e.preventDefault();
               // alert("Thank you for reaching out!");
               toast.success("Thanks for reaching out! We'll respond shortly.");
+              console.log("email  = ", email);
+              console.log("name = ", fullName);
+              console.log("message = ", message);
               navigate("/");
             }}
           >
@@ -50,6 +64,8 @@ const ContactUs = () => {
                 required
                 className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
                 placeholder="Jane Doe"
+                onChange={(e) => setFullName(e.target.value)}
+                value={fullName}
               />
             </div>
             <div>
@@ -61,6 +77,8 @@ const ContactUs = () => {
                 required
                 className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
                 placeholder="you@email.com"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
               />
             </div>
             <div>
@@ -72,6 +90,7 @@ const ContactUs = () => {
                 rows={4}
                 className="w-full px-4 py-2 rounded-md border border-[#b9a78b] focus:ring-2 focus:ring-[#b59f77] outline-none bg-white text-[#3c2d16]"
                 placeholder="How may we help you?"
+                onChange={(e) => setMessage(e.target.value)}
               />
             </div>
             <button

@@ -20,20 +20,20 @@ function Navbar() {
   const isBidder = location.pathname === "/bidder";
   const isAddEmp = location.pathname === "/add-employee";
   const isContactUs = location.pathname === "/contact";
+  const isAllUsers = location.pathname === "/all-users";
 
   const loggedInfo = sessionStorage.getItem("isLoggedIn");
   const user = JSON.parse(sessionStorage.getItem("user"));
   const fullName = user?.fullName;
   const roleName = extractRoleName(user?.role);
-  
+
   function extractRoleName(roleStr) {
-  // roleStr example: "Role(roleId=3, roleName=AUCTIONEER)"
-  if (typeof roleStr !== "string") return null;
-  const match = roleStr.match(/roleName=([^,)]+)/);
-  return match ? match[1] : null;
-}
-  
-  
+    // roleStr example: "Role(roleId=3, roleName=AUCTIONEER)"
+    if (typeof roleStr !== "string") return null;
+    const match = roleStr.match(/roleName=([^,)]+)/);
+    return match ? match[1] : null;
+  }
+
   return (
     <>
       <nav className="flex items-center justify-between px-6 py-3 shadow-md bg-white">
@@ -60,61 +60,56 @@ function Navbar() {
             Home
           </Link>
 
-            {(roleName === "BIDDER" || roleName === "AUCTIONEER") && (
-              <Link
-                to="/ongoing"
-                className={
-                  isOnGoing
-                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
-                    : "text-gray-700 hover:text-yellow-700"
-                }
-              >
-                On-going Auctions
-              </Link>
-            )}
+          {(roleName === "BIDDER" || roleName === "AUCTIONEER") && (
+            <Link
+              to="/ongoing"
+              className={
+                isOnGoing
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              On-going Auctions
+            </Link>
+          )}
 
-            {(roleName === "AUCTIONEER") && (
-              <Link
-                to="/create-auction"
-                className={
-                  isCreateAuction
-                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
-                    : "text-gray-700 hover:text-yellow-700"
-                }
-              >
-                Create Auction
-              </Link>
-            )}
+          {roleName === "AUCTIONEER" && (
+            <Link
+              to="/create-auction"
+              className={
+                isCreateAuction
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              Create Auction
+            </Link>
+          )}
 
-            {(roleName === "AUCTIONEER") && (
-              <Link
-                to="/auction-list"
-                className={
-                  isAuctionList
-                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
-                    : "text-gray-700 hover:text-yellow-700"
-                }
-              >
-                Auction Summary
-              </Link>
-            )}
-            {(roleName === "MANAGER") && (
-              <Link
-                to="/museummanager/productlist"
-                className={
-                  isProductList
-                    ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
-                    : "text-gray-700 hover:text-yellow-700"
-                }
-              >
-                Product List
-              </Link>
-            )}
-
-
-
-
-
+          {roleName === "AUCTIONEER" && (
+            <Link
+              to="/auction-list"
+              className={
+                isAuctionList
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              Auction Summary
+            </Link>
+          )}
+          {roleName === "MANAGER" && (
+            <Link
+              to="/museummanager/productlist"
+              className={
+                isProductList
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              Product List
+            </Link>
+          )}
 
           {/* <Link
             to="/ongoing"
@@ -137,7 +132,21 @@ function Navbar() {
             Upcoming Auctions
           </Link>*/}
 
-          
+
+          {roleName === "MANAGER" && (
+            <Link
+              to="/add-employee"
+              className={
+                isAddEmp
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              Add Employee
+            </Link>
+          )}
+          {/* {(roleName === "BIDDER" || roleName === "") && ( */}
+
 
           {(roleName === "MANAGER") && (
           <Link
@@ -150,6 +159,19 @@ function Navbar() {
           >
             Add Employee
           </Link>
+        )}
+
+          {roleName === "ADMIN" && (
+            <Link
+              to="/all-users"
+              className={
+                isAllUsers
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              Users List
+            </Link>
           )}
         {/* {(roleName === "BIDDER" || roleName === "") && ( */}
           <Link
@@ -162,7 +184,8 @@ function Navbar() {
           >
             Contact Us
           </Link>
-          {/* )} */}
+        )}
+          
         </div>
 
         {/* Search + Auth Buttons */}
