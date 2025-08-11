@@ -94,4 +94,54 @@ public class UserServiceImpl implements UserService {
                 .map(user -> modelMapper.map(user, AuctioneerDto.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userDao.findAll();
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        if (!userDao.existsById(id)) {
+            throw new ResourceNotFoundException("User not found with id: " + id);
+        }
+        userDao.deleteById(id);
+    }
+    
+    @Override
+    public User updateUser(Long id, UserRequestDTO dto) {
+        // Find existing user
+        User user = userDao.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        // Update fields
+        user.setFullName(dto.getFullName());
+        user.setPhoneNo(dto.getPhoneNo());
+        user.setEmail(dto.getEmail());
+        user.setAge(dto.getAge());
+
+        // Update Gender, if provided
+        if (dto.getGenderId() != null) {
+            Gender gender = genderDao.findById(dto.getGenderId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Gender not found with id: " + dto.getGenderId()));
+            user.setGender(gender);
+        }
+
+        // Update Role, if provided
+        if (dto.getRoleId() != null) {
+            Role role = roleDao.findById(dto.getRoleId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + dto.getRoleId()));
+            user.setRole(role);
+        }
+
+        // Update password, if provided and not blank (optional, for security)
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        // Save updated user
+        return userDao.save(user);
+    }
+
+    
 }

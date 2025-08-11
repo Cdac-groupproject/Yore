@@ -18,6 +18,10 @@ function Register() {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, []);
+
   const onRegisterHandler = async (e) => {
     e.preventDefault();
 
