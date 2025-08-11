@@ -132,6 +132,7 @@ function Navbar() {
             Upcoming Auctions
           </Link>*/}
 
+          {/* {(roleName === "BIDDER" || roleName === "") && ( */}
 
           {roleName === "MANAGER" && (
             <Link
@@ -145,21 +146,18 @@ function Navbar() {
               Add Employee
             </Link>
           )}
+
           {/* {(roleName === "BIDDER" || roleName === "") && ( */}
-
-
-          {(roleName === "MANAGER") && (
           <Link
-            to="/add-employee"
+            to="/contact"
             className={
-              isAddEmp
+              isContactUs
                 ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
                 : "text-gray-700 hover:text-yellow-700"
             }
           >
-            Add Employee
+            Contact Us
           </Link>
-        )}
 
           {roleName === "ADMIN" && (
             <Link
@@ -173,19 +171,6 @@ function Navbar() {
               Users List
             </Link>
           )}
-        {/* {(roleName === "BIDDER" || roleName === "") && ( */}
-          <Link
-            to="/contact"
-            className={
-              isContactUs
-                ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1"
-                : "text-gray-700 hover:text-yellow-700"
-            }
-          >
-            Contact Us
-          </Link>
-        )}
-          
         </div>
 
         {/* Search + Auth Buttons */}
