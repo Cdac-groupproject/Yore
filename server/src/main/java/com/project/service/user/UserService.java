@@ -15,4 +15,10 @@ public interface UserService {
 	User createUser(UserRequestDTO userDto);
 
 	List<AuctioneerDto> getAllAuctioneers();
+	
+	List<User> getAllUsers();
+	
+    void deleteUserById(Long id);
+    
+    User updateUser(Long id, UserRequestDTO userDto);
 }

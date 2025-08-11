@@ -80,7 +80,8 @@ export default function AddAuctionPage() {
   return (
     <>
       <Navbar />
-      <div className="max-w-3xl mx-auto p-6 bg-white shadow-xl rounded-lg mt-10">
+     <div className="bg-[#fdf6ec] min-h-screen flex items-center justify-center px-30 py-5">
+      <div className="max-w-3xl mx-auto p-6 bg-white shadow-xl rounded-lg mt-10 mb-10 ">
         <ToastContainer />
         <h2 className="text-2xl font-bold mb-6 text-center">Create Auction</h2>
 
@@ -183,6 +184,7 @@ export default function AddAuctionPage() {
             {loading ? "Creating..." : "Create Auction"}
           </button>
         </form>
+      </div>
       </div>
     </>
   );

@@ -15,6 +15,9 @@ import AuctioneerOngoingPage from "./pages/Auctioneer/AuctioneerOngoingPage";
 import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuction";
 
 //import ContactUs from "./pages/ContactUs";
+import EmployeesList from "./pages/EmployeesList";
+
+
 
 import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
@@ -23,6 +26,7 @@ import OtpVerification from "./components/OtpVerification";
 import AuctionDetail from "./components/Bidder/AuctionDetail";
 import AddAuctionPage from "./pages/Auctioneer/AddAuctionPage";
 import AuctionListPage from "./pages/Auctioneer/AuctionListPage";
+import AllUsers from "./pages/AllUsers";
 
 function App() {
   return (
@@ -69,12 +73,16 @@ function App() {
           path="/auctioneer/summary"
           element={<AuctioneerSessionSummary />}
         />
-        <Route path="/auctioneer/ongoing/:auctionId" element={<AuctioneerOngoingPage />} />
+        <Route
+          path="/auctioneer/ongoing/:auctionId"
+          element={<AuctioneerOngoingPage />}
+        />
 
         {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/bidders/:auctionId" element={<BiddersAuction />} />
         <Route path="/add-employee" element={<AddEmployee />} />
+        <Route path="/employees" element={<EmployeesList />} />
         <Route path="/museummanager/addproduct" element={<AddProduct />} />
         <Route path="/museummanager/productlist" element={<ProductList />} />
         <Route path="/update-product" element={<UpdateProduct />} />
@@ -82,6 +90,8 @@ function App() {
         <Route path="/otp-verification" element={<OtpVerification />} />
         <Route path="/create-auction" element={<AddAuctionPage />} />
         <Route path="/auction-list" element={<AuctionListPage />} />
+
+        <Route path="/all-users" element={<AllUsers />} />
       </Routes>
     </div>
   );

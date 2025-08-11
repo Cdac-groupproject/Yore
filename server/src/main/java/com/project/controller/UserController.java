@@ -22,11 +22,33 @@ public class UserController {
         User createdUser = userService.createUser(userRequestDTO);
         return ResponseEntity.ok("User created with email: " + createdUser.getEmail());
     }
-    
+
     @GetMapping("/auctioneer/auctioneers")
     public ResponseEntity<List<AuctioneerDto>> getAuctioneers() {
         List<AuctioneerDto> auctioneers = userService.getAllAuctioneers();
         return ResponseEntity.ok(auctioneers);
     }
+
+    // List all users
+    @GetMapping("/api/users/all")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+
+    // Delete user by ID
+    @DeleteMapping("/api/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        userService.deleteUserById(id);
+        return ResponseEntity.ok("User deleted with id: " + id);
+    }
     
+    // Update user by ID
+    @PutMapping("/api/users/{id}")
+    public ResponseEntity<User> updateUser(
+            @PathVariable Long id,
+            @RequestBody UserRequestDTO userRequestDTO) {
+        User updatedUser = userService.updateUser(id, userRequestDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/newLogo.png";
 import Navbar from "../components/Navbar";
@@ -17,6 +17,10 @@ function Register() {
   const [genderId, setGenderId] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, []);
 
   const onRegisterHandler = async (e) => {
     e.preventDefault();
@@ -41,6 +45,10 @@ function Register() {
     // toast.success("User Registered Successfully");
     // navigate("/login");
   };
+
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, []);
 
   return (
     <>
