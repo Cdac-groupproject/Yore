@@ -1,6 +1,6 @@
 package com.project.dto.bids;
 
-import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -18,4 +18,5 @@ public class BidRespDTO {
     private String username;
     private Double bidAmount;
     private LocalDateTime createdAt;
+    //private Double highestBid;
 }

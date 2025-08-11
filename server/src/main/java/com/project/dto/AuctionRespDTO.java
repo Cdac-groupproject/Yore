@@ -1,7 +1,8 @@
 package com.project.dto;
 
-import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +27,7 @@ public class AuctionRespDTO {
     private String productName;
     private String description;
     private String countryOfOrigin;
-
+    private List<String> productImages;
     // Auctioneer Info
     private Long auctioneerId;
     private String auctioneerName;
