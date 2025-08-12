@@ -33,12 +33,13 @@ public class ProductPostDto {
 	
 	@Positive
 	private Long countryOfOriginId;
-	
+	private boolean auctionedForToday;
 	@NotNull
-	@Min(1000)
+	@Min(0)
 	@Max(2025)
 	private Long yearMade;
-	
+	private boolean sold;
 //	@JsonIgnore
     private List<MultipartFile> imageFiles;
+
 }

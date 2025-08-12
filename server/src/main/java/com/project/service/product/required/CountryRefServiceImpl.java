@@ -37,7 +37,7 @@ public class CountryRefServiceImpl implements CountryRefService  {
 	    }
 	    
 	    CountryRef countryRef = new CountryRef();
-	    countryRef.setCountryId(countryRefDto.getCountryId()); // optional if your DB auto-generates ID
+	    //countryRef.setCountryId(countryRefDto.getCountryId()); // optional if your DB auto-generates ID
 	    countryRef.setCountryName(countryRefDto.getCountryName());
 	    
 	    return countryRefDao.save(countryRef);

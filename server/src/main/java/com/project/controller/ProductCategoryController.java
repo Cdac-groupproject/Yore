@@ -38,7 +38,7 @@ public class ProductCategoryController {
 		return ResponseEntity.ok(allCategories);
 	}
 	
-	@PostMapping("/addCategory")
+	@PostMapping("/manager/addCategory")
 	@Operation(description = "add a product category")
 	ResponseEntity<ProductCategory> addProduct(@RequestBody ProductCategoryDto productCategoryDto){
 		return ResponseEntity.status(HttpStatus.CREATED).body(productCategoryService.productCategoryCreate(productCategoryDto));

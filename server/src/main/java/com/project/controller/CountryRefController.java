@@ -40,7 +40,7 @@ public class CountryRefController {
 		return ResponseEntity.ok(allCountries);
 	}
 	
-	@PostMapping("/addCountry")
+	@PostMapping("/manager/addCountry")
 	@Operation(description = "add a country")
 	public ResponseEntity<CountryRef> addCountry(@RequestBody CountryRefDto countryRefDto)throws IOException{
 		return ResponseEntity.status(HttpStatus.CREATED).body(countryService.addCountryRef(countryRefDto));
