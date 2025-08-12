@@ -16,7 +16,9 @@ function Navbar() {
   const isCreateAuction = location.pathname === "/create-auction";
   const isAuctionList = location.pathname === "/auction-list";
   const isProductList = location.pathname === "/museummanager/productlist";
+  const isProduct = location.pathname === "/museummanager/addProduct";
   const isUpcoming = location.pathname === "/upcoming";
+  const isProductSummary = location.pathname === "/museummanager/orders";
   const isBidder = location.pathname === "/bidder";
   const isAddEmp = location.pathname === "/add-employee";
   const isContactUs = location.pathname === "/contact";
@@ -102,7 +104,7 @@ function Navbar() {
             <Link
               to="/museummanager/addProduct"
               className={
-                isProductList
+                isProduct
                   ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
                   : "text-gray-700 hover:text-yellow-700"
               }
@@ -162,7 +164,7 @@ function Navbar() {
             <Link
               to="/museummanager/orders"
               className={
-                isProductList
+                isProductSummary
                   ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
                   : "text-gray-700 hover:text-yellow-700"
               }

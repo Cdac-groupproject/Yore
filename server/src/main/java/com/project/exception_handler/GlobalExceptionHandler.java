@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.project.custom_exception.ApiException;
+import com.project.custom_exception.FileStorageException;
 import com.project.custom_exception.ResourceNotFoundException;
 import com.project.dto.ApiResponseDTO;
 
@@ -21,6 +22,10 @@ public class GlobalExceptionHandler {
 	//	Exception handling method
 	@ExceptionHandler(ApiException.class)
 	public ResponseEntity<?> handelApiException(ApiException e){
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDTO(e.getMessage()));
+	}
+	@ExceptionHandler(FileStorageException.class)
+	public ResponseEntity<?> handelFileStorageException(FileStorageException e){
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDTO(e.getMessage()));
 	}
 

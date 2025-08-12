@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.project.custom_exception.ApiException;
+import com.project.custom_exception.FileStorageException;
 import com.project.custom_exception.ResourceNotFoundException;
 import com.project.dao.AuctionDao;
 import com.project.dao.product.CountryRefDao;
@@ -101,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
         product.setYearMade(productDTO.getYearMade());
         product.setCategory(productCategory);
         product.setCountryOfOrigin(countryOfOrigin);
-
+       product.setAuctionedForToday(false);
         // we are saving the product first to give product a id for further use
         Product savedProduct = productDao.save(product);
         List<ProductImage> productImages = new ArrayList<>();
@@ -193,38 +194,104 @@ public class ProductServiceImpl implements ProductService {
     	}).toList();
     }
 
+//    @Override
+//    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
+//        Product product = productDao.findById(productId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+//
+//        product.setName(productDTO.getName());
+//        product.setDescription(productDTO.getDescription());
+//        product.setPrice(productDTO.getPrice());
+//        product.setSold(productDTO.getSold());
+//        product.setYearMade(productDTO.getYearMade());
+//
+//        ProductCategory category = categoryDao.findById(Long.valueOf(productDTO.getCategoryId()))
+//                .orElseThrow(() -> new ApiException("Invalid Category ID"));
+//        CountryRef country = countryDao.findById(productDTO.getCountryOfOriginId())
+//                .orElseThrow(() -> new ApiException("Invalid Country ID"));
+//
+//        product.setCategory(category);
+//        product.setCountryOfOrigin(country);
+//
+//        List<ProductImage> updatedImages = productDTO.getImageUrl().stream()
+//                .map(url -> {
+//                    ProductImage img = new ProductImage();
+//                    img.setImgUrl(url);
+//                    img.setProduct(product);
+//                    return img;
+//                })
+//                .collect(Collectors.toList());
+//        product.getImageList().clear();
+//        product.getImageList().addAll(updatedImages);
+//
+//        Product saved = productDao.save(product);
+//
+//        ProductDTO dto = modelMapper.map(saved, ProductDTO.class);
+//        dto.setPrice(saved.getPrice());
+//        dto.setCategoryId(saved.getCategory().getCategoryId().toString());
+//        dto.setCountryOfOriginId(saved.getCountryOfOrigin().getCountryId());
+//        dto.setImageUrl(saved.getImageList().stream()
+//                .map(ProductImage::getImgUrl)
+//                .collect(Collectors.toList()));
+//        return dto;
+//    }
+    
     @Override
-    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
+    @Transactional
+    public ProductDTO updateProduct(Long productId, ProductPostDto productDTO) {
         Product product = productDao.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
 
+        // Basic field updates
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
-        product.setSold(productDTO.getSold());
         product.setYearMade(productDTO.getYearMade());
+        product.setSold(productDTO.isSold());
+        product.setAuctionedForToday(productDTO.isAuctionedForToday());
+        // Update category
+        ProductCategory productCategory = categoryDao.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Invalid Category Id"));
+        product.setCategory(productCategory);
 
-        ProductCategory category = categoryDao.findById(Long.valueOf(productDTO.getCategoryId()))
-                .orElseThrow(() -> new ApiException("Invalid Category ID"));
-        CountryRef country = countryDao.findById(productDTO.getCountryOfOriginId())
-                .orElseThrow(() -> new ApiException("Invalid Country ID"));
+        // Update country of origin
+        CountryRef countryOfOrigin = countryDao.findById(productDTO.getCountryOfOriginId())
+                .orElseThrow(() -> new RuntimeException("Invalid Country id"));
+        product.setCountryOfOrigin(countryOfOrigin);
 
-        product.setCategory(category);
-        product.setCountryOfOrigin(country);
+        // Handle images if provided
+        if (productDTO.getImageFiles() != null && !productDTO.getImageFiles().isEmpty()) {
+            try {
+                // Clear existing list (keeping same instance)
+                product.getImageList().clear();
 
-        List<ProductImage> updatedImages = productDTO.getImageUrl().stream()
-                .map(url -> {
-                    ProductImage img = new ProductImage();
-                    img.setImgUrl(url);
-                    img.setProduct(product);
-                    return img;
-                })
-                .collect(Collectors.toList());
-        product.getImageList().clear();
-        product.getImageList().addAll(updatedImages);
+                // Save new images
+                for (MultipartFile file : productDTO.getImageFiles()) {
+                    if (!file.isEmpty()) {
+                        String uploadedFileName = file.getOriginalFilename();
+                        String uniqueFileName = UUID.randomUUID().toString() + "_" + uploadedFileName;
+
+                        File dir = new File(uploadDir);
+                        if (!dir.exists()) dir.mkdirs();
+
+                        String filePath = uploadDir + File.separator + uniqueFileName;
+                        Files.copy(file.getInputStream(), Paths.get(filePath));
+
+                        ProductImage img = new ProductImage();
+                        img.setImgUrl(filePath);
+                        img.setProduct(product);
+                        product.getImageList().add(img); // add to same list
+                    }
+                }
+
+            } catch (IOException e) {
+                throw new FileStorageException("Could not store file. Please try again!", e);
+            }
+        }
 
         Product saved = productDao.save(product);
 
+        // Convert to DTO
         ProductDTO dto = modelMapper.map(saved, ProductDTO.class);
         dto.setPrice(saved.getPrice());
         dto.setCategoryId(saved.getCategory().getCategoryId().toString());
@@ -232,8 +299,12 @@ public class ProductServiceImpl implements ProductService {
         dto.setImageUrl(saved.getImageList().stream()
                 .map(ProductImage::getImgUrl)
                 .collect(Collectors.toList()));
+
         return dto;
     }
+
+
+
 
     @Override
     public void deleteProduct(Long productId) {

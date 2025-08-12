@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -78,7 +79,7 @@ public class ProductController {
      * - Payload: none
      * - Response: SC 200 + ProductDTO OR SC 404 if not found
      */
-    @GetMapping("/products/{id}")
+    @GetMapping("manager/products/{id}")
     @Operation(description = "Get Product by ID")
     public ResponseEntity<ProductGetDto> getProduct(@PathVariable @Min(1) Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
@@ -92,9 +93,9 @@ public class ProductController {
      * - Payload: JSON representation of ProductDTO
      * - Response: SC 200 + Updated ProductDTO
      */
-    @PutMapping("/products/{id}")
+    @PutMapping(value="manager/products/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(description = "Update Product")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductDTO dto) {
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @ModelAttribute @Valid ProductPostDto dto) {
         return ResponseEntity.ok(productService.updateProduct(id, dto));
     }
 

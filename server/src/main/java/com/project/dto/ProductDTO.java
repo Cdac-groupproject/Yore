@@ -21,6 +21,7 @@ public class ProductDTO {
     private String categoryId;
     private Long countryOfOriginId; 
     private Long yearMade;
+    private boolean auctionedForToday;
     private List<String> imageUrl = new ArrayList<>();
     // For input: multipart image files (used in controller, not sent as JSON)
     @JsonIgnore

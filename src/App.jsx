@@ -86,7 +86,7 @@ function App() {
         <Route path="/museummanager/addproduct" element={<AddProduct />} />
         <Route path="/museummanager/productlist" element={<ProductList />} />
         <Route path="/museummanager/orders" element={<OrdersPage />} />
-        <Route path="/update-product" element={<UpdateProduct />} />
+        <Route path="/update-product/:productId" element={<UpdateProduct />} />
         <Route path="/auctions/:auctionId" element={<AuctionDetail />} />
         <Route path="/otp-verification" element={<OtpVerification />} />
         <Route path="/create-auction" element={<AddAuctionPage />} />

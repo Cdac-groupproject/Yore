@@ -15,4 +15,26 @@ export const getAllCountries = async () => {
   return response.data;
 };
 
+// Create category
+export const createCategory = async (categoryName) => {
+  const response = await axios.post(
+    `${API_BASE_URL}/manager/addCategory`,
+    { name: categoryName },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
 
+// Create country
+export const createCountry = async (countryName) => {
+  const response = await axios.post(
+    `${API_BASE_URL}/manager/addCountry`,
+    { countryName },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};

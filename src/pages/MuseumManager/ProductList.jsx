@@ -44,7 +44,7 @@ const ProductList = () => {
   }, [token]);
 
   const handleUpdate = (product) => {
-    navigate("/update-product", { state: { product } });
+    navigate(`/update-product/${product.productId}`, { state: { product } });
   };
 
   const handleAuctionAway = async (productId) => {
@@ -100,12 +100,12 @@ const ProductList = () => {
       setProducts(products.filter(p => p.productId !== productId));
     } 
     catch (err) {
-          if (
-            err.response?.data?.message?.toLowerCase().includes("referenced in auctions")
-          ) {
-            toast.error("Product Present For Auction, Cannot Delete");
-          }
-        }
+  if (err.response?.data?.message?.toLowerCase().includes("referenced in auctions")) {
+    toast.error("Product is present for an auction and cannot be deleted.");
+  } else {
+    toast.error("Failed to delete product.");
+  }
+}
     // catch (error) {
     //   console.error("Failed to delete product:", error);
     //   toast.error("Failed to delete product.");
@@ -202,7 +202,7 @@ const ProductList = () => {
                     <button
                       onClick={() => handleUpdate(product)}
                       className="bg-yellow-400 hover:bg-yellow-500 transition text-white px-4 py-2 rounded-md"
-                      aria-label={`Update ${product.name}`}
+                      aria-label={`Update ${product}`}
                       disabled={isLoading}
                     >
                       Update
