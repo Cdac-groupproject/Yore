@@ -24,4 +24,6 @@ public interface AuctionService {
 
 	ApiResponse deleteAuctionById(Long id);
 
+	ApiResponse startAuction(Long id);
+
 }

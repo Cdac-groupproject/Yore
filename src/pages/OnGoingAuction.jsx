@@ -1,18 +1,21 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import AuctionCard from "../components/AuctionCard";
 import car from "../assets/Homepage/car.png";
 import paint from "../assets/Homepage/list2.jpg";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
 
 function UpcomingAuction() {
   const navigate = useNavigate();
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const intervalRef = useRef();
 
-  const fetchActive = async (controller) => {
+  /** Fetch active auctions from backend */
+  const fetchActive = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -21,8 +24,7 @@ function UpcomingAuction() {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        signal: controller?.signal,
+        }
       });
 
       if (res.status === 204) {
@@ -38,15 +40,38 @@ function UpcomingAuction() {
       const data = await res.json();
       setAuctions(Array.isArray(data) ? data : []);
     } catch (err) {
-      if (err.name !== "AbortError") {
-        console.error("Failed to fetch active auctions:", err);
-        setError("Failed to load auctions");
-      }
+      console.error("Failed to fetch active auctions:", err);
+      setError("Failed to load auctions");
     } finally {
       setLoading(false);
     }
   };
 
+  /** Format date to dd/mm/yyyy */
+  const fmtDate = (isoStr) => {
+    if (!isoStr) return "-";
+    try {
+      const d = new Date(isoStr);
+      return d.toLocaleDateString("en-GB");
+    } catch {
+      return isoStr;
+    }
+  };
+
+  /** Get image source for auction */
+  const getImageSrc = (a) => {
+    const imgs = a?.productImages || [];
+    if (imgs.length > 0) {
+      const first = imgs[0];
+      const path = first.startsWith("/") ? first : `/${first}`;
+      return first.startsWith("http") ? first : `http://localhost:8080${path}`;
+    }
+    const name = (a?.productName || "").toLowerCase();
+    if (name.includes("car")) return car;
+    return paint;
+  };
+
+  /** Connect to WebSocket on mount */
   useEffect(() => {
     const loggeInInfo = sessionStorage.getItem("isLoggedIn");
     if (!loggeInInfo) {
@@ -54,46 +79,44 @@ function UpcomingAuction() {
       return;
     }
 
-    const controller = new AbortController();
-    fetchActive(controller);
+    // 1. Fetch initial active auctions
+    fetchActive();
 
-    // Poll every 5 seconds
-    intervalRef.current = setInterval(() => {
-      fetchActive();
-    }, 5000);
+    // 2. Connect WebSocket
+    const client = new Client({
+      webSocketFactory: () => new SockJS("http://localhost:8080/ws-auction"),
+      reconnectDelay: 5000,
+    });
+
+    client.onConnect = () => {
+      console.log("✅ Connected to WebSocket");
+
+      // Subscribe to *all* auction events
+      client.subscribe(`/topic/auction`, (message) => {
+        console.log("📩 Received WebSocket message:", message.body);
+        const auctionEvent = JSON.parse(message.body);
+
+        if (auctionEvent.type === "START") {
+          toast.success("🚀 Auction has started!");
+          fetchActive(); // refresh list
+        } else if (auctionEvent.type === "STOP") {
+          toast("🔒 Auction has ended!", { icon: "🔒" });
+          fetchActive(); // refresh list
+        }
+      });
+    };
+
+    client.activate();
 
     return () => {
-      controller.abort();
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      client.deactivate();
     };
   }, [navigate]);
-
-  const fmtDate = (isoStr) => {
-    if (!isoStr) return "-";
-    try {
-      const d = new Date(isoStr);
-      return d.toLocaleDateString("en-GB"); // dd/mm/yyyy
-    } catch {
-      return isoStr;
-    }
-  };
-
-  const getImageSrc = (a) => {
-    const imgs = a?.productImages || [];
-    if (imgs.length > 0) {
-  const first = imgs[0];
-  const path = first.startsWith('/') ? first : `/${first}`;
-  return first.startsWith("http") ? first : `http://localhost:8080${path}`;
-}
-    // fallback by heuristics
-    const name = (a?.productName || "").toLowerCase();
-    if (name.includes("car")) return car;
-    return paint;
-  };
 
   return (
     <div className="bg-[#fdf6ec] min-h-screen">
       <Navbar />
+      <Toaster position="top-right" />
 
       <div className="flex flex-col items-center px-4 py-8">
         <h2 className="text-2xl font-semibold mb-6">Active / Upcoming Auctions</h2>
@@ -102,13 +125,12 @@ function UpcomingAuction() {
         {error && <div className="text-red-600 mb-4">{error}</div>}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center">
-          {/* If no auctions, show two sample cards (keeps same UI as before) */}
           {!loading && auctions.length === 0 ? (
             <>
               <AuctionCard
                 image={car}
-                title="Vintage Car Aution"
-                autioneer="Vikrant kale"
+                title="Vintage Car Auction"
+                autioneer="Vikrant Kale"
                 sdate="25-07-2025"
                 edate="27-07-2025"
                 onView={() => navigate("/auctions/sample/1")}
@@ -116,7 +138,7 @@ function UpcomingAuction() {
               />
               <AuctionCard
                 image={paint}
-                title="Paint Aution"
+                title="Paint Auction"
                 autioneer="Pranit"
                 sdate="25-08-2025"
                 edate="27-08-2025"

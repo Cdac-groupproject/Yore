@@ -12,8 +12,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-	    registry.addEndpoint("/ws")
-	            .setAllowedOriginPatterns("http://localhost:5173", "http://127.0.0.1:5500") // Add both dev frontends
+	    registry.addEndpoint("/ws-auction")
+	            .setAllowedOriginPatterns("*","http://localhost:5173","http://localhost:5173", "http://127.0.0.1:5500") // Add both dev frontends
 	            //first url is our frontend(main) and second is for testing puspose
 	            .withSockJS(); // Enables fallback paths like /ws/info
 	}
