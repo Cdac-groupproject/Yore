@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.project.custom_exception.ApiException;
@@ -16,30 +17,33 @@ import com.project.dao.BidDao;
 import com.project.dao.UserDao;
 import com.project.dto.bids.BidReqDTO;
 import com.project.dto.bids.BidRespDTO;
+import com.project.dto.events.BidEvent;
 import com.project.entity.Auction;
 import com.project.entity.Bid;
 import com.project.entity.User;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 @Service
 @Transactional
+@AllArgsConstructor
 public class BidServiceImpl implements BidService{
 	
-	@Autowired
+
     private BidDao bidDao;
 
-    @Autowired
+   
     private AuctionDao auctionDao;
 
-    @Autowired
+
     private UserDao userDao;
-	@Autowired
+
     private ModelMapper modelMapper;
-    
+    private final SimpMessagingTemplate messagingTemplate;
 	@Override
 	@Transactional
 	public BidRespDTO placeBid(BidReqDTO dto) {
-	    // 1) Lock auction row
+	    // Lock auction row
 	    Auction auction = auctionDao.findByIdWithLock(dto.getAuctionId())
 	            .orElseThrow(() -> new ApiException("Invalid Auction ID"));
 
@@ -47,17 +51,17 @@ public class BidServiceImpl implements BidService{
 	        throw new ApiException("Auction is already closed.");
 	    }
 
-	    // 2) Validate bidder
+	    // Validate bidder
 	    User bidder = userDao.findById(dto.getUserId())
 	            .orElseThrow(() -> new ApiException("Invalid User ID"));
 
-	    // 3) Base price enforcement
+	    // Base price enforcement
 	    Double newBidAmount = dto.getBidAmount();
 	    if (newBidAmount.compareTo(auction.getBasePrice()) < 0) {
 	        throw new ApiException("Bid must be at least equal to the base price ₹" + auction.getBasePrice());
 	    }
 
-	    // 4) Check last bid by same user for this auction (prevent same-amount repeat)
+	    // Check last bid by same user for this auction (prevent same-amount repeat)
 	    Optional<Bid> lastUserBidOpt = bidDao.findTopByAuction_AuctionIdAndBidder_UserIdOrderByCreatedAtDesc(
 	            auction.getAuctionId(),
 	            bidder.getUserId()
@@ -70,7 +74,7 @@ public class BidServiceImpl implements BidService{
 	        }
 	    }
 
-	    // 5) Fetch and lock current highest bid (if exists)
+	    // Fetch and lock current highest bid (if exists)
 	    Optional<Bid> currentHighestOpt = bidDao.findFirstByAuction_AuctionIdOrderByBidAmountDesc(auction.getAuctionId());
 
 	    if (currentHighestOpt.isPresent()) {
@@ -90,7 +94,7 @@ public class BidServiceImpl implements BidService{
 	        }
 	    }
 
-	    // 6) Create and save new Bid row
+	    // Create and save new Bid row
 	    Bid bid = modelMapper.map(dto, Bid.class);
 	    bid.setAuction(auction);
 	    bid.setBidder(bidder);
@@ -98,11 +102,23 @@ public class BidServiceImpl implements BidService{
 
 	    Bid saved = bidDao.saveAndFlush(bid);
 
-	    // 7) Build response
+	    // Build response
 	    BidRespDTO respDTO = modelMapper.map(saved, BidRespDTO.class);
 	    respDTO.setAuctionId(auction.getAuctionId());
 	    respDTO.setUserId(bidder.getUserId());
 	    respDTO.setUsername(bidder.getFullName());
+	    
+	    //broadcast bid event to subscribers
+	    BidEvent bidEvent = new BidEvent();
+	    bidEvent.setAuctionId(auction.getAuctionId());
+	    bidEvent.setBidId(saved.getBidId());
+	    bidEvent.setUserId(bidder.getUserId());
+	    bidEvent.setUsername(bidder.getFullName());
+	    bidEvent.setBidAmount(saved.getBidAmount());
+	    bidEvent.setCreatedAt(saved.getCreatedAt());
+
+	    messagingTemplate.convertAndSend("/topic/auction/" + auction.getAuctionId() + "/bids", bidEvent);
+	    messagingTemplate.convertAndSend("/topic/auction/bids", bidEvent);
 
 	    return respDTO;
 	}

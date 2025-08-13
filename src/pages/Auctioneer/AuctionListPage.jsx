@@ -3,6 +3,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../../components/Navbar";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
 
 const fallbackImages = [
   "/src/assets/Homepage/car.png",
@@ -20,18 +22,17 @@ export default function AuctionListPage() {
     ? { headers: { Authorization: `Bearer ${token}` } }
     : null;
 
-  useEffect(() => {
+  // Fetch auctions initially
+  const fetchAuctions = () => {
     if (!token) {
       toast.error("Authentication token not found. Please log in.");
       return;
     }
-
     setLoading(true);
     axios
       .get("http://localhost:8080/auctioneer/auctions", authConfig)
       .then((res) => {
         if (res.status === 204) {
-          toast.info("No auctions available.");
           setAuctions([]);
         } else if (Array.isArray(res.data)) {
           setAuctions(res.data);
@@ -43,7 +44,54 @@ export default function AuctionListPage() {
       .finally(() => {
         setLoading(false);
       });
-  }, [token]);
+  };
+
+  useEffect(() => {
+    fetchAuctions();
+
+    // Connect WebSocket
+    const client = new Client({
+      webSocketFactory: () => new SockJS("http://localhost:8080/ws-auction"),
+      reconnectDelay: 5000,
+    });
+
+    client.onConnect = () => {
+      console.log("✅ Connected to WebSocket");
+
+      // Listen for bid events
+      client.subscribe("/topic/auction/bids", (message) => {
+        const bidEvent = JSON.parse(message.body);
+        console.log("📨 Bid Event:", bidEvent);
+
+        toast.info(`💰 New bid: ₹${bidEvent.bidAmount}`);
+        fetchAuctions(); // Refresh auction list
+      });
+
+      // Listen for START / STOP events
+      client.subscribe("/topic/auction", (message) => {
+        const event = JSON.parse(message.body);
+        console.log("📨 Auction Event:", event);
+
+        if (event.type === "STOP") {
+          toast.info("🔒 Auction has ended!", { icon: "🔒" });
+        } else if (event.type === "START") {
+          toast.success("🚀 Auction started!");
+        }
+
+        fetchAuctions(); // Refresh auction list
+      });
+    };
+
+    client.onStompError = (frame) => {
+      console.error("Broker error:", frame.headers["message"]);
+    };
+
+    client.activate();
+
+    return () => {
+      client.deactivate();
+    };
+  }, []);
 
   const getImageSrc = (auction) => {
     const images =
@@ -68,18 +116,7 @@ export default function AuctionListPage() {
         </h2>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="animate-pulse border rounded-xl p-4 shadow-sm bg-white"
-              >
-                <div className="w-full h-48 bg-gray-200 rounded-md"></div>
-                <div className="h-4 bg-gray-200 mt-4 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 mt-2 rounded w-1/2"></div>
-              </div>
-            ))}
-          </div>
+          <p className="text-center">Loading...</p>
         ) : auctions.length === 0 ? (
           <p className="text-center text-gray-500">No auctions available.</p>
         ) : (
@@ -91,14 +128,11 @@ export default function AuctionListPage() {
                   key={auction.auctionId}
                   className="bg-white border rounded-xl shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1 overflow-hidden"
                 >
-                  {/* Product Image */}
                   <img
                     src={getImageSrc(auction)}
                     alt={auction.productName}
                     className="w-full h-48 object-cover"
                   />
-
-                  {/* Card Content */}
                   <div className="p-5">
                     <div className="flex justify-between items-center mb-2">
                       <h3 className="text-lg font-semibold text-gray-800">
@@ -114,11 +148,9 @@ export default function AuctionListPage() {
                         {isOngoing ? "Ongoing" : "Closed"}
                       </span>
                     </div>
-
                     <p className="text-sm text-gray-500 line-clamp-2">
                       {auction.description}
                     </p>
-
                     <div className="mt-3 space-y-1 text-sm text-gray-600">
                       <p>
                         Base Price:{" "}
@@ -139,7 +171,6 @@ export default function AuctionListPage() {
                           ? new Date(auction.endTime).toLocaleString()
                           : "N/A"}
                       </p>
-
                       {!isOngoing && auction.winnerName && (
                         <p className="mt-2 text-sm text-blue-600 font-medium">
                           Winner: {auction.winnerName} (₹

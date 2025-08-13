@@ -23,6 +23,7 @@ import com.project.service.AuctionService;
 import com.project.service.AuctionServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -48,7 +49,7 @@ public class AuctionController {
 	 */
 	@PostMapping("/create")
 	@Operation(description = "Add New Auction")
-	public ResponseEntity<?> addNewAuction(@RequestBody AddAuctionDTO dto) {
+	public ResponseEntity<?> addNewAuction(@RequestBody @Valid AddAuctionDTO dto) {
 		System.out.println("in add " + dto);
 		
 		// call service method
@@ -139,6 +140,13 @@ public class AuctionController {
 	@DeleteMapping("/{auctionId}")
 	public ApiResponse deleteAuction(@PathVariable Long auctionId) {
 	    return auctionService.deleteAuctionById(auctionId);
+	}
+	
+	@PutMapping("/start/{id}")
+	public ResponseEntity<?> startAuction(@PathVariable Long id) {
+	    // we can add a simple service method to mark auction startTime = now (if not started) or just notify
+	    auctionService.startAuction(id);
+	    return ResponseEntity.ok(new ApiResponse("Auction started and event broadcasted"));
 	}
 
 }

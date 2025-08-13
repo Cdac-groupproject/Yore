@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +28,13 @@ import com.project.dto.AddAuctionDTO;
 import com.project.dto.ApiResponse;
 import com.project.dto.AuctionCloseResponseDTO;
 import com.project.dto.AuctionRespDTO;
+import com.project.dto.ProductDTO;
+import com.project.dto.events.AuctionEvent;
 import com.project.entity.Auction;
 import com.project.entity.Bid;
 import com.project.entity.Order;
 import com.project.entity.Product;
+import com.project.entity.ProductImage;
 import com.project.entity.User;
 
 
@@ -49,7 +53,7 @@ public class AuctionServiceImpl implements AuctionService {
     private final ProductImageDao productImageDao;
     private final OrdersDao orderDao;
     private final ModelMapper modelMapper;
-
+    private final SimpMessagingTemplate messagingTemplate;
     @Override
     public ApiResponse addNewAuction(AddAuctionDTO dto) {
         Product product = productDao.findById(dto.getProductId())
@@ -96,6 +100,25 @@ public class AuctionServiceImpl implements AuctionService {
         entity.setUpdatedAt(LocalDateTime.now());
 
         Auction persistentAuction = auctionDao.save(entity);
+        
+     // If auction starts now or in the past, notify subscribers immediately (START)
+        LocalDateTime now = LocalDateTime.now();
+     
+            AuctionEvent statusEvent = new AuctionEvent(
+                    "START",
+                    persistentAuction.getAuctionId(),
+                    persistentAuction.getStartTime(),
+                    persistentAuction.getEndTime(),
+                    persistentAuction.getBasePrice(),
+                    persistentAuction.getBasePrice(),// at start, no bids yet
+                    //persistentAuction.getProduct(),
+                    persistentAuction.getAuctioneer()
+            );
+            messagingTemplate.convertAndSend("/topic/auction", statusEvent);
+            System.out.println("📢 Sending START event to /topic/auction");
+            System.out.println("START event payload: " + statusEvent);
+
+
 
         return new ApiResponse("Added new Auction with ID=" + persistentAuction.getAuctionId());
     }
@@ -506,7 +529,37 @@ public class AuctionServiceImpl implements AuctionService {
             response.setWinningBidAmount(null);
             response.setMessage("Auction closed successfully. No bids were placed.");
         }
-
+//        Product product = auction.getProduct();
+//        ProductDTO dto = new ProductDTO();
+//        dto.setProductId(product.getProductId());
+//        dto.setName(product.getName());
+//        dto.setDescription(product.getDescription());
+//        dto.setPrice(product.getPrice());
+//        dto.setSold(product.getSold());
+//        dto.setCategoryId(product.getCategory().getCategoryId().toString());
+//        dto.setCountryOfOriginId(product.getCountryOfOrigin().getCountryId());
+//        dto.setYearMade(product.getYearMade());
+//        dto.setAuctionedForToday(product.getAuctionedForToday());
+//        dto.setImageUrl(product.getImageList()
+//                .stream()
+//                .map(ProductImage::getImageUrl)
+//                .collect(Collectors.toList()));
+        // broadcast STOP event (include final highest bid info if any)
+        Double finalHighest = highestBidOpt.map(Bid::getBidAmount).orElse(auction.getBasePrice());
+        AuctionEvent statusEvent = new AuctionEvent(
+                "STOP",
+                auction.getAuctionId(),
+                auction.getStartTime(),
+                auction.getEndTime(),
+                auction.getBasePrice(),
+                finalHighest,
+                //dto,
+                auction.getAuctioneer()
+        );
+        messagingTemplate.convertAndSend("/topic/auction/" + auction.getAuctionId(), statusEvent);
+        messagingTemplate.convertAndSend("/topic/auction", statusEvent);
+        System.out.println("📢 Sending STOP event to /topic/auction/" + auction.getAuctionId());
+        System.out.println("STOP event payload: " + statusEvent);
         return response;
     }
 
@@ -612,4 +665,35 @@ public class AuctionServiceImpl implements AuctionService {
         auctionDao.deleteById(auctionId);
         return new ApiResponse("Auction with ID " + auctionId + " has been deleted successfully");
     }
+
+	@Override
+	public ApiResponse startAuction(Long id) {
+		Auction auction = auctionDao.findById(id)
+	            .orElseThrow(() -> new ApiException("Auction not found"));
+
+	    LocalDateTime now = LocalDateTime.now();
+	    if (auction.getStartTime() == null || auction.getStartTime().isAfter(now)) {
+	        auction.setStartTime(now);
+	        auction.setUpdatedAt(now);
+	        auctionDao.save(auction);
+	    }
+
+	    Double currentHighest = bidDao.findTopByAuctionOrderByBidAmountDesc(auction)
+	            .map(Bid::getBidAmount)
+	            .orElse(auction.getBasePrice());
+
+	    AuctionEvent startEvent = new AuctionEvent(
+	            "START",
+	            auction.getAuctionId(),
+	            auction.getStartTime(),
+	            auction.getEndTime(),
+	            auction.getBasePrice(),
+	            currentHighest,
+	            //auction.getProduct(),
+	            auction.getAuctioneer()
+	    );
+	    messagingTemplate.convertAndSend("/topic/auction/", startEvent);
+
+	    return new ApiResponse("Auction started and event sent");
+	}
 }
