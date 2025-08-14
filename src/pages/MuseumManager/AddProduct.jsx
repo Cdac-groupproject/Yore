@@ -49,6 +49,39 @@ function AddProduct() {
     }
   };
 
+
+  const handleCreateCategory = async (inputValue) => {
+    try {
+      const newCategory = await createCategory(inputValue);
+      const option = {
+        value: newCategory.categoryId,
+        label: newCategory.name,
+      };
+      setCategories((prev) => [...prev, option]);
+      setSelectedCategory(option);
+      toast.success(`Category "${inputValue}" created successfully!`);
+    } catch (err) {
+      console.error("Error creating category", err);
+      toast.error("Failed to create category.");
+    }
+  };
+
+  const handleCreateCountry = async (inputValue) => {
+    try {
+      const newCountry = await createCountry(inputValue);
+      const option = {
+        value: newCountry.countryId,
+        label: newCountry.countryName,
+      };
+      setCountries((prev) => [...prev, option]);
+      setSelectedCountry(option);
+      toast.success(`Country "${inputValue}" created successfully!`);
+    } catch (err) {
+      console.error("Error creating country", err);
+      toast.error("Failed to create country.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -163,6 +196,7 @@ function AddProduct() {
                   options={categories}
                   value={selectedCategory}
                   onChange={setSelectedCategory}
+                  onCreateOption={handleCreateCategory}
                   isClearable
                   isSearchable
                   placeholder="Select or type to add category"
@@ -176,6 +210,7 @@ function AddProduct() {
                   options={countries}
                   value={selectedCountry}
                   onChange={setSelectedCountry}
+                  onCreateOption={handleCreateCountry}
                   isClearable
                   isSearchable
                   placeholder="Select or type to add country"
