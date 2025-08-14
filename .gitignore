@@ -18,26 +18,21 @@ logs/
 .idea/
 *.iml
 
-# Eclipse workspace metadata (do NOT include this)
+# Eclipse workspace metadata
 .metadata/
-
 
 # Build results
 *.jar
 *.war
 
-# OS-specific
-.DS_Store
-Thumbs.db
+# STS-specific
+.springBeans
 
 # Temporary files
 *.tmp
 *.bak
 *.swp
 *.swo
-
-# STS-specific
-.springBeans
 
 ##################################
 # Frontend (React - Node/NPM)    #
@@ -68,18 +63,70 @@ lerna-debug.log*
 .vscode/
 !.vscode/extensions.json
 
-##########################
-# Optional - Test/Coverage
-##########################
+# Test/Coverage
 coverage/
 TestResults/
 *.coverage
 *.coveragexml
 
 ##########################
-# OS-specific
+# .NET / Visual Studio   #
+##########################
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache
+.vs/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+
+# MSBuild Binary and Structured Log
+*.binlog
+
+# MSTest / NUnit test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+# Executables & libraries
+private/
+*.exe
+*.dll
+*.app
+*.so
+*.dylib
+
+# Code Coverage
+CodeCoverage/
+
+##########################
+# OS-specific / General  #
 ##########################
 .DS_Store
 Thumbs.db
-
-.metadata/

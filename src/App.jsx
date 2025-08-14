@@ -17,8 +17,6 @@ import AuctioneerUpcomingAuction from "./pages/Auctioneer/AuctioneerUpcomingAuct
 //import ContactUs from "./pages/ContactUs";
 import EmployeesList from "./pages/EmployeesList";
 
-
-
 import BiddersAuction from "./pages/BiddersAuction";
 import { Toaster } from "react-hot-toast";
 import AddEmployee from "./pages/AddEmployee";
@@ -27,6 +25,8 @@ import AuctionDetail from "./components/Bidder/AuctionDetail";
 import AddAuctionPage from "./pages/Auctioneer/AddAuctionPage";
 import AuctionListPage from "./pages/Auctioneer/AuctionListPage";
 import AllUsers from "./pages/AllUsers";
+import MuseumArtifacts from "./pages/MuseumArtifacts";
+import AddArtifacts from "./pages/AddArtifacts";
 
 function App() {
   return (
@@ -91,6 +91,9 @@ function App() {
         <Route path="/otp-verification" element={<OtpVerification />} />
         <Route path="/create-auction" element={<AddAuctionPage />} />
         <Route path="/auction-list" element={<AuctionListPage />} />
+
+        <Route path="/museum-art" element={<MuseumArtifacts />} />
+        <Route path="/add-artifact" element={<AddArtifacts />} />
 
         <Route path="/all-users" element={<AllUsers />} />
       </Routes>
