@@ -23,6 +23,7 @@ function Navbar() {
   const isAddEmp = location.pathname === "/add-employee";
   const isContactUs = location.pathname === "/contact";
   const isAllUsers = location.pathname === "/all-users";
+  const isMuseumArt = location.pathname === "/museum-art";
 
   const loggedInfo = sessionStorage.getItem("isLoggedIn");
   const user = JSON.parse(sessionStorage.getItem("user"));
@@ -124,6 +125,17 @@ function Navbar() {
               Product List
             </Link>
           )}
+
+          <Link
+            to="/museum-art"
+            className={
+              isMuseumArt
+                ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                : "text-gray-700 hover:text-yellow-700"
+            }
+          >
+            Artifacts
+          </Link>
 
           {/* <Link
             to="/ongoing"
