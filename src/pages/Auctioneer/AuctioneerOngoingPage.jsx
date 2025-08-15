@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { useParams } from "react-router-dom";
-import { getAuctionDetailsById, getHighestBid } from "../../api/api";
+import { getAuctionDetailsById } from "../../api/api";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
 
 const fallbackImages = [
   "/src/assets/Homepage/car.png",
@@ -14,13 +16,13 @@ const fallbackImages = [
 ];
 
 const navButtonStyle = {
-  fontSize: '24px',
-  padding: '10px 20px',
-  cursor: 'pointer',
-  border: 'none',
-  backgroundColor: '#eee',
-  borderRadius: '8px',
-  boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+  fontSize: "24px",
+  padding: "10px 20px",
+  cursor: "pointer",
+  border: "none",
+  backgroundColor: "#eee",
+  borderRadius: "8px",
+  boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
 };
 const auctionCardStyle = {
   width: 450,
@@ -55,7 +57,11 @@ const AuctioneerOngoingPage = () => {
   const [winningBidAmount, setWinningBidAmount] = useState("");
   const [showWinner, setShowWinner] = useState(false);
 
+  const [auctionEnded, setAuctionEnded] = useState(false);
   const intervalRef = useRef();
+
+  // Current logged-in user ID
+  const userId = localStorage.getItem("userId");
 
   // Fetch auction details once
   useEffect(() => {
@@ -76,27 +82,61 @@ const AuctioneerOngoingPage = () => {
     fetchAuction();
   }, [auctionId]);
 
-  // Poll highest bid every 5 seconds, but stop if auction is closed
+  // WebSocket connection instead of polling
   useEffect(() => {
-    if (!auctionId || isClosed) return;
+    if (!auctionId) return;
 
-    const fetchHighest = async () => {
-      try {
-        const data = await getHighestBid(auctionId);
-        setHighestBid(data.bidAmount || auction?.basePrice || 0);
-        setHighestBidder(data.bidderName || "No bids yet");
-      } catch (err) {
-        console.error("Error fetching highest bid", err);
-      }
+    const client = new Client({
+      webSocketFactory: () => new SockJS("http://localhost:8080/ws-auction"),
+      reconnectDelay: 5000,
+    });
+
+    client.onConnect = () => {
+      console.log("✅ Connected to WebSocket");
+
+      // Listen for new bids
+      client.subscribe(`/topic/auction/${auctionId}/bids`, (message) => {
+        const bidEvent = JSON.parse(message.body);
+        setHighestBid(bidEvent.bidAmount);
+        setHighestBidder(bidEvent.username);
+
+        // Show toast only if bid is from another user
+        if (bidEvent.userId !== userId) {
+          toast.success(`💰 New bid: ₹${bidEvent.bidAmount} by ${bidEvent.username}`);
+        }
+      });
+
+      // Listen for auction start events
+      client.subscribe(`/topic/auction`, (message) => {
+        console.log("Received WebSocket message:", message.body);
+        const startEvent = JSON.parse(message.body);
+        if (startEvent.type === "START") {
+          toast.success(`🚀 A new Auction has started! By ${startEvent.auctioneer.fullName}`);
+        }
+      });
+
+      // Listen for auction stop events
+      client.subscribe(`/topic/auction/${auctionId}`, (message) => {
+        console.log("Received WebSocket message:", message.body);
+        const auctionEvent = JSON.parse(message.body);
+        if (auctionEvent.type === "STOP") {
+          toast("🔒 Auction has ended!");
+          setAuctionEnded(true);
+          setHighestBid(auctionEvent.currentHighestBid);
+
+          // Disconnect WebSocket
+          client.deactivate();
+        }
+      });
     };
 
-    fetchHighest();
-    intervalRef.current = setInterval(fetchHighest, 5000);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+    client.onStompError = (frame) => {
+      console.error("❌ STOMP error:", frame.headers["message"]);
     };
-  }, [auctionId, auction?.basePrice, isClosed]);
+
+    client.activate();
+    return () => client.deactivate();
+  }, [auctionId, userId]);
 
   // Terminate auction handler
   const terminateAuction = async () => {
@@ -124,7 +164,7 @@ const AuctioneerOngoingPage = () => {
         toast.success(message || "Auction terminated successfully");
       }
       setIsClosed(true); // Set isClosed immediately
-      if (intervalRef.current) clearInterval(intervalRef.current); // Stop polling immediately
+      if (intervalRef.current) clearInterval(intervalRef.current); // Stop polling if it was there
     } catch (err) {
       if (
         err.response?.data?.message?.toLowerCase().includes("already closed")
@@ -189,8 +229,8 @@ const AuctioneerOngoingPage = () => {
                       safeImages[currentImage]?.startsWith("http")
                         ? safeImages[currentImage]
                         : safeImages[currentImage]?.startsWith("/src/assets/")
-                          ? safeImages[currentImage] // Use as-is for local assets
-                          : `http://localhost:8080/${safeImages[currentImage]}` // Prepend for backend images
+                          ? safeImages[currentImage]
+                          : `http://localhost:8080/${safeImages[currentImage]}`
                     }
                     alt="Product"
                     style={{ width: 550, height: 400, objectFit: "contain" }}
@@ -239,7 +279,6 @@ const AuctioneerOngoingPage = () => {
                   </button>
                 </div>
 
-                {/* Winner info, only visible after termination */}
                 {showWinner && (
                   <div style={{ marginTop: 20, padding: 10, background: "#f9f9f9", borderRadius: 6 }}>
                     <div>

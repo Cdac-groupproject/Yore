@@ -97,7 +97,7 @@ function UpcomingAuction() {
         const auctionEvent = JSON.parse(message.body);
 
         if (auctionEvent.type === "START") {
-          toast.success("🚀 Auction has started!");
+          toast.success(`🚀 Auction has started By ${auctionEvent.auctioneer.fullName}`);
           fetchActive(); // refresh list
         } else if (auctionEvent.type === "STOP") {
           toast("🔒 Auction has ended!", { icon: "🔒" });
