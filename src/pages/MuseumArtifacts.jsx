@@ -20,7 +20,7 @@ function MuseumArtifacts() {
     return match ? match[1] : null;
   }
 
-  const apiUrl = "https://localhost:7056/api/product";
+  const apiUrl = "http://localhost:5000/api/product";
 
   // Fetch all products
   const getProducts = async () => {
@@ -68,7 +68,7 @@ function MuseumArtifacts() {
               {/* Image */}
               <div className="w-full h-56 bg-gray-200 flex items-center justify-center overflow-hidden">
                 <img
-                  src={`https://localhost:7056${item.imageUrl}`}
+                  src={`http://localhost:5000${item.imageUrl}`}
                   alt={item.name}
                   className="max-h-full max-w-full object-contain"
                 />

@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite",
+    "start-dotnet-react": "concurrently --names \"DOTNET,REACT\" --prefix-colors \"cyan,green\" \"cd \\\"D:/final project/Yore/product.netserver/YoreDemo/YoreDemo\\\" && dotnet run\" \"cd \\\"D:/final project/Yore\\\" && npm run start\""
   },
   "dependencies": {
     "@stomp/stompjs": "^7.1.1",
@@ -35,6 +37,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
+    "concurrently": "^9.2.0",
     "eslint": "^9.30.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",

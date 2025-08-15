@@ -42,7 +42,7 @@ function AddArtifacts() {
     data.append("imageFile", imageFile);
 
     try {
-      await axios.post("https://localhost:7056/api/product", data, {
+      await axios.post("http://localhost:5000/api/product", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       toast.success("Product added succesfully");
