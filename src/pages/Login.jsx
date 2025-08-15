@@ -35,7 +35,7 @@ function Login() {
 
       const decoded = jwtDecode(token);
       const userId = parseInt(decoded.sub);
-
+      console.log("user id = ", userId);
       const userRes = await getUserById(userId);
       const user = userRes.data;
 
@@ -48,6 +48,7 @@ function Login() {
         email: user.email,
         age: user.age,
         role: user.role,
+        user_id: userId,
       };
 
       sessionStorage.setItem("user", JSON.stringify(userDetails));

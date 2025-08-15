@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.dto.bidder.BidderRegisterResDTO;
 import com.project.dto.EditProfileDTO;
+import com.project.dto.bidder.BIdderOrderDTO;
 import com.project.dto.bidder.BidderLogReqDTO;
 import com.project.dto.bidder.BidderLogResDTO;
 import com.project.dto.bidder.BidderRegisterResDTO;
 import com.project.dto.bidder.BidderRequestDTO;
 import com.project.security.JwtUtil;
 import com.project.service.bidder.BidderService;
+import com.project.service.orders.OrdersService;
 import com.project.service.user.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -39,6 +42,9 @@ public class BidderController {
 		
 	@Autowired
 	private BidderService bidderService;
+	
+	@Autowired
+	private OrdersService orderService;
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -111,4 +117,9 @@ public class BidderController {
 	public ResponseEntity<?> getUser(@RequestParam Long id){	
 		return ResponseEntity.ok(bidderService.getUser(id));
 	}
+	
+	@GetMapping("/{bidderId}/orders")
+    public List<BIdderOrderDTO> getBidderOrders(@PathVariable Long bidderId) {
+        return orderService.getOrdersForBidder(bidderId);
+    }
 }

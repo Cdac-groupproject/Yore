@@ -27,6 +27,7 @@ import AuctionListPage from "./pages/Auctioneer/AuctionListPage";
 import AllUsers from "./pages/AllUsers";
 import MuseumArtifacts from "./pages/MuseumArtifacts";
 import AddArtifacts from "./pages/AddArtifacts";
+import BidderOrders from "./pages/BidderOrders";
 
 function App() {
   return (
@@ -94,6 +95,8 @@ function App() {
 
         <Route path="/museum-art" element={<MuseumArtifacts />} />
         <Route path="/add-artifact" element={<AddArtifacts />} />
+
+        <Route path="/bidder/orders" element={<BidderOrders />} />
 
         <Route path="/all-users" element={<AllUsers />} />
       </Routes>

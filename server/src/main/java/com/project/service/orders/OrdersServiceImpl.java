@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.custom_exception.ResourceNotFoundException;
 import com.project.dao.orders.OrdersDao;
+import com.project.dto.bidder.BIdderOrderDTO;
 import com.project.dto.orders.OrderDto;
 import com.project.entity.Order;
 
@@ -65,5 +66,10 @@ public class OrdersServiceImpl implements OrdersService {
 		}
 		return dto;
 	}
+	
+	@Override
+	public List<BIdderOrderDTO> getOrdersForBidder(Long bidderId) {
+        return orderDao.findOrdersByBidderId(bidderId);
+    }
 	
 }

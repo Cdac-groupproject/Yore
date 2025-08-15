@@ -24,6 +24,7 @@ function Navbar() {
   const isContactUs = location.pathname === "/contact";
   const isAllUsers = location.pathname === "/all-users";
   const isMuseumArt = location.pathname === "/museum-art";
+  const isBidderOrders = location.pathname === "/bidder/orders";
 
   const loggedInfo = sessionStorage.getItem("isLoggedIn");
   const user = JSON.parse(sessionStorage.getItem("user"));
@@ -123,6 +124,19 @@ function Navbar() {
               }
             >
               Product List
+            </Link>
+          )}
+
+          {roleName === "BIDDER" && (
+            <Link
+              to="/bidder/orders"
+              className={
+                isBidderOrders
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-700 pb-1 transition-all duration-200"
+                  : "text-gray-700 hover:text-yellow-700"
+              }
+            >
+              Orders
             </Link>
           )}
 
