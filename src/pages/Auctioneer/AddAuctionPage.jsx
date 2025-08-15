@@ -252,7 +252,7 @@ export default function AddAuctionPage() {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold"
               disabled={loading}
             >
-              {loading ? "Creating..." : "Create Auction"}
+              {loading ? "Creating..." : "Create And Start Auction"}
             </button>
           </form>
         </div>

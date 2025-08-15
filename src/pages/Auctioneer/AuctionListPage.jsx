@@ -63,7 +63,7 @@ export default function AuctionListPage() {
         const bidEvent = JSON.parse(message.body);
         console.log("📨 Bid Event:", bidEvent);
 
-        toast.info(`💰 New bid: ₹${bidEvent.bidAmount}`);
+        toast.info(`💰 New bid: ₹${bidEvent.bidAmount} by ${bidEvent.username} for auction ${bidEvent.auctionId}`);
         fetchAuctions(); // Refresh auction list
       });
 
