@@ -30,7 +30,7 @@ function Login() {
 
       console.log("token = " + token);
 
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("token", token);
       sessionStorage.setItem("isLoggedIn", true);
 
       const decoded = jwtDecode(token);

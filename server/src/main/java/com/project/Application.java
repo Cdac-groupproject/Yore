@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import com.project.entity.Auction;
 import com.project.dto.AuctionRespDTO;
 
-@SpringBootApplication // includes @Configuration
+@SpringBootApplication // includes @Configuration @EnableAutoConfiguration @ComponentScan
 public class Application {
 
 	public static void main(String[] args) {

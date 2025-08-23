@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:8080"; // change if needed
-const token = localStorage.getItem("token");
+const token = sessionStorage.getItem("token");
 
 // Fetch all categories
 export const getAllCategories = async () => {

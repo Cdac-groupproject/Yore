@@ -17,7 +17,7 @@ const ProductList = () => {
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState(null);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const authConfig = token
     ? { headers: { Authorization: `Bearer ${token}` } }
     : null;

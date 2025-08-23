@@ -8,7 +8,7 @@ function MuseumArtifacts() {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
-  // Extract role from localStorage
+  // Extract role from sessionStorage
   const user = JSON.parse(sessionStorage.getItem("user"));
   const fullName = user?.fullName;
   const roleName = extractRoleName(user?.role);

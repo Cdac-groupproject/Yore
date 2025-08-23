@@ -61,7 +61,7 @@ const AuctioneerOngoingPage = () => {
   const intervalRef = useRef();
 
   // Current logged-in user ID
-  const userId = localStorage.getItem("userId");
+  const userId = sessionStorage.getItem("userId");
 
   // Fetch auction details once
   useEffect(() => {
@@ -144,7 +144,7 @@ const AuctioneerOngoingPage = () => {
     setTerminateLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const result = await axios.put(
         `http://localhost:8080/auctioneer/auctions/close/${auctionId}`,
         {},

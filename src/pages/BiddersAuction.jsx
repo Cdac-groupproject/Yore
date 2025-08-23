@@ -17,7 +17,7 @@ const STEP = 500;
 
 const BiddersAuction = () => {
   const { auctionId } = useParams();
-  const userId = parseInt(localStorage.getItem("userId"), 10);
+  const userId = parseInt(sessionStorage.getItem("userId"), 10);
 
   const [auction, setAuction] = useState(null);
   const [currentImage, setCurrentImage] = useState(0);

@@ -30,13 +30,17 @@ namespace YoreDemo.Models
         public string ImageUrl { get; set; } = string.Empty;
     }
 
-    public class YoreContext : DbContext
-    {
-        public DbSet<Product> Products { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+
+        public class YoreContext : DbContext
         {
-            optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=yore_db_ms;Integrated Security=True;Encrypt=True");
+            public YoreContext(DbContextOptions<YoreContext> options)
+                : base(options)
+            {
+            }
+
+            public DbSet<Product> Products { get; set; }
         }
     }
-}
+
+

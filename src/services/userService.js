@@ -21,7 +21,7 @@ export const updateProfile = async (profileData) => {
 };
 
 export const getUserById = async (userId) => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   return axios.get(`http://localhost:8080/get-user?id=${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -30,7 +30,7 @@ export const getUserById = async (userId) => {
 };
 
 export const getAllUsers = async () => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   return await myAxios.get("/users");
 };
 

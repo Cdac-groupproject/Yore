@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 
 
 public interface BidderService {
-	BidderLogResDTO logIn(BidderLogReqDTO dto);
+//	BidderLogResDTO logIn(BidderLogReqDTO dto);
 //	BidderRegisterResDTO register(BidderRequestDTO dto);
 	List<BidderLogResDTO> getAllUsers();
 	String signUp(BidderRequestDTO dto);

@@ -8,7 +8,13 @@ namespace YoreDemo.Controllers
     [EnableCors("Policy1")]
     public class ProductController : ControllerBase
     {
-        YoreContext _context = new YoreContext();
+        private readonly YoreContext _context;
+
+        public ProductController(YoreContext context)
+        {
+            _context = context;
+        }
+
         // GET: api/<ProductController>
         [HttpGet]
         public IEnumerable<Product> Get()

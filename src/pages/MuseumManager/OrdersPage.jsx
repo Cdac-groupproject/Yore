@@ -4,17 +4,38 @@ import Navbar from "../../components/Navbar";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
-  useEffect(() => {
-    axios.get("http://localhost:8080/orders", {headers: {Authorization: `Bearer ${token}`}})
-      .then((res) => {
+  // useEffect(() => {
+  //   axios.get("http://localhost:8080/orders", {headers: {Authorization: `Bearer ${token}`}})
+  //     .then((res) => {
+  //       setOrders(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error fetching orders", err);
+  //     });
+  // }, []);
+
+useEffect(() => {
+  axios
+    .get("http://localhost:8080/orders", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((res) => {
+      // Defensive check: ensure res.data is an array
+      if (Array.isArray(res.data)) {
         setOrders(res.data);
-      })
-      .catch((err) => {
-        console.error("Error fetching orders", err);
-      });
-  }, []);
+      } else {
+        setOrders([]); // fallback to empty array if not
+        console.warn("Expected an array but got:", res.data);
+      }
+    })
+    .catch((err) => {
+      console.error("Error fetching orders", err);
+      setOrders([]); // fallback to empty on error
+    });
+}, []);
+
 
   return (
     <div>
@@ -36,7 +57,7 @@ export default function OrdersPage() {
               <th className="p-4 border">Final Price</th>
             </tr>
           </thead>
-          <tbody>
+          {/* <tbody>
             {orders.map((order, index) => (
               <tr
                 key={order.orderId}
@@ -56,7 +77,39 @@ export default function OrdersPage() {
                 </td>
               </tr>
             ))}
-          </tbody>
+          </tbody> */}
+
+          <tbody>
+  {orders.length === 0 ? (
+    <tr>
+      <td colSpan="6" className="p-4 text-center text-gray-500 italic">
+        No orders found.
+      </td>
+    </tr>
+  ) : (
+    orders.map((order, index) => (
+      <tr
+        key={order.orderId}
+        className={`hover:bg-[#f0e1c6] transition duration-200 ${
+          index % 2 === 0 ? "bg-[#fffaf3]" : "bg-[#fdf3e7]"
+        }`}
+      >
+        <td className="p-4 border text-center">{order.orderId}</td>
+        <td className="p-4 border">{order.productName}</td>
+        <td className="p-4 border">{order.bidderName}</td>
+        <td className="p-4 border">{order.auctioneerName}</td>
+        <td className="p-4 border">
+          {new Date(order.orderDate).toLocaleString()}
+        </td>
+        <td className="p-4 border text-right">
+          ₹{order.finalPrice.toLocaleString()}
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
+
+
         </table>
       </div>
 

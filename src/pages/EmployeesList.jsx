@@ -43,7 +43,7 @@ export default function EmployeesList() {
     <>
       <Navbar />
       <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white via-[#ece6da] to-[#d1c7b7] py-16 px-4">
-        <div className="max-w-4xl w-full bg-white p-6 rounded-lg shadow-lg border border-gray-300">
+        <div className="max-w-6xl w-full bg-white p-6 rounded-lg shadow-lg border border-gray-300">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-[#332214]">
               Employees List

@@ -46,27 +46,27 @@ public class BidderServiceImpl implements BidderService {
 	
 	private  Map<String, String> otpMap = new ConcurrentHashMap<>();
 	private  Map<String, BidderRequestDTO> pendingUsers = new ConcurrentHashMap<>();
-
-	@Override
-	public BidderLogResDTO logIn(BidderLogReqDTO dto) {
-		User entity = userDao.findByEmail(dto.getEmail())
-				.orElseThrow(() -> new ApiException("Email id not found"));
-
-		// Match raw password with encrypted one
-		if (!passwordEncoder.matches(dto.getPassword(), entity.getPassword())) {
-			throw new ApiException("Invalid password");
-		}
-
-		BidderLogResDTO resdto = new BidderLogResDTO();
-		resdto.setFullName(entity.getFullName());
-		resdto.setEmail(entity.getEmail());
-		resdto.setPhoneNo(entity.getPhoneNo());
-		resdto.setAge(entity.getAge());
-		resdto.setGender(entity.getGender().getGenderName());
-		resdto.setRole(entity.getRole().getRoleName());
-
-		return resdto;
-	}
+//
+//	@Override
+//	public BidderLogResDTO logIn(BidderLogReqDTO dto) {
+//		User entity = userDao.findByEmail(dto.getEmail())
+//				.orElseThrow(() -> new ApiException("Email id not found"));
+//
+//		// Match raw password with encrypted one
+//		if (!passwordEncoder.matches(dto.getPassword(), entity.getPassword())) {
+//			throw new ApiException("Invalid password");
+//		}
+//
+//		BidderLogResDTO resdto = new BidderLogResDTO();
+//		resdto.setFullName(entity.getFullName());
+//		resdto.setEmail(entity.getEmail());
+//		resdto.setPhoneNo(entity.getPhoneNo());
+//		resdto.setAge(entity.getAge());
+//		resdto.setGender(entity.getGender().getGenderName());
+//		resdto.setRole(entity.getRole().getRoleName());
+//
+//		return resdto;
+//	}
 
 
 

@@ -17,7 +17,7 @@ export default function AuctionListPage() {
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const authConfig = token
     ? { headers: { Authorization: `Bearer ${token}` } }
     : null;

@@ -1,41 +1,32 @@
-namespace YoreDemo
+using Microsoft.EntityFrameworkCore;
+using YoreDemo.Models;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers();
+
+// Register DbContext (Update with your actual connection string)
+builder.Services.AddDbContext<YoreContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add CORS
+builder.Services.AddCors((corsoptions) =>
 {
-    public class Program
+    corsoptions.AddPolicy("Policy1", (policy) =>
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
-            // Add controllers
-            builder.Services.AddControllers();
+var app = builder.Build();
 
-            // Add CORS policy for React app
-            builder.Services.AddCors((corsoptions) =>
-            {
-                corsoptions.AddPolicy("Policy1", (policy) =>
-                {
-                    policy.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-                });
-            });
-
-            var app = builder.Build();
-
-            // Serve static files (images in wwwroot)
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            // Enable CORS between UseRouting and UseAuthorization
-            app.UseCors("AllowReactApp");
-
-            app.UseAuthorization();
-
-            // Map API controllers
-            app.MapControllers();
-
-            app.Run();
-        }
-    }
-}
+// Middlewares
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors("Policy1");
+app.UseAuthorization();
+app.MapControllers();
+app.Run();

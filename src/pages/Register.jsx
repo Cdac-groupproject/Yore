@@ -19,7 +19,7 @@ function Register() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
   }, []);
 
   const onRegisterHandler = async (e) => {
@@ -47,7 +47,7 @@ function Register() {
   };
 
   useEffect(() => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
   }, []);
 
   return (

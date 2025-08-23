@@ -3,7 +3,9 @@ import Navbar from "../components/Navbar";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getRoles, getGenders } from "../services/userService";
 import { myAxios } from "../services/config";
+import { Link } from "react-router-dom";
 import logo from "../assets/newLogo.png"; // import your logo image
+
 
 export default function AddEmployee() {
   const navigate = useNavigate();
@@ -200,6 +202,15 @@ export default function AddEmployee() {
             >
               {isEditing ? "Update Employee" : "Add Employee"}
             </button>
+            
+            <Link
+            to="/employees"
+            className="text-blue-600 hover:underline"
+            >
+            View Employees
+            </Link>
+
+
             {isEditing && (
               <button
                 type="button"
